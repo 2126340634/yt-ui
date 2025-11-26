@@ -1,0 +1,41 @@
+{
+  "name": "@rao2126340634/yt-ui",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.0.0",
+  "description": "Vue3组件库 for 指尖移通微信小程序",
+  "main": "src/components",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "src/components"
+  ],
+  "keywords": [
+    "uni-app",
+    "vue3",
+    "typescript",
+    "ui",
+    "component",
+    "wechat-miniprogram",
+    "h5",
+    "mobile",
+    "lightweight",
+    "easycom",
+    "uniapp-ui",
+    "mini-program",
+    "dcloud",
+    "vue-component"
+  ],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@10.23.0",
+  "peerDependencies": {
+    "@dcloudio/uni-app": "3.0.0-4080520251106001",
+    "vue": "^3.5.25"
+  },
+  "dependencies": {
+    "@rao2126340634/yt-ui": "^1.0.0"
+  }
+}
