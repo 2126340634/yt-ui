@@ -25,7 +25,7 @@ Configure [pages.json]:
   "easycom": {
     "custom": {
         "autoscan": true,
-        "^yt-(.*)": "yt-ui/src/components/yt-$1/yt-$1.vue"
+        "^yt-(.*)": "@rao2126340634/yt-ui/src/components/yt-$1/yt-$1.vue"
     }
   }
 }
