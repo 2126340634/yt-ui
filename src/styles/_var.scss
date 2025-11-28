@@ -1,20 +1,16 @@
-// 主题色
-$primary-color: #49b08f !default;
-$success-color: #00b803 !default;
-$warning-color: #faad14 !default;
-$error-color: #f53f3f !default;
-$info-color: #3491fb !default;
+$max-content-width: 768px;
 
-// 文字色
-// $text-color-primary: rgba(0, 0, 0, 0.9) !default;
-// $text-color-secondary: rgba(0, 0, 0, 0.6) !default;
-// $text-color-placeholder: rgba(0, 0, 0, 0.4) !default;
-// $text-color-disabled: rgba(0, 0, 0, 0.26) !default;
+// 功能色
+$primary-color: #49b08f !default; // 主色
+$success-color: #00b803 !default; // 成功
+$warning-color: #faad14 !default; // 警告
+$error-color: #f53f3f !default; // 错误
+$info-color: #3491fb !default; // 详情
 
 // 背景色
-// $bg-color-container: #ffffff !default;
-// $bg-color-secondary: #f3f3f3 !default;
-// $bg-color-component: #f5f5f5 !default;
+$bg-color-container: #ffffff !default;
+$bg-color-secondary: #f3f3f3 !default;
+$bg-color-component: #f5f5f5 !default;
 
 // 边框色
 $border-color: #dcdcdc !default;
@@ -43,9 +39,9 @@ $font-size-xl: 20px !default;
 $line-height: 1.5 !default;
 
 // 阴影
-$shadow-1: 0 1px 4px rgba(0, 0, 0, 0.2) !default;
-$shadow-2: 0 2px 8px rgba(0, 0, 0, 0.3) !default;
-$shadow-3: 0 4px 12px rgba(0, 0, 0, 0.4) !default;
+$shadow-1: 0 1px 4px rgba(0, 0, 0, 0.25) !default;
+$shadow-2: 0 2px 8px rgba(0, 0, 0, 0.35) !default;
+$shadow-3: 0 4px 12px rgba(0, 0, 0, 0.45) !default;
 
 // 动画
 $transition-duration-fast: 0.1s !default;

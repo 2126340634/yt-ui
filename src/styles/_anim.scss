@@ -1,0 +1,70 @@
+$animation-duration-fast: 0.3s;
+$animation-duration-normal: 0.5s;
+$animation-duration-slow: 0.8s;
+
+$ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+$ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+$ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+// bounce
+@keyframes scale-bounce {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  75% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// stronger bounce
+@keyframes scale-bounce-strong {
+  0% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(0.7);
+  }
+  30% {
+    transform: scale(1.25);
+  }
+  45% {
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+  75% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// translate-up
+@keyframes tabbar-active-animation {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(0) scale(0.9);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.08);
+  }
+  75% {
+    transform: translateY(-4px) scale(0.95);
+  }
+  100% {
+    transform: translateY(-4px) scale(1);
+  }
+}
