@@ -1,0 +1,32 @@
+@use '../_mixins.scss' as mixins;
+
+.yt-space {
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+
+  &--horizontal {
+    flex-direction: row;
+  }
+
+  &--vertical {
+    flex-direction: column;
+  }
+
+  &--wrap {
+    flex-wrap: wrap;
+  }
+
+  &--nowrap {
+    flex-wrap: nowrap;
+  }
+
+  &--separator-container {
+    @include mixins.inline-flex-center(var(--separator-container-direction));
+    gap: var(--separator-container-gap);
+  }
+
+  &--separator {
+    background-color: #3e3e3e40;
+  }
+}

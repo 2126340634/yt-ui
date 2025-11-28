@@ -1,0 +1,15 @@
+@use '../_var.scss' as var;
+
+.yt-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: fit-content;
+
+  :deep(svg) {
+    fill: var(--icon-fill-color);
+    stroke: var(--icon-stroke-color);
+    stroke-width: var(--icon-stroke-width);
+  }
+}

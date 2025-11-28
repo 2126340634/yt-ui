@@ -1,0 +1,118 @@
+@use '../_var.scss' as var;
+
+.yt-button {
+  margin: 0; // button默认有margin！！！
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var.$spacing-small var.$spacing-medium;
+  font-size: var.$font-size-small;
+  line-height: var.$line-height;
+  border: 1px solid var.$border-color;
+  border-radius: var.$border-radius-large;
+  position: relative;
+  transition: transform var.$transition-duration-fast var.$easing-ease-out;
+
+  // 主题色
+  &--primary {
+    background: var.$primary-color;
+    color: white;
+    border-color: var.$primary-color;
+  }
+
+  &--success {
+    background: var.$success-color;
+    color: white;
+    border-color: var.$success-color;
+  }
+
+  &--warning {
+    background: var.$warning-color;
+    color: white;
+    border-color: var.$warning-color;
+  }
+
+  &--error {
+    background: var.$error-color;
+    color: white;
+    border-color: var.$error-color;
+  }
+
+  &--info {
+    background: var.$info-color;
+    color: white;
+    border-color: var.$info-color;
+  }
+
+  // 朴素版本
+  &--plain {
+    background: transparent;
+
+    &.yt-button--primary {
+      color: var.$primary-color;
+      border-color: var.$primary-color;
+    }
+
+    &.yt-button--success {
+      color: var.$success-color;
+      border-color: var.$success-color;
+    }
+
+    &.yt-button--warning {
+      color: var.$warning-color;
+      border-color: var.$warning-color;
+    }
+
+    &.yt-button--error {
+      color: var.$error-color;
+      border-color: var.$error-color;
+    }
+
+    &.yt-button--info {
+      color: var.$info-color;
+      border-color: var.$info-color;
+    }
+  }
+
+  &--small {
+    padding: var.$spacing-xs var.$spacing-medium;
+    font-size: var.$font-size-xs;
+  }
+
+  &--large {
+    padding: var.$spacing-small var.$spacing-large;
+    font-size: var.$font-size-medium;
+  }
+
+  &--disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  &--loading {
+    pointer-events: none;
+  }
+
+  &--overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var.$transition-duration-fast var.$easing-ease-out;
+    z-index: var.$z-index-popup;
+    pointer-events: none;
+    background: rgba($color: #3e3e3e, $alpha: 0.2);
+  }
+
+  &--text {
+    white-space: nowrap;
+  }
+}
+
+.yt-button--hover {
+  transform: scale(0.97);
+  .yt-button--overlay {
+    transform: scaleX(1);
+  }
+}
