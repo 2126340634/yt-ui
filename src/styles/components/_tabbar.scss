@@ -1,0 +1,103 @@
+@use '../var' as var;
+@use '../mixins' as mixins;
+@use '../anim' as anim;
+
+$standard-item-width: 60px;
+$standard-item-height: 60px;
+$margin-top-offset: -16px;
+
+.yt-tabbar {
+  &--container {
+    overflow: hidden;
+    display: inline-flex;
+    justify-content: space-around;
+    align-items: center;
+    width: min(100%, var.$max-content-width);
+    height: fit-content;
+    background-color: var.$bg-color-container;
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    box-shadow: var.$shadow-3;
+    padding: var(--tabbar-container-padding);
+    border-top-left-radius: var.$border-radius-extra-large;
+    border-top-right-radius: var.$border-radius-extra-large;
+  }
+
+  &--item {
+    @include mixins.inline-flex-center(column);
+    margin-top: $margin-top-offset;
+
+    &-active {
+      animation: tabbar-active-animation anim.$animation-duration-fast anim.$ease-out-back forwards;
+      filter: drop-shadow(var.$shadow-1);
+    }
+
+    &-index-0 {
+      margin-left: 24px;
+    }
+    &-index-1 {
+      margin-right: var(--tabbar-item-margin);
+    }
+    &-index-2 {
+      margin-left: var(--tabbar-item-margin);
+    }
+    &-index-3 {
+      margin-right: 24px;
+    }
+
+    // centerIcon
+    &-center {
+      @include mixins.inline-flex-center;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      overflow: hidden;
+      width: 52px;
+      height: 52px;
+
+      &-inner {
+        @include mixins.inline-flex-center;
+        background: black;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        position: relative;
+
+        &-icon {
+          width: inherit;
+          height: inherit;
+          position: absolute;
+          top: 2px;
+        }
+
+        &-image {
+          transform: scale(0.42);
+          object-fit: fill;
+          width: inherit;
+          height: inherit;
+        }
+      }
+    }
+  }
+
+  &--icon {
+    width: $standard-item-width;
+    height: $standard-item-height;
+  }
+
+  &--image {
+    width: $standard-item-width;
+    height: $standard-item-height;
+    transform: scale(0.36);
+    object-fit: fill;
+  }
+
+  &--text {
+    margin-top: $margin-top-offset;
+    font-size: var.$font-size-xs;
+  }
+}

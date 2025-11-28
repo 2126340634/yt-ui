@@ -1,0 +1,31 @@
+$theme-forest: #49b08f;
+$theme-ocean: #00a5e0;
+$theme-magic: #9c27ff;
+$theme-blossom: #ff6b9d;
+$theme-sunshine: #ff9800;
+$theme-classic: #ffffff;
+$theme-gradient-forest-sky: linear-gradient(135deg, #49b08f, #66bb6a);
+$theme-gradient-ocean-sky: linear-gradient(135deg, #00a5e0, #667ee0);
+$theme-gradient-magic-sky: linear-gradient(135deg, #9c27ff, #e040fb);
+$theme-gradient-blossom-sky: linear-gradient(135deg, #ff6b9d, #ff8a80);
+$theme-gradient-sunshine-sky: linear-gradient(135deg, #ff9800, #ffca28);
+
+$themes: (
+  'forest': $theme-forest,
+  'ocean': $theme-ocean,
+  'magic': $theme-magic,
+  'blossom': $theme-blossom,
+  'sunshine': $theme-sunshine,
+  'classic': $theme-classic,
+  'forest-sky': $theme-gradient-forest-sky,
+  'ocean-sky': $theme-gradient-ocean-sky,
+  'magic-sky': $theme-gradient-magic-sky,
+  'blossom-sky': $theme-gradient-blossom-sky,
+  'sunshine-sky': $theme-gradient-sunshine-sky
+);
+
+@each $name, $color in $themes {
+  .yt-tabbar--theme-#{$name} {
+    background: #{$color};
+  }
+}
