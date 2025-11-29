@@ -1,16 +1,17 @@
 /**
- * @description 这是icons的svg文件映射表
+ * @description ICON文件路径映射表
  */
 
-import Home from '../../assets/icons/home.svg?raw'
-import Course from '../../assets/icons/course.svg?raw'
-import Community from '../../assets/icons/community.svg?raw'
-import Me from '../../assets/icons/me.svg?raw'
-import QRcode from '../../assets/icons/QRcode.svg?raw'
-import HomeActive from '../../assets/icons/home_active.svg?raw'
-import CourseActive from '../../assets/icons/course_active.svg?raw'
-import CommunityActive from '../../assets/icons/community_active.svg?raw'
-import MeActive from '../../assets/icons/me_active.svg?raw'
+import Home from '../../assets/icons/home.webp'
+import Course from '../../assets/icons/course.webp'
+import Community from '../../assets/icons/community.webp'
+import Me from '../../assets/icons/me.webp'
+import QRcode from '../../assets/icons/QRcode.webp'
+import HomeActive from '../../assets/icons/home_active.webp'
+import CourseActive from '../../assets/icons/course_active.webp'
+import CommunityActive from '../../assets/icons/community_active.webp'
+import MeActive from '../../assets/icons/me_active.webp'
+
 export const iconMap: Record<string, string> = {
   Home,
   Course,

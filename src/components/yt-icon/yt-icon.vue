@@ -6,17 +6,11 @@
   interface Props {
     name: string
     size?: number | string
-    strokeColor?: string
-    fillColor?: string
-    strokeWidth?: number | string
   }
 
   const props = withDefaults(defineProps<Props>(), {
     name: '',
-    size: 32,
-    strokeColor: 'red',
-    fillColor: '#333',
-    strokeWidth: 0
+    size: 32
   })
 
   const emit = defineEmits<{
@@ -30,11 +24,7 @@
   const iconStyle = computed(() => {
     const sizeValue = typeof props.size === 'number' ? props.size : Number(props.size)
     return {
-      transform: `scale(${sizeValue * 0.01})`,
-      '--icon-stroke-color': props.strokeColor,
-      '--icon-fill-color': props.fillColor,
-      '--icon-stroke-width':
-        typeof props.strokeWidth === 'number' ? `${props.strokeWidth}px` : props.strokeWidth
+      transform: `scale(${sizeValue * 0.01})`
     }
   })
 
@@ -57,12 +47,12 @@
 </script>
 
 <template>
-  <view
+  <image
     :class="iconClass"
     :style="iconStyle"
     @click="handleClick"
-    v-html="svgStr"
-  ></view>
+    :src="svgStr"
+  ></image>
 </template>
 
 <style lang="scss" scoped>

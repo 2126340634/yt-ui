@@ -25,6 +25,7 @@ $themes: (
 );
 
 @each $name, $color in $themes {
+  // tabbar主题
   .yt-tabbar--theme-#{$name} {
     background: #{$color};
   }
