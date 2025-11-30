@@ -5,12 +5,16 @@
 
   interface Props {
     name: string
-    size?: number | string
+    size?: number
+    width?: number | string
+    height?: number | string
   }
 
   const props = withDefaults(defineProps<Props>(), {
     name: '',
-    size: 32
+    size: 32,
+    width: 60,
+    height: 60
   })
 
   const emit = defineEmits<{
@@ -22,9 +26,10 @@
   })
 
   const iconStyle = computed(() => {
-    const sizeValue = typeof props.size === 'number' ? props.size : Number(props.size)
     return {
-      transform: `scale(${sizeValue * 0.01})`
+      transform: `scale(${props.size * 0.01})`,
+      width: typeof props.width === 'number' ? `${props.width}px` : props.width,
+      height: typeof props.height === 'number' ? `${props.height}px` : props.height
     }
   })
 

@@ -11,7 +11,7 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "isolatedModules": true,
-    "types": ["node"],
+    "types": ["node", "@dcloudio/types"],
     "paths": {}
   },
 

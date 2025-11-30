@@ -1,52 +1,51 @@
 @use '../_var.scss' as var;
+@use '../mixins' as mixins;
 
 .yt-button {
   margin: 0; // button默认有margin！！！
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var.$spacing-small var.$spacing-medium;
+  @include mixins.inline-flex-center;
   font-size: var.$font-size-small;
   line-height: var.$line-height;
   border: 1px solid var.$border-color;
   border-radius: var.$border-radius-large;
   position: relative;
-  transition: transform var.$transition-duration-fast var.$easing-ease-out;
+  transition: transform var.$transition-duration-fast var.$easing-ease-out,
+    background-color var.$transition-duration-slow var.$easing-ease-in-out;
 
   // 主题色
   &--primary {
-    background: var.$primary-color;
-    color: white;
+    background-color: var.$primary-color;
+    color: #fff;
     border-color: var.$primary-color;
   }
 
   &--success {
-    background: var.$success-color;
-    color: white;
+    background-color: var.$success-color;
+    color: #fff;
     border-color: var.$success-color;
   }
 
   &--warning {
-    background: var.$warning-color;
-    color: white;
+    background-color: var.$warning-color;
+    color: #fff;
     border-color: var.$warning-color;
   }
 
   &--error {
-    background: var.$error-color;
-    color: white;
+    background-color: var.$error-color;
+    color: #fff;
     border-color: var.$error-color;
   }
 
   &--info {
-    background: var.$info-color;
-    color: white;
+    background-color: var.$info-color;
+    color: #fff;
     border-color: var.$info-color;
   }
 
   // 朴素版本
   &--plain {
-    background: transparent;
+    background-color: transparent;
 
     &.yt-button--primary {
       color: var.$primary-color;
@@ -74,13 +73,26 @@
     }
   }
 
+  &--circle {
+    border-radius: 25px;
+  }
+
+  &--stretch {
+    width: min(80%, 180px);
+  }
+
   &--small {
     padding: var.$spacing-xs var.$spacing-medium;
     font-size: var.$font-size-xs;
   }
 
-  &--large {
+  &--medium {
     padding: var.$spacing-small var.$spacing-large;
+    font-size: var.$font-size-small;
+  }
+
+  &--large {
+    padding: var.$spacing-small var.$spacing-xl;
     font-size: var.$font-size-medium;
   }
 
@@ -111,7 +123,7 @@
 }
 
 .yt-button--hover {
-  transform: scale(0.97);
+  transform: scale(0.99);
   .yt-button--overlay {
     transform: scaleX(1);
   }

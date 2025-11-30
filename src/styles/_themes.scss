@@ -9,6 +9,7 @@ $theme-gradient-ocean-sky: linear-gradient(135deg, #00a5e0, #667ee0);
 $theme-gradient-magic-sky: linear-gradient(135deg, #9c27ff, #e040fb);
 $theme-gradient-blossom-sky: linear-gradient(135deg, #ff6b9d, #ff8a80);
 $theme-gradient-sunshine-sky: linear-gradient(135deg, #ff9800, #ffca28);
+$theme-none: transparent;
 
 $themes: (
   'forest': $theme-forest,
@@ -21,7 +22,9 @@ $themes: (
   'ocean-sky': $theme-gradient-ocean-sky,
   'magic-sky': $theme-gradient-magic-sky,
   'blossom-sky': $theme-gradient-blossom-sky,
-  'sunshine-sky': $theme-gradient-sunshine-sky
+  'sunshine-sky': $theme-gradient-sunshine-sky,
+  // 部分组件支持无主题
+  'none': $theme-none
 );
 
 @each $name, $color in $themes {

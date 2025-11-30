@@ -7,6 +7,8 @@
     plain?: boolean
     disabled?: boolean
     loading?: boolean
+    circle?: boolean
+    stretch?: boolean
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -14,11 +16,13 @@
     size: 'medium',
     plain: false,
     disabled: false,
-    loading: false
+    loading: false,
+    circle: false,
+    stretch: false
   })
 
   const emit = defineEmits<{
-    click: [e: any]
+    click: [e: Event]
   }>()
 
   const buttonClass = computed(() => {
@@ -29,12 +33,14 @@
       {
         'yt-button--plain': props.plain,
         'yt-button--disabled': props.disabled || props.loading,
-        'yt-button--loading': props.loading
+        'yt-button--loading': props.loading,
+        'yt-button--circle': props.circle,
+        'yt-button--stretch': props.stretch
       }
     ]
   })
 
-  const handleClick = (e: any) => {
+  function handleClick(e: Event) {
     if (!props.disabled && !props.loading) {
       emit('click', e)
     }

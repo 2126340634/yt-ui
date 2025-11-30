@@ -52,7 +52,7 @@ $center-item-height: 48px;
     // centerIcon
     &-center {
       @include mixins.inline-flex-center;
-      position: absolute;
+      position: fixed;
       bottom: 14px;
       left: 50%;
       transform: translateX(-50%);

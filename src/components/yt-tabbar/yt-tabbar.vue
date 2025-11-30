@@ -151,6 +151,8 @@
             :name="item.icon"
             class="yt-tabbar--item-center-inner-icon"
             :size="42"
+            width="100%"
+            height="100%"
           />
           <image
             v-else
@@ -164,6 +166,8 @@
           :name="centerIcon"
           class="yt-tabbar--item-center-inner-icon"
           :size="42"
+          width="100%"
+          height="100%"
         />
         <image
           v-else
