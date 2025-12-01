@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 $theme-forest: #49b08f;
 $theme-ocean: #00a5e0;
 $theme-magic: #9c27ff;
@@ -9,7 +11,6 @@ $theme-gradient-ocean-sky: linear-gradient(135deg, #00a5e0, #667ee0);
 $theme-gradient-magic-sky: linear-gradient(135deg, #9c27ff, #e040fb);
 $theme-gradient-blossom-sky: linear-gradient(135deg, #ff6b9d, #ff8a80);
 $theme-gradient-sunshine-sky: linear-gradient(135deg, #ff9800, #ffca28);
-$theme-none: transparent;
 
 $themes: (
   'forest': $theme-forest,
@@ -23,13 +24,51 @@ $themes: (
   'magic-sky': $theme-gradient-magic-sky,
   'blossom-sky': $theme-gradient-blossom-sky,
   'sunshine-sky': $theme-gradient-sunshine-sky,
-  // 部分组件支持无主题
-  'none': $theme-none
+  'none': transparent
+);
+
+$component-themes: (
+  'dots': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': $theme-classic,
+    'forest-sky': $theme-gradient-forest-sky,
+    'ocean-sky': $theme-gradient-ocean-sky,
+    'magic-sky': $theme-gradient-magic-sky,
+    'blossom-sky': $theme-gradient-blossom-sky,
+    'sunshine-sky': $theme-gradient-sunshine-sky,
+    'none': #ffffff
+  )
 );
 
 @each $name, $color in $themes {
-  // tabbar主题
+  // tabbar
   .yt-tabbar--theme-#{$name} {
     background: #{$color};
+  }
+  // swiper
+  .yt-swiper--theme-#{$name} {
+    background: #{$color};
+  }
+}
+
+// dots
+@each $name, $color in map.get($component-themes, 'dots') {
+  $dots-border-radius: 40px;
+  // inactive dots
+  .yt-dots--theme-#{$name} .yt-dots--item-outer {
+    @if $name != 'none' {
+      border-radius: $dots-border-radius;
+    }
+  }
+  // active dots
+  .yt-dots--theme-#{$name} .yt-dots--item-outer-active .yt-dots--item-inner {
+    background: #{$color};
+    @if $name != 'none' {
+      border-radius: $dots-border-radius;
+    }
   }
 }

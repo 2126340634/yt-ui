@@ -1,19 +1,24 @@
 <script setup lang="ts">
-  import { computed, nextTick, onUnmounted, ref } from 'vue'
+  import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
   import { ThemeColor } from '../../types/theme-types'
   import { useInterval } from '../../hooks/useInterval'
 
   interface Props {
     theme?: ThemeColor | 'none'
+    showBgColor?: boolean
     list: any[]
-    perWidth?: number | string
-    perHeight?: number | string
+    width?: number | string
+    height?: number | string
     direction?: 'horizontal' | 'vertical'
     duration?: number
     showArrow?: boolean
-    showDots?: boolean
     arrowColor?: 'light' | 'dark'
     arrowSize?: number
+    showDots?: boolean
+    dotsSize?: number
+    maxDots?: number
+    dotsSide?: 'left' | 'right'
+    dotsOffset?: number | string
     loop?: boolean
     lazy?: boolean
     autoplay?: boolean
@@ -22,20 +27,25 @@
     activeCardScale?: number
     inactiveCardScale?: number
     cardGap?: number
-    rounded?: boolean
+    borderRadius?: number | string
   }
 
   const props = withDefaults(defineProps<Props>(), {
     theme: 'none',
+    showBgColor: true,
     list: () => [],
-    perWidth: '100vw',
-    perHeight: '60vw',
+    width: '100%',
+    height: '100%',
     direction: 'horizontal',
     duration: 500,
     showArrow: true,
-    showDots: true,
     arrowColor: 'light',
     arrowSize: 50,
+    showDots: true,
+    dotsSize: 32,
+    maxDots: 7,
+    dotsSide: 'right',
+    dotsOffset: '15%',
     loop: true,
     lazy: true,
     autoplay: false,
@@ -44,7 +54,11 @@
     activeCardScale: 0.8,
     inactiveCardScale: 0.6,
     cardGap: 25,
-    rounded: false
+    borderRadius: 0
+  })
+
+  const maxSwiperDots = computed(() => {
+    return Math.min(props.list.length, props.maxDots)
   })
 
   const { pause, resume, clear } = useInterval(
@@ -73,14 +87,21 @@
   const curIndex = ref(props.loop && props.list.length > 1 ? 1 : 0)
   const enableTransition = ref(true)
   const isAnimating = ref(false)
+  let lastTouchTime = 0
+  const THTROTTLE_DELAY = 16 // 60FPS
   // autoplay
   const resumeTimer = ref<NodeJS.Timeout | null>(null)
   const touchState = ref({
     startX: 0,
     startY: 0,
-    isSwiping: false
+    isSwiping: false,
+    deltaX: 0,
+    deltaY: 0
   })
 
+  const cardBorderRadius = computed(() => {
+    return typeof props.borderRadius === 'number' ? `${props.borderRadius}px` : props.borderRadius
+  })
   const isHorizontal = computed(() => {
     return props.direction === 'horizontal'
   })
@@ -91,13 +112,20 @@
     return props.type === 'card'
   })
   const swiperClass = computed(() => {
-    return ['yt-swiper', { 'yt-swiper--card': isCard.value }]
+    return [
+      'yt-swiper',
+      `yt-swiper--theme-${props.showBgColor ? props.theme : 'none'}`,
+      { 'yt-swiper--card': isCard.value }
+    ]
   })
   const swiperStyle = computed(() => {
+    const dotsOffset =
+      typeof props.dotsOffset === 'number' ? `${props.dotsOffset}%` : props.dotsOffset
     return {
-      width: typeof props.perWidth === 'number' ? `${props.perWidth}px` : props.perWidth,
-      height: typeof props.perHeight === 'number' ? `${props.perHeight}px` : props.perHeight,
-      borderRadius: props.rounded ? '20px' : '0'
+      width: typeof props.width === 'number' ? `${props.width}px` : props.width,
+      height: typeof props.height === 'number' ? `${props.height}px` : props.height,
+      '--swiper-dots-offset': dotsOffset,
+      borderRadius: cardBorderRadius.value
     }
   })
   const swiperContainerClass = computed(() => {
@@ -108,6 +136,35 @@
       '--swiper-translate-index': curIndex.value,
       '--swiper-translate-duration': enableTransition.value ? `${props.duration * 0.001}s` : '0s'
     }
+  })
+  const draggerTransform = computed(() => {
+    const translateX = `translateX(max(-50% ,min(${touchState.value.deltaX * 0.6}px, 50%)))`
+    const translateY = `translateY(max(-50% ,min(${touchState.value.deltaY * 0.6}px, 50%)))`
+    return {
+      translate: isHorizontal.value ? translateX : translateY,
+      horizontalNext: isHorizontal.value && touchState.value.deltaX < -swipeThreshold.value,
+      horizontalPrev: isHorizontal.value && touchState.value.deltaX > swipeThreshold.value,
+      verticalNext: !isHorizontal.value && touchState.value.deltaY < -swipeThreshold.value,
+      verticalPrev: !isHorizontal.value && touchState.value.deltaY > swipeThreshold.value
+    }
+  })
+  const swipeThreshold = computed(() => {
+    const systemInfo = uni.getSystemInfoSync()
+    const threshold = isHorizontal.value ? systemInfo.windowWidth / 3 : systemInfo.windowHeight / 3
+    return Math.min(threshold, 50)
+  })
+  const swiperDraggerStyle = computed(() => {
+    return {
+      transform: draggerTransform.value.translate
+    }
+  })
+  const swiperDraggerClass = computed(() => {
+    return [
+      'yt-swiper--dragger',
+      {
+        'yt-swiper--dragger-swipping': touchState.value.isSwiping
+      }
+    ]
   })
   const arrowStyle = computed(() => {
     return {
@@ -214,14 +271,17 @@
       isCurrentCard ? Math.min(props.activeCardScale, 1) : Math.min(props.inactiveCardScale, 1)
     })`
     // shadow
-    const shadowValue =
+    const boxShadow =
       isCurrentCard || index === curIndex.value + 1 || index === curIndex.value - 1
         ? '0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.2)'
         : 'none'
+    // border-radius
+    const borderRadius = cardBorderRadius.value
     return {
       transform: isCard.value ? cardTransform : 'none',
       zIndex: index === curIndex.value ? '1' : '0',
-      boxShadow: shadowValue
+      boxShadow,
+      borderRadius
     }
   }
   function isCurrentActive(index: number) {
@@ -259,42 +319,71 @@
   /** */
 
   /**
-   * autoplay相关函数
+   * autoplay,touch相关函数
    */
   function handleTouchStart(e: TouchEvent) {
     const touch = e.touches[0]
     touchState.value = {
       startX: touch.clientX,
       startY: touch.clientY,
-      isSwiping: false
+      isSwiping: false,
+      deltaX: 0,
+      deltaY: 0
     }
     pause()
   }
   function handleTouchMove(e: TouchEvent) {
-    if (!touchState.value.startX) return
-    const touch = e.touches[0]
-    const deltaX = touch.clientX - touchState.value.startX
-    const deltaY = touch.clientY - touchState.value.startY
+    const now = Date.now()
+    if (now - lastTouchTime < THTROTTLE_DELAY) return
+    const deltaX = e.touches[0].clientX - touchState.value.startX
+    const deltaY = e.touches[0].clientY - touchState.value.startY
+    touchState.value.deltaX = deltaX
+    touchState.value.deltaY = deltaY
     if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
       touchState.value.isSwiping = true
     }
+    lastTouchTime = now
   }
   function handleTouchEnd() {
-    if (resumeTimer.value) {
-      clearTimeout(resumeTimer.value)
-      resumeTimer.value = null
+    // touchMove
+    if (draggerTransform.value.horizontalNext || draggerTransform.value.verticalNext) handleNext()
+    if (draggerTransform.value.horizontalPrev || draggerTransform.value.verticalPrev) handlePrev()
+    touchState.value = {
+      startX: 0,
+      startY: 0,
+      isSwiping: false,
+      deltaX: 0,
+      deltaY: 0
     }
-    if (!touchState.value.isSwiping) {
+  }
+  // autoplay
+  if (resumeTimer.value) {
+    clearTimeout(resumeTimer.value)
+    resumeTimer.value = null
+  }
+  if (!touchState.value.isSwiping) {
+    if (props.autoplay) resume()
+  } else {
+    resumeTimer.value = setTimeout(() => {
       if (props.autoplay) resume()
-    } else {
-      resumeTimer.value = setTimeout(() => {
-        if (props.autoplay) resume()
-        resumeTimer.value = null
-      }, 500)
-    }
-    touchState.value.isSwiping = false
+      resumeTimer.value = null
+    }, 500)
   }
   /** */
+
+  /**
+   * dots相关函数
+   */
+  const dotsClass = computed(() => {
+    return [
+      'yt-swiper--dots',
+      `yt-swiper--dots-${props.direction}`,
+      {
+        'yt-swiper--dots-vertical-left': !isHorizontal.value && props.dotsSide === 'left',
+        'yt-swiper--dots-vertical-right': !isHorizontal.value && props.dotsSide === 'right'
+      }
+    ]
+  })
 
   onUnmounted(() => {
     if (resumeTimer.value) {
@@ -318,23 +407,28 @@
     @touchend="handleTouchEnd"
     @touchcancel="handleTouchEnd"
   >
-    <!-- Swiper Container -->
     <view
-      :class="swiperContainerClass"
-      :style="swiperContainerStyle"
+      :class="swiperDraggerClass"
+      :style="swiperDraggerStyle"
     >
+      <!-- Item Container -->
       <view
-        class="yt-swiper--container-item"
-        v-for="(item, index) in visibleList"
-        @click="handleClick($event, getRealIndex(index))"
-        :style="getCardStyle(index)"
+        :class="swiperContainerClass"
+        :style="swiperContainerStyle"
       >
-        <template v-if="shouldRender(index)">
-          <slot
-            :item="item"
-            :index="getRealIndex(index)"
-          />
-        </template>
+        <view
+          class="yt-swiper--container-item"
+          v-for="(item, index) in visibleList"
+          @click="handleClick($event, getRealIndex(index))"
+          :style="getCardStyle(index)"
+        >
+          <template v-if="shouldRender(index)">
+            <slot
+              :item="item"
+              :index="getRealIndex(index)"
+            />
+          </template>
+        </view>
       </view>
     </view>
 
@@ -373,13 +467,24 @@
         @click="handleNext"
       />
     </view>
-    <!-- <view
+
+    <!-- Dots -->
+    <view
       v-if="showDots"
-      class="yt-swiper--dots"
-    /> -->
+      :class="dotsClass"
+    >
+      <yt-dots
+        :theme="theme"
+        :total="maxSwiperDots"
+        :size="props.dotsSize"
+        :activeIndex="getRealIndex(curIndex)"
+        :direction="props.direction"
+      />
+    </view>
   </view>
 </template>
 
 <style lang="scss" scoped>
   @use '../../styles/components/_swiper.scss';
+  @use '../../styles/_themes.scss';
 </style>
