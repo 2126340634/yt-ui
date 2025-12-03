@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vue3组件库 for 指尖移通微信小程序",
   "main": "src/components",
   "scripts": {
@@ -32,6 +32,12 @@
   "license": "MIT",
   "packageManager": "pnpm@10.23.0",
   "devDependencies": {
-    "@types/node": "^24.10.1"
+    "@types/node": "^24.10.1",
+    "@dcloudio/types": "^3.4.28",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.4",
+    "@vitejs/plugin-vue": "^6.0.2",
+    "vue-tsc": "^3.1.5",
+    "sass": "^1.94.2"
   }
 }

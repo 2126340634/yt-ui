@@ -5,6 +5,8 @@
 
   interface Props {
     centerIcon?: string
+    centerBgColor?: string
+    centerBgColorLast?: string
     theme?: ThemeColor
     showText?: boolean
     list?: { text?: string; icon: string; activeIcon?: string }[]
@@ -13,16 +15,24 @@
 
   const props = withDefaults(defineProps<Props>(), {
     centerIcon: '',
+    centerBgColor: '#ffffff20',
+    centerBgColorLast: '#000',
     theme: 'classic',
     showText: false,
     list: () => [],
-    zIndex: 1000
+    zIndex: 500
   })
 
   function validateListLength(list: Array<any>) {
-    if (list && list.length > 4) {
-      console.warn('[YtTabbar] list长度不能超过4，将自动截断')
-      return list.slice(0, 4)
+    if (list) {
+      if (list.length > 4) {
+        console.warn('[YtTabbar] list长度不能超过4，将自动截断')
+        return list.slice(0, 4)
+      }
+      if (list.length < 4) {
+        console.warn('[YtTabbar] list长度不能少于4')
+        return Array.from({ length: 4 }, () => ({ icon: '' }))
+      }
     }
     return list
   }
@@ -32,8 +42,8 @@
   })
 
   const emit = defineEmits<{
-    tabbarChange: [e: any, activeIndex: number]
-    centerClick: [e: any]
+    tabbarChange: [e: Event, activeIndex: number]
+    centerClick: [e: Event]
   }>()
 
   const activeIndex = ref(0)
@@ -41,7 +51,7 @@
   const tabbarContainerStyle = computed(() => {
     return {
       '--tabbar-container-padding': props.showText ? '8px 0' : '16px 0 0 0',
-      '--tabbar-item-margin': props.centerIcon ? '24px' : '0',
+      '--tabbar-item-margin': props.centerIcon ? '30px' : '0',
       zIndex: Number(props.zIndex)
     }
   })
@@ -58,12 +68,23 @@
     return { zIndex: props.zIndex }
   })
 
+  const centerInnerStyle = computed(() => {
+    return {
+      transform: `translateY(-${activeIndex.value * 48}px)`,
+      '--tabbar-center-item-bgColor':
+        activeIndex.value === 4 ? props.centerBgColorLast : props.centerBgColor
+    }
+  })
+
   function handleClick(e: Event, index: number) {
+    if (index === activeIndex.value) return
     activeIndex.value = index
     emit('tabbarChange', e, index)
   }
 
   function handleCenterClick(e: Event) {
+    if (activeIndex.value === 4) return
+    activeIndex.value = 4
     emit('centerClick', e)
   }
 
@@ -94,7 +115,6 @@
           activeIndex === index ? item.activeIcon && iconMap[item.activeIcon] : iconMap[item.icon]
         "
         :name="activeIndex === index ? item.activeIcon : item.icon"
-        :fillColor="activeIndex === index ? '#333' : '#3e3e3e50'"
         class="yt-tabbar--icon"
         :size="36"
       />
@@ -112,6 +132,7 @@
       </span>
     </view>
   </view>
+
   <!-- centerIcon -->
   <view
     v-if="centerIcon"
@@ -120,19 +141,41 @@
     :style="centerIconStyle"
   >
     <view class="yt-tabbar--item-center-inner">
-      <yt-icon
-        v-if="iconMap[centerIcon]"
-        :name="centerIcon"
-        class="yt-tabbar--item-center-inner-icon"
-        :size="42"
-        fillColor="#fff"
-      />
-      <img
-        v-else
-        :src="centerIcon"
-        alt="ICON"
-        class="yt-tabbar--item-center-inner-image"
-      />
+      <view
+        class="yt-tabbar--item-center-inner-items"
+        :style="centerInnerStyle"
+      >
+        <template v-for="item in validatedList">
+          <yt-icon
+            v-if="iconMap[item.icon]"
+            :name="item.icon"
+            class="yt-tabbar--item-center-inner-icon"
+            :size="42"
+            width="100%"
+            height="100%"
+          />
+          <image
+            v-else
+            :src="item.icon"
+            alt="ICON"
+            class="yt-tabbar--item-center-inner-image"
+          />
+        </template>
+        <yt-icon
+          v-if="iconMap[centerIcon]"
+          :name="centerIcon"
+          class="yt-tabbar--item-center-inner-icon"
+          :size="42"
+          width="100%"
+          height="100%"
+        />
+        <image
+          v-else
+          :src="centerIcon"
+          alt="ICON"
+          class="yt-tabbar--item-center-inner-image"
+        />
+      </view>
     </view>
   </view>
 </template>

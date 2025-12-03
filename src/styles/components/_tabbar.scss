@@ -5,6 +5,8 @@
 $standard-item-width: 60px;
 $standard-item-height: 60px;
 $margin-top-offset: -16px;
+$center-item-width: 48px;
+$center-item-height: 48px;
 
 .yt-tabbar {
   &--container {
@@ -23,6 +25,7 @@ $margin-top-offset: -16px;
     padding: var(--tabbar-container-padding);
     border-top-left-radius: var.$border-radius-extra-large;
     border-top-right-radius: var.$border-radius-extra-large;
+    transition: background-color var.$transition-duration-slow var.$easing-ease-in-out;
   }
 
   &--item {
@@ -31,7 +34,6 @@ $margin-top-offset: -16px;
 
     &-active {
       animation: tabbar-active-animation anim.$animation-duration-fast anim.$ease-out-back forwards;
-      filter: drop-shadow(var.$shadow-1);
     }
 
     &-index-0 {
@@ -50,35 +52,44 @@ $margin-top-offset: -16px;
     // centerIcon
     &-center {
       @include mixins.inline-flex-center;
-      position: absolute;
-      bottom: 20px;
+      position: fixed;
+      bottom: 14px;
       left: 50%;
       transform: translateX(-50%);
       border-radius: 50%;
-      overflow: hidden;
-      width: 52px;
-      height: 52px;
+      width: $center-item-width + 10px;
+      height: $center-item-height + 10px;
 
       &-inner {
-        @include mixins.inline-flex-center;
-        background: black;
-        width: 42px;
-        height: 42px;
+        width: $center-item-width;
+        height: $center-item-height;
         border-radius: 50%;
-        position: relative;
+        overflow: hidden;
+        box-shadow: inset var.$shadow-2;
 
         &-icon {
-          width: inherit;
-          height: inherit;
-          position: absolute;
-          top: 2px;
+          width: $center-item-width;
+          height: $center-item-width;
         }
 
         &-image {
           transform: scale(0.42);
           object-fit: fill;
-          width: inherit;
-          height: inherit;
+          width: $center-item-width;
+          height: $center-item-width;
+        }
+
+        &-items {
+          width: 100%;
+          height: 100%;
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          background-color: var(--tabbar-center-item-bgColor);
+          width: $center-item-width;
+          height: $center-item-height * 5;
+          transition: transform var.$transition-duration-slow var.$easing-ease-in-out,
+            background-color var.$transition-duration-slow var.$easing-ease-in-out;
         }
       }
     }

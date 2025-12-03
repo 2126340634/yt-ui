@@ -26,9 +26,9 @@ $border-radius-extra-large: 12px !default;
 // 间距
 $spacing-xs: 4px !default;
 $spacing-small: 8px !default;
-$spacing-medium: 16px !default;
-$spacing-large: 24px !default;
-$spacing-xl: 32px !default;
+$spacing-medium: 12px !default;
+$spacing-large: 16px !default;
+$spacing-xl: 24px !default;
 
 // 字体
 $font-size-xs: 12px !default;
@@ -42,6 +42,8 @@ $line-height: 1.5 !default;
 $shadow-1: 0 1px 4px rgba(0, 0, 0, 0.25) !default;
 $shadow-2: 0 2px 8px rgba(0, 0, 0, 0.35) !default;
 $shadow-3: 0 4px 12px rgba(0, 0, 0, 0.45) !default;
+$card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.2);
+$button-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 6px 20px rgba(0, 0, 0, 0.1);
 
 // 动画
 $transition-duration-fast: 0.1s !default;

@@ -13,3 +13,4 @@ export type ThemeColor =
   | 'magic-sky' // 魔法星空
   | 'blossom-sky' // 樱花星空
   | 'sunshine-sky' // 阳光星空
+  
