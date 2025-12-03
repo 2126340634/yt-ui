@@ -2,7 +2,6 @@
   import { computed } from 'vue'
 
   interface Props {
-    content: string
     type?: 'primary' | 'success' | 'warning' | 'error' | 'info'
     size?: number | string
     disabled?: boolean
@@ -12,7 +11,6 @@
   }
 
   const props = withDefaults(defineProps<Props>(), {
-    string: '',
     type: 'primary',
     size: 16,
     disabled: false,
@@ -62,7 +60,7 @@
       :class="lineClass"
       :style="lineStyle"
     >
-      {{ props.content }}
+      <slot />
     </span>
     <slot name="suffix" />
   </view>

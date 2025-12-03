@@ -19,6 +19,21 @@ import ArrowLeftWhite from '../../assets/icons/arrow_left_white.webp'
 import ArrowRightWhite from '../../assets/icons/arrow_right_white.webp'
 import ArrowUpWhite from '../../assets/icons/arrow_up_white.webp'
 import ArrowDownWhite from '../../assets/icons/arrow_down_white.webp'
+import Calendar from '../../assets/icons/calendar.webp'
+import DefaultAvatar from '../../assets/icons/default_avatar.webp'
+import DoorEnter from '../../assets/icons/door_enter.webp'
+import DoorExit from '../../assets/icons/door_exit.webp'
+import Edit from '../../assets/icons/edit.webp'
+import Fail from '../../assets/icons/fail.webp'
+import HotTopic from '../../assets/icons/hot_topic.webp'
+import Identity from '../../assets/icons/identity.webp'
+import Official from '../../assets/icons/official.webp'
+import Passed from '../../assets/icons/passed.webp'
+import Unpassed from '../../assets/icons/unpassed.webp'
+import Success from '../../assets/icons/success.webp'
+import Time from '../../assets/icons/time.webp'
+import ToolbarActive from '../../assets/icons/toolbar_active.webp'
+import Close from '../../assets/icons/close.webp'
 
 export const iconMap: Record<string, string> = {
   Home,
@@ -37,5 +52,20 @@ export const iconMap: Record<string, string> = {
   ArrowLeftWhite,
   ArrowRightWhite,
   ArrowUpWhite,
-  ArrowDownWhite
+  ArrowDownWhite,
+  Calendar,
+  DefaultAvatar,
+  DoorEnter,
+  DoorExit,
+  Edit,
+  Fail,
+  HotTopic,
+  Identity,
+  Official,
+  Passed,
+  Unpassed,
+  Success,
+  Time,
+  ToolbarActive,
+  Close
 }

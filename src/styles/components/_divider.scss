@@ -2,64 +2,81 @@
 
 $divider-margin: 1em;
 
+// line with text
 .yt-divider--container {
   @include mixins.inline-flex-center(var(--divider-direction));
-  min-width: fit-content;
-  min-height: fit-content;
+  width: 100%;
+  height: 100%;
+}
 
-  .yt-divider {
-    width: 100%;
-    height: 100%;
-    @include mixins.inline-flex-center(var(--divider-direction));
+.yt-divider {
+  width: 100%;
+  height: 100%;
+  @include mixins.inline-flex-center(var(--divider-direction));
 
-    // horizontal
-    &--horizontal {
-      margin: $divider-margin;
-    }
-
-    &--horizontal.start-line {
-      margin-top: var(--divider-margin);
-      margin-bottom: var(--divider-margin);
-    }
-
-    &--horizontal.end-line {
-      margin-top: var(--divider-margin);
-      margin-bottom: var(--divider-margin);
-    }
-
-    // vertical
-    &--vertical {
-      margin: $divider-margin;
-    }
-
-    &--vertical.start-line {
-      margin-left: var(--divider-margin);
-      margin-right: var(--divider-margin);
-    }
-
-    &--vertical.end-line {
-      margin-left: var(--divider-margin);
-      margin-right: var(--divider-margin);
-    }
-
-    // align-start
-    &--start.start-line,
-    &--left.start-line {
-      flex: 0.3;
-    }
-    &--start.end-line,
-    &--left.end-line {
-      flex: 1;
-    }
-
-    // align-end
-    &--end.start-line,
-    &--right.start-line {
-      flex: 1;
-    }
-    &--end.end-line,
-    &--right.end-line {
-      flex: 0.3;
-    }
+  // horizontal
+  &--horizontal {
+    margin: $divider-margin;
   }
+
+  &--horizontal.start-line {
+    margin-top: var(--divider-margin);
+    margin-bottom: var(--divider-margin);
+  }
+
+  &--horizontal.end-line {
+    margin-top: var(--divider-margin);
+    margin-bottom: var(--divider-margin);
+  }
+
+  // vertical
+  &--vertical {
+    margin: $divider-margin;
+  }
+
+  &--vertical.start-line {
+    margin-left: var(--divider-margin);
+    margin-right: var(--divider-margin);
+  }
+
+  &--vertical.end-line {
+    margin-left: var(--divider-margin);
+    margin-right: var(--divider-margin);
+  }
+
+  // align-start
+  &--start.start-line,
+  &--left.start-line {
+    flex: 0.35;
+  }
+  &--start.end-line,
+  &--left.end-line {
+    flex: 1;
+  }
+
+  // align-end
+  &--end.start-line,
+  &--right.start-line {
+    flex: 1;
+  }
+  &--end.end-line,
+  &--right.end-line {
+    flex: 0.35;
+  }
+}
+
+// line without text
+.single-line {
+  width: 100%;
+  height: 100%;
+}
+
+.yt-divider--horizontal.single-line {
+  margin-top: var(--divider-margin);
+  margin-bottom: var(--divider-margin);
+}
+
+.yt-divider--vertical.single-line {
+  margin-left: var(--divider-margin);
+  margin-right: var(--divider-margin);
 }

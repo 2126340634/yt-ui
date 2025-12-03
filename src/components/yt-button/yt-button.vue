@@ -1,7 +1,9 @@
 <script setup lang="ts">
   import { computed } from 'vue'
+  import { ThemeColor } from '../../types/theme-types'
 
   interface Props {
+    theme?: ThemeColor | 'none' | null
     type?: 'primary' | 'success' | 'warning' | 'error' | 'info'
     size?: 'small' | 'medium' | 'large'
     plain?: boolean
@@ -12,6 +14,7 @@
   }
 
   const props = withDefaults(defineProps<Props>(), {
+    theme: null,
     type: 'primary',
     size: 'medium',
     plain: false,
@@ -28,7 +31,7 @@
   const buttonClass = computed(() => {
     return [
       'yt-button',
-      `yt-button--${props.type}`,
+      `yt-button--${props.type}${props.theme && props.type === 'primary' ? `-${props.theme}` : ''}`,
       `yt-button--${props.size}`,
       {
         'yt-button--plain': props.plain,
@@ -71,4 +74,5 @@
 
 <style lang="scss" scoped>
   @use '../../styles/components/_button.scss';
+  @use '../../styles/_themes.scss';
 </style>

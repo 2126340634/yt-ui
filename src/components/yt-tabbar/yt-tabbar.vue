@@ -20,7 +20,7 @@
     theme: 'classic',
     showText: false,
     list: () => [],
-    zIndex: 1000
+    zIndex: 500
   })
 
   function validateListLength(list: Array<any>) {

@@ -1,5 +1,6 @@
 @use '../_var.scss' as var;
 @use '../mixins' as mixins;
+@use '../anim' as anim;
 
 .yt-button {
   margin: 0; // button默认有margin！！！
@@ -9,48 +10,49 @@
   border: 1px solid var.$border-color;
   border-radius: var.$border-radius-large;
   position: relative;
+  box-shadow: var.$shadow-1;
   transition: transform var.$transition-duration-fast var.$easing-ease-out,
-    background-color var.$transition-duration-slow var.$easing-ease-in-out;
+    background var.$transition-duration-slow var.$easing-ease-in-out;
 
   // 主题色
   &--primary {
-    background-color: var.$primary-color;
+    background: var.$primary-color;
     color: #fff;
     border-color: var.$primary-color;
   }
 
   &--success {
-    background-color: var.$success-color;
+    background: var.$success-color;
     color: #fff;
     border-color: var.$success-color;
   }
 
   &--warning {
-    background-color: var.$warning-color;
+    background: var.$warning-color;
     color: #fff;
     border-color: var.$warning-color;
   }
 
   &--error {
-    background-color: var.$error-color;
+    background: var.$error-color;
     color: #fff;
     border-color: var.$error-color;
   }
 
   &--info {
-    background-color: var.$info-color;
+    background: var.$info-color;
     color: #fff;
     border-color: var.$info-color;
   }
 
   // 朴素版本
   &--plain {
-    background-color: transparent;
+    background: transparent;
 
-    &.yt-button--primary {
-      color: var.$primary-color;
-      border-color: var.$primary-color;
-    }
+    // &.yt-button--primary {
+    //   color: var.$primary-color;
+    //   border-color: var.$primary-color;
+    // }
 
     &.yt-button--success {
       color: var.$success-color;
@@ -110,9 +112,8 @@
     width: 100%;
     height: 100%;
     transform: scaleX(0);
-    transform-origin: left;
-    transition: transform var.$transition-duration-fast var.$easing-ease-out;
-    z-index: var.$z-index-popup;
+    opacity: 0;
+    transform-origin: left top;
     pointer-events: none;
     background: rgba($color: #3e3e3e, $alpha: 0.2);
   }
@@ -125,6 +126,6 @@
 .yt-button--hover {
   transform: scale(0.99);
   .yt-button--overlay {
-    transform: scaleX(1);
+    animation: button-overlay-animation anim.$animation-duration-normal anim.$ease-out-back;
   }
 }

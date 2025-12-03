@@ -1,4 +1,5 @@
 @use 'sass:map';
+@use '../styles/var' as var;
 
 $theme-forest: #49b08f;
 $theme-ocean: #00a5e0;
@@ -41,6 +42,20 @@ $component-themes: (
     'blossom-sky': $theme-gradient-blossom-sky,
     'sunshine-sky': $theme-gradient-sunshine-sky,
     'none': #ffffff
+  ),
+  'button': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': $theme-classic,
+    'forest-sky': $theme-gradient-forest-sky,
+    'ocean-sky': $theme-gradient-ocean-sky,
+    'magic-sky': $theme-gradient-magic-sky,
+    'blossom-sky': $theme-gradient-blossom-sky,
+    'sunshine-sky': $theme-gradient-sunshine-sky,
+    'none': var.$primary-color
   )
 );
 
@@ -69,6 +84,19 @@ $component-themes: (
     background: #{$color};
     @if $name != 'none' {
       border-radius: $dots-border-radius;
+    }
+  }
+}
+
+// button
+@each $name, $color in map.get($component-themes, 'button') {
+  // button primary
+  .yt-button--primary-#{$name} {
+    background: #{$color};
+    color: #fff;
+    border-color: #{$color};
+    @if $name == 'classic' {
+      color: #333;
     }
   }
 }

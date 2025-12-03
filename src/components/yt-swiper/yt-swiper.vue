@@ -138,8 +138,8 @@
     }
   })
   const draggerTransform = computed(() => {
-    const translateX = `translateX(max(-50% ,min(${touchState.value.deltaX * 0.6}px, 50%)))`
-    const translateY = `translateY(max(-50% ,min(${touchState.value.deltaY * 0.6}px, 50%)))`
+    const translateX = `translateX(max(-50% ,min(${touchState.value.deltaX * 0.7}px, 50%)))`
+    const translateY = `translateY(max(-50% ,min(${touchState.value.deltaY * 0.7}px, 50%)))`
     return {
       translate: isHorizontal.value ? translateX : translateY,
       horizontalNext: isHorizontal.value && touchState.value.deltaX < -swipeThreshold.value,
@@ -345,6 +345,19 @@
     lastTouchTime = now
   }
   function handleTouchEnd() {
+    // autoplay
+    if (resumeTimer.value) {
+      clearTimeout(resumeTimer.value)
+      resumeTimer.value = null
+    }
+    if (!touchState.value.isSwiping) {
+      if (props.autoplay) resume()
+    } else {
+      resumeTimer.value = setTimeout(() => {
+        if (props.autoplay) resume()
+        resumeTimer.value = null
+      }, 500)
+    }
     // touchMove
     if (draggerTransform.value.horizontalNext || draggerTransform.value.verticalNext) handleNext()
     if (draggerTransform.value.horizontalPrev || draggerTransform.value.verticalPrev) handlePrev()
@@ -355,19 +368,6 @@
       deltaX: 0,
       deltaY: 0
     }
-  }
-  // autoplay
-  if (resumeTimer.value) {
-    clearTimeout(resumeTimer.value)
-    resumeTimer.value = null
-  }
-  if (!touchState.value.isSwiping) {
-    if (props.autoplay) resume()
-  } else {
-    resumeTimer.value = setTimeout(() => {
-      if (props.autoplay) resume()
-      resumeTimer.value = null
-    }, 500)
   }
   /** */
 
