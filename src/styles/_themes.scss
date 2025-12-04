@@ -1,5 +1,7 @@
 @use 'sass:map';
+@use 'sass:meta';
 @use '../styles/var' as var;
+// @use '../styles/theme-utils' as utils;
 
 $theme-forest: #49b08f;
 $theme-ocean: #00a5e0;
@@ -43,19 +45,19 @@ $component-themes: (
     'sunshine-sky': $theme-gradient-sunshine-sky,
     'none': #ffffff
   ),
-  'button': (
+  'checkbox': (
     'forest': $theme-forest,
     'ocean': $theme-ocean,
     'magic': $theme-magic,
     'blossom': $theme-blossom,
     'sunshine': $theme-sunshine,
     'classic': $theme-classic,
-    'forest-sky': $theme-gradient-forest-sky,
-    'ocean-sky': $theme-gradient-ocean-sky,
-    'magic-sky': $theme-gradient-magic-sky,
-    'blossom-sky': $theme-gradient-blossom-sky,
-    'sunshine-sky': $theme-gradient-sunshine-sky,
-    'none': var.$primary-color
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #ffffff
   )
 );
 
@@ -68,35 +70,31 @@ $component-themes: (
   .yt-swiper--theme-#{$name} {
     background: #{$color};
   }
-}
-
-// dots
-@each $name, $color in map.get($component-themes, 'dots') {
-  $dots-border-radius: 40px;
-  // inactive dots
-  .yt-dots--theme-#{$name} .yt-dots--item-outer {
-    @if $name != 'none' {
-      border-radius: $dots-border-radius;
-    }
-  }
-  // active dots
-  .yt-dots--theme-#{$name} .yt-dots--item-outer-active .yt-dots--item-inner {
-    background: #{$color};
-    @if $name != 'none' {
-      border-radius: $dots-border-radius;
-    }
-  }
-}
-
-// button
-@each $name, $color in map.get($component-themes, 'button') {
-  // button primary
+  // button-primary
   .yt-button--primary-#{$name} {
     background: #{$color};
     color: #fff;
     border-color: #{$color};
     @if $name == 'classic' {
       color: #333;
+    }
+  }
+}
+
+// dots
+@each $name, $color in map.get($component-themes, 'dots') {
+  $dots-border-radius: 40px;
+  // inactive-dots
+  .yt-dots--theme-#{$name} .yt-dots--item-outer {
+    @if $name != 'none' {
+      border-radius: $dots-border-radius;
+    }
+  }
+  // active-dots
+  .yt-dots--theme-#{$name} .yt-dots--item-outer-active .yt-dots--item-inner {
+    background: #{$color};
+    @if $name != 'none' {
+      border-radius: $dots-border-radius;
     }
   }
 }

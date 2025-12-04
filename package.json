@@ -39,5 +39,9 @@
     "@vitejs/plugin-vue": "^6.0.2",
     "vue-tsc": "^3.1.5",
     "sass": "^1.94.2"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.25",
+    "@dcloudio/uni-app": "3.0.0-4080520251106001"
   }
 }

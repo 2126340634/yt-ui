@@ -424,6 +424,7 @@
         >
           <template v-if="shouldRender(index)">
             <slot
+              name="swiper-item"
               :item="item"
               :index="getRealIndex(index)"
             />

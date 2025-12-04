@@ -3,7 +3,7 @@
   import { ThemeColor } from '../../types/theme-types'
 
   interface Props {
-    theme?: ThemeColor | 'none' | null
+    theme?: ThemeColor
     type?: 'primary' | 'success' | 'warning' | 'error' | 'info'
     size?: 'small' | 'medium' | 'large'
     plain?: boolean
@@ -14,7 +14,7 @@
   }
 
   const props = withDefaults(defineProps<Props>(), {
-    theme: null,
+    theme: 'classic',
     type: 'primary',
     size: 'medium',
     plain: false,
