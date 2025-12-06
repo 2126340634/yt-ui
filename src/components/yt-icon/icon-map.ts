@@ -34,6 +34,7 @@ import Success from '../../assets/icons/success.webp'
 import Time from '../../assets/icons/time.webp'
 import ToolbarActive from '../../assets/icons/toolbar_active.webp'
 import Close from '../../assets/icons/close.webp'
+import Search from '../../assets/icons/search.webp'
 
 export const iconMap: Record<string, string> = {
   Home,
@@ -67,5 +68,6 @@ export const iconMap: Record<string, string> = {
   Success,
   Time,
   ToolbarActive,
-  Close
+  Close,
+  Search
 }
