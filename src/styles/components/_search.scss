@@ -1,0 +1,20 @@
+@use '../var' as var;
+@use '../mixins' as mixins;
+
+.yt-search {
+  display: inline-flex;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+
+  &--input {
+    position: absolute;
+    font-size: var.$font-size-small;
+    width: 100%;
+    z-index: 0;
+  }
+
+  &--button {
+    z-index: 1;
+  }
+}

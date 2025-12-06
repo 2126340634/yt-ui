@@ -2,35 +2,39 @@
   import { inject, onMounted, onUnmounted, ref } from 'vue'
 
   interface Props {
-    name?: string // form-name
-    list: {
-      label?: string | number
-      value?: string | number
-      checked?: boolean
-      disabled?: boolean
-    }[]
+    name?: string
+    modelValue?: boolean | null
+    checked?: boolean
+    disabled?: boolean
+    type?: 'switch' | 'checkbox'
   }
+
   const props = withDefaults(defineProps<Props>(), {
     name: '',
-    list: () => []
+    modelValue: null,
+    checked: false,
+    disabled: false,
+    type: 'switch'
   })
 
   // 初始化传入的checked
-  const currentValue = ref<any>(null)
-  const defaultItem = props.list.find(item => item.checked)
-  if (defaultItem) currentValue.value = defaultItem.value
+  const currentValue = ref<any>(false)
+  if (props.modelValue !== null) currentValue.value = props.modelValue
+  else currentValue.value = !!props.checked
 
   const emit = defineEmits<{
-    change: [value: any]
+    'update:modelValue': [modelValue: boolean]
+    change: [value: boolean]
   }>()
 
   function handleChange(e: any) {
     currentValue.value = e.detail.value
+    emit('update:modelValue', e.detail.value)
     emit('change', e.detail.value)
   }
 
   defineOptions({
-    name: 'YtRadioGroup'
+    name: 'YtSwitch'
   })
 
   const registerField: any = inject('registerField', () => {})
@@ -39,7 +43,8 @@
     return currentValue.value
   }
   const setValue = (value: any) => {
-    currentValue.value = value
+    currentValue.value = !!value
+    emit('update:modelValue', !!value)
   }
   onMounted(() => {
     if (registerField && props.name) {
@@ -54,20 +59,10 @@
 </script>
 
 <template>
-  <radio-group @change="handleChange">
-    <label
-      v-for="item in list"
-      :key="item.value"
-    >
-      <radio
-        :value="item.value"
-        :checked="currentValue === item.value"
-        :disabled="item.disabled"
-      >
-        {{ item.label }}
-      </radio>
-    </label>
-  </radio-group>
+  <switch
+    :checked="currentValue"
+    @change="handleChange"
+    :type="type"
+    :disabled="disabled"
+  />
 </template>
-
-<style lang="scss" scoped></style>

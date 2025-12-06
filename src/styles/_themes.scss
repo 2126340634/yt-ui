@@ -45,7 +45,7 @@ $component-themes: (
     'sunshine-sky': $theme-gradient-sunshine-sky,
     'none': #ffffff
   ),
-  'checkbox': (
+  'input': (
     'forest': $theme-forest,
     'ocean': $theme-ocean,
     'magic': $theme-magic,
@@ -57,10 +57,11 @@ $component-themes: (
     'magic-sky': $theme-magic,
     'blossom-sky': $theme-blossom,
     'sunshine-sky': $theme-sunshine,
-    'none': #ffffff
+    'none': transparent
   )
 );
 
+//theme
 @each $name, $color in $themes {
   // tabbar
   .yt-tabbar--theme-#{$name} {
@@ -77,6 +78,7 @@ $component-themes: (
     border-color: #{$color};
     @if $name == 'classic' {
       color: #333;
+      border-color: #33333330;
     }
   }
 }
@@ -95,6 +97,19 @@ $component-themes: (
     background: #{$color};
     @if $name != 'none' {
       border-radius: $dots-border-radius;
+    }
+  }
+}
+
+// input
+@each $name, $color in map.get($component-themes, 'input') {
+  .yt-input--theme-#{$name} {
+    box-sizing: border-box;
+    border: 1px #{$color} solid;
+    border-radius: 8px;
+    @if $name == 'classic' {
+      border: 1px #333 solid;
+      border-color: #33333330;
     }
   }
 }
