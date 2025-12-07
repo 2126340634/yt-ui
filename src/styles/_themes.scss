@@ -112,4 +112,14 @@ $component-themes: (
       border-color: #33333330;
     }
   }
+  // textarea
+  .yt-textarea--theme-#{$name} {
+    box-sizing: border-box;
+    border: 1px #{$color} solid;
+    border-radius: 8px;
+    @if $name == 'classic' {
+      border: 1px #333 solid;
+      border-color: #33333330;
+    }
+  }
 }
