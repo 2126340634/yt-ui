@@ -9,8 +9,6 @@
     buffer?: number // item预渲染缓冲数量, 防止闪烁
     estimatedSize?: number
     showScrollbar?: boolean
-    refresher?: boolean // 是否开启下拉刷新
-    threshold?: number // 下拉刷新阈值
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -20,9 +18,7 @@
     direction: 'vertical',
     buffer: 5,
     estimatedSize: 30,
-    showScrollbar: false,
-    refresher: false,
-    threshold: 45
+    showScrollbar: false
   })
 
   const emit = defineEmits<{
@@ -193,20 +189,19 @@
 
 <template>
   <scroll-view
-    class="yt-virtual-list"
+    :class="[
+      'yt-virtual-list',
+      {
+        'yt-virtual-list--hidden-scrollbar': !showScrollbar
+      }
+    ]"
     :style="virtualListStyle"
     :scroll-y="isVertical"
     :scroll-x="!isVertical"
     :show-scrollbar="showScrollbar"
-    :refresher-enabled="refresher"
-    :refresher-threshold="threshold"
     @scroll="handleScroll"
     @scrolltoupper="$emit('scrollToUpper')"
     @scrolltolower="$emit('scrollToLower')"
-    @refresherpulling="$emit('pull')"
-    @refresherrefresh="$emit('refresh')"
-    @refresherrestore="$emit('restore')"
-    @refresherabort="$emit('abort')"
   >
     <view
       class="yt-virtual-list--placeholder"
@@ -231,3 +226,11 @@
     </view>
   </scroll-view>
 </template>
+
+<style lang="scss" scoped>
+  .yt-virtual-list--hidden-scrollbar {
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+</style>

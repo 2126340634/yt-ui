@@ -57,8 +57,6 @@
   defineOptions({
     name: 'YtDots'
   })
-
-  console.log(props.theme)
 </script>
 
 <template>
