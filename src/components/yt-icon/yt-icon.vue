@@ -1,20 +1,22 @@
 <script setup lang="ts">
-  import { computed, watchEffect } from 'vue'
+  import { computed } from 'vue'
   import { iconMap } from './icon-map'
-  import { ref } from 'vue'
+  import { ImageMode } from '../../types/prop-types'
 
   interface Props {
     name: string
     size?: number
     width?: number | string
     height?: number | string
+    fit?: ImageMode
   }
 
   const props = withDefaults(defineProps<Props>(), {
     name: '',
     size: 32,
     width: 60,
-    height: 60
+    height: 60,
+    fit: 'widthFix'
   })
 
   const emit = defineEmits<{
@@ -37,13 +39,12 @@
     emit('click', e)
   }
 
-  const svgStr = ref<string>('')
-
-  watchEffect(() => {
-    svgStr.value = iconMap[props.name] || ''
-    if (props.name && !svgStr.value) {
+  const imgStr = computed(() => {
+    const str = iconMap[props.name] || ''
+    if (props.name && !str) {
       console.warn(`[${props.name}] icon was not found! 名为${props.name}的icon不存在!`)
     }
+    return str
   })
 
   defineOptions({
@@ -56,7 +57,8 @@
     :class="iconClass"
     :style="iconStyle"
     @click="handleClick"
-    :src="svgStr"
+    :src="imgStr"
+    :mode="fit"
   ></image>
 </template>
 

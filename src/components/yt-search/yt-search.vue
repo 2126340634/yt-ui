@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { ref } from 'vue'
   import { ThemeColor } from '../../types/theme-types'
 
   interface Props {
@@ -30,12 +31,16 @@
     blur: [value: any]
     confirm: [value: any]
     keyboardHeightChange: [{ height: number; duration: number }]
+    search: [value: any]
   }>()
+
+  const currentValue = ref<any>('')
 
   function handleUpdateModelValue(modelValue: any) {
     emit('update:modelValue', modelValue)
   }
   function handleInput(value: any) {
+    currentValue.value = value
     emit('input', value)
   }
   function handleFocus(value: any) {
@@ -49,6 +54,9 @@
   }
   function handleKeyboardHeightChange(value: any) {
     emit('keyboardHeightChange', value)
+  }
+  function handleSearch() {
+    emit('search', currentValue.value)
   }
 
   defineOptions({
@@ -89,6 +97,7 @@
       class="yt-search--button"
       :theme="theme"
       size="small"
+      @click="handleSearch"
     >
       搜索
     </yt-button>

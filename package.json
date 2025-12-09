@@ -1,16 +1,16 @@
 {
   "name": "@rao2126340634/yt-ui",
-  "publishConfig": {
-    "access": "public"
-  },
-  "version": "1.0.1",
-  "description": "Vue3组件库 for 指尖移通微信小程序",
+  "version": "1.0.10605",
+  "description": "uniapp vue3 component library for zjyt wechat miniprogram",
   "main": "src/components",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
+  "scripts": {},
   "files": [
-    "src/components"
+    "src",
+    "README.md"
   ],
   "keywords": [
     "uni-app",
@@ -28,20 +28,19 @@
     "dcloud",
     "vue-component"
   ],
-  "author": "",
+  "author": "CHEEMS",
   "license": "MIT",
   "packageManager": "pnpm@10.23.0",
   "devDependencies": {
-    "@types/node": "^24.10.1",
     "@dcloudio/types": "^3.4.28",
+    "@types/node": "^24.10.2",
+    "@vue/tsconfig": "^0.8.1",
     "typescript": "^5.9.3",
-    "vite": "^7.2.4",
-    "@vitejs/plugin-vue": "^6.0.2",
-    "vue-tsc": "^3.1.5",
-    "sass": "^1.94.2"
+    "vue-tsc": "^3.1.5"
   },
   "peerDependencies": {
+    "@dcloudio/uni-app": "2.0.2-4080420251103001",
     "vue": "^3.5.25",
-    "@dcloudio/uni-app": "3.0.0-4080520251106001"
+    "sass": "^1.95.0"
   }
 }
