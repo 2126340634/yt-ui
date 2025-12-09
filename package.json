@@ -33,13 +33,14 @@
   "packageManager": "pnpm@10.23.0",
   "devDependencies": {
     "@dcloudio/types": "^3.4.28",
+    "@types/node": "^24.10.2",
     "@vue/tsconfig": "^0.8.1",
-    "sass": "^1.94.2",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.1.5"
   },
   "peerDependencies": {
-    "@dcloudio/uni-app": "3.0.0-4080520251106001",
-    "vue": "^3.5.25"
+    "@dcloudio/uni-app": "2.0.2-4080420251103001",
+    "vue": "^3.5.25",
+    "sass": "^1.95.0"
   }
 }

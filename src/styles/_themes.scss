@@ -76,7 +76,7 @@ $component-themes: (
     background: #{$color};
     color: #fff;
     border-color: #{$color};
-    @if $name == 'classic' {
+    @if $name == 'classic' or $name == 'none' {
       color: #333;
       border-color: #33333330;
     }
