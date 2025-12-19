@@ -1,0 +1,35 @@
+@use '../var' as var;
+@use '../mixins' as mixins;
+
+.yt-badge {
+  position: absolute;
+  pointer-events: none;
+  transition: transform var.$transition-duration-fast var.$easing-ease-out;
+  transform: scale(0);
+
+  &--visible {
+    transform: scale(1);
+  }
+
+  &--count {
+    @include mixins.inline-flex-center;
+    width: fit-content;
+    padding: 1px 4px;
+    min-width: 12px;
+    height: 12px;
+    border-radius: 50px;
+    color: #fff;
+    border: 1px solid #fff;
+
+    &-text {
+      white-space: nowrap;
+      font-size: 12px;
+    }
+  }
+
+  &--dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+}

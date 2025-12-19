@@ -69,7 +69,7 @@
     <yt-icon
       name="Search"
       class="yt-search--icon"
-      :size="50"
+      :size="16"
       :width="28"
       :height="28"
     />

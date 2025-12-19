@@ -1,11 +1,12 @@
 <script setup lang="ts">
   import { computed } from 'vue'
   import { ThemeColor } from '../../types/theme-types'
+  import { ColorType, SizeType } from '../../types/prop-types'
 
   interface Props {
     theme?: ThemeColor
-    type?: 'primary' | 'success' | 'warning' | 'error' | 'info'
-    size?: 'small' | 'medium' | 'large'
+    type?: ColorType
+    size?: SizeType
     plain?: boolean
     disabled?: boolean
     loading?: boolean

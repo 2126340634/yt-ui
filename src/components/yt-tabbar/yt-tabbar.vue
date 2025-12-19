@@ -4,6 +4,7 @@
   import { ThemeColor } from '../../types/theme-types'
 
   interface Props {
+    modelValue?: number
     centerIcon?: string
     centerBgColor?: string
     centerBgColorLast?: string
@@ -14,6 +15,7 @@
   }
 
   const props = withDefaults(defineProps<Props>(), {
+    modelValue: 0,
     centerIcon: '',
     centerBgColor: '#ffffff20',
     centerBgColorLast: '#000',
@@ -42,11 +44,12 @@
   })
 
   const emit = defineEmits<{
-    tabbarChange: [e: Event, activeIndex: number]
+    change: [e: Event, activeIndex: number]
+    'update:modelValue': [activeIndex: number]
     centerClick: [e: Event]
   }>()
 
-  const activeIndex = ref(0)
+  const activeIndex = ref(props.modelValue)
 
   const tabbarContainerStyle = computed(() => {
     return {
@@ -79,13 +82,15 @@
   function handleClick(e: Event, index: number) {
     if (index === activeIndex.value) return
     activeIndex.value = index
-    emit('tabbarChange', e, index)
+    emit('change', e, index)
+    emit('update:modelValue', index)
   }
 
   function handleCenterClick(e: Event) {
     if (activeIndex.value === 4) return
     activeIndex.value = 4
     emit('centerClick', e)
+    emit('update:modelValue', 4)
   }
 
   defineOptions({
@@ -116,7 +121,7 @@
         "
         :name="activeIndex === index ? item.activeIcon : item.icon"
         class="yt-tabbar--icon"
-        :size="36"
+        :size="9"
       />
       <img
         v-else
@@ -150,7 +155,7 @@
             v-if="iconMap[item.icon]"
             :name="item.icon"
             class="yt-tabbar--item-center-inner-icon"
-            :size="42"
+            :size="10"
             width="100%"
             height="100%"
           />
@@ -165,7 +170,7 @@
           v-if="iconMap[centerIcon]"
           :name="centerIcon"
           class="yt-tabbar--item-center-inner-icon"
-          :size="42"
+          :size="10"
           width="100%"
           height="100%"
         />

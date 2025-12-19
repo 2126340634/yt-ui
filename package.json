@@ -7,7 +7,9 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "files": [
     "src",
     "README.md"
@@ -40,7 +42,7 @@
   },
   "peerDependencies": {
     "@dcloudio/uni-app": "2.0.2-4080420251103001",
-    "vue": "^3.5.25",
-    "sass": "^1.95.0"
+    "sass": "^1.95.0",
+    "vue": "^3.5.25"
   }
 }

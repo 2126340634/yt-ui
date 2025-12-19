@@ -4,7 +4,6 @@
   overflow: hidden;
   box-sizing: border-box;
   position: fixed;
-  opacity: 0.7;
   padding: 16px;
 
   &--header {
@@ -52,6 +51,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) scale(0.5);
+    visibility: hidden;
   }
 
   &--left {
@@ -75,10 +75,9 @@
   }
 
   &--visible {
-    opacity: 1;
-
     &.yt-popup--center {
       transform: translate(-50%, -50%) scale(1);
+      visibility: visible;
     }
 
     &.yt-popup--left {

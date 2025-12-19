@@ -40,7 +40,7 @@
     duration: 500,
     showArrow: true,
     arrowColor: 'light',
-    arrowSize: 50,
+    arrowSize: 16,
     showDots: true,
     dotsSize: 32,
     maxDots: 7,

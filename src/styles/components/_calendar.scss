@@ -1,0 +1,144 @@
+@use '../mixins' as mixins;
+@use '../var' as var;
+
+.yt-calendar {
+  @include mixins.inline-flex-center(column);
+  background: #fff;
+  box-sizing: border-box;
+  box-shadow: var.$shadow-1;
+  overflow: hidden;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &--header {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 8% 16px 8%;
+    box-sizing: border-box;
+    color: #fff;
+
+    &-month-text,
+    &-year-month {
+      white-space: nowrap;
+      gap: 8px;
+    }
+
+    &-month-text {
+      display: flex;
+      flex-direction: column;
+
+      &-number {
+        font-size: 68px;
+        font-weight: 600;
+      }
+
+      &-word {
+        margin-top: -20px;
+        font-size: 24px;
+      }
+    }
+
+    &-year-month {
+      @include mixins.inline-flex-center;
+      width: fit-content;
+      font-size: 14px;
+    }
+  }
+
+  &--body {
+    width: 90%;
+    height: 100%;
+    text-align: center;
+    margin: 16px auto;
+    position: relative;
+    overflow: hidden;
+
+    &-week {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      height: fit-content;
+      width: 100%;
+      margin-bottom: 12px;
+      gap: var(--calendar-item-gap);
+      color: #3e3e3e80;
+    }
+
+    &-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      height: 100%;
+      width: 100%;
+      gap: var(--calendar-item-gap);
+      position: relative;
+
+      &-loading {
+        opacity: 0;
+      }
+
+      &:not(.yt-calendar--body-grid-loading) {
+        transition: opacity var.$transition-duration-fast var.$easing-ease-out;
+      }
+
+      &-item {
+        border-radius: 8px;
+        padding: 4px;
+        color: #333;
+        z-index: 1;
+        position: relative;
+      }
+
+      &-item-prev-month {
+        color: #33333350;
+      }
+
+      &-item-next-month {
+        color: #33333350;
+      }
+
+      &-item-date {
+        white-space: nowrap;
+        font-size: 14px;
+      }
+
+      &-item-extra {
+        white-space: nowrap;
+        font-size: 10px;
+      }
+
+      &-item-holiday {
+        position: absolute;
+        font-size: 10px;
+        right: 6px;
+        top: 0;
+      }
+
+      &-item-today {
+        color: #000;
+      }
+
+      &-background-text {
+        white-space: nowrap;
+        font-size: 6em;
+        color: #eeeeeecc;
+        z-index: 0;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    &-loading {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
