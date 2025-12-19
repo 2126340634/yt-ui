@@ -27,7 +27,7 @@ $themes: (
   'magic-sky': $theme-gradient-magic-sky,
   'blossom-sky': $theme-gradient-blossom-sky,
   'sunshine-sky': $theme-gradient-sunshine-sky,
-  'none': transparent
+  'none': #ffffff00
 );
 
 $component-themes: (
@@ -51,13 +51,69 @@ $component-themes: (
     'magic': $theme-magic,
     'blossom': $theme-blossom,
     'sunshine': $theme-sunshine,
-    'classic': $theme-classic,
+    'classic': #333,
     'forest-sky': $theme-forest,
     'ocean-sky': $theme-ocean,
     'magic-sky': $theme-magic,
     'blossom-sky': $theme-blossom,
     'sunshine-sky': $theme-sunshine,
-    'none': transparent
+    'none': #ffffff00
+  ),
+  'avatar': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #33333330,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #ffffff00
+  ),
+  'calendar': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #333,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #ffffff00
+  ),
+  'calendar-header': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': linear-gradient(135deg, #33333350, #eee),
+    'forest-sky': $theme-gradient-forest-sky,
+    'ocean-sky': $theme-gradient-ocean-sky,
+    'magic-sky': $theme-gradient-magic-sky,
+    'blossom-sky': $theme-gradient-blossom-sky,
+    'sunshine-sky': $theme-gradient-sunshine-sky,
+    'none': linear-gradient(135deg, #33333350, #eee)
+  ),
+  'loading': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #333,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #333
   )
 );
 
@@ -79,6 +135,13 @@ $component-themes: (
     @if $name == 'classic' or $name == 'none' {
       color: #333;
       border-color: #33333330;
+    }
+  }
+  // badge
+  .yt-badge--theme-#{$name} {
+    background: #{$color};
+    @if $name == 'classic' or $name == 'none' {
+      background: #f50;
     }
   }
 }
@@ -107,19 +170,58 @@ $component-themes: (
     box-sizing: border-box;
     border: 1px #{$color} solid;
     border-radius: 8px;
-    @if $name == 'classic' {
-      border: 1px #333 solid;
-      border-color: #33333330;
-    }
   }
   // textarea
   .yt-textarea--theme-#{$name} {
     box-sizing: border-box;
     border: 1px #{$color} solid;
     border-radius: 8px;
-    @if $name == 'classic' {
-      border: 1px #333 solid;
-      border-color: #33333330;
+  }
+}
+
+// avatar
+@each $name, $color in map.get($component-themes, 'avatar') {
+  .yt-avatar--theme-#{$name} {
+    border: 1px solid #{$color};
+  }
+}
+
+// calendar
+@each $name, $color in map.get($component-themes, 'calendar') {
+  .yt-calendar--theme-#{$name} {
+    .yt-calendar--body-grid-item-today {
+      background: rgba($color, 0.05);
+      border: 1px solid #{$color};
+      color: #{$color};
+      @if $name == 'none' {
+        background: rgba(#333, 0.05);
+        border: 1px solid #333;
+        color: #333;
+      }
+    }
+    .yt-calendar--body-week {
+      color: rgba($color, 0.8);
+      @if $name == 'none' {
+        color: rgba(#333, 0.8);
+      }
+    }
+  }
+}
+
+// calendar-header
+@each $name, $color in map.get($component-themes, 'calendar-header') {
+  .yt-calendar--theme-#{$name} {
+    .yt-calendar--header {
+      background: #{$color};
+    }
+  }
+}
+
+// loading-inner-circle
+@each $name, $color in map.get($component-themes, 'loading') {
+  .yt-loading--theme-#{$name} {
+    .yt-loading--inner-circle {
+      border-top-color: #{$color};
     }
   }
 }

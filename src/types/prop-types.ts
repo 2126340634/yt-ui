@@ -1,3 +1,6 @@
+export type ColorType = 'primary' | 'success' | 'warning' | 'error' | 'info'
+export type SizeType = 'small' | 'medium' | 'large'
+
 export type BorderStyle =
   | 'none' // 无边框
   | 'solid' // 实线边框

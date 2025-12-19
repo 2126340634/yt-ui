@@ -13,7 +13,7 @@
 
   const props = withDefaults(defineProps<Props>(), {
     name: '',
-    size: 32,
+    size: 24,
     width: 60,
     height: 60,
     fit: 'widthFix'
@@ -29,7 +29,7 @@
 
   const iconStyle = computed(() => {
     return {
-      transform: `scale(${props.size * 0.01})`,
+      transform: `scale(${props.size / 24})`,
       width: typeof props.width === 'number' ? `${props.width}px` : props.width,
       height: typeof props.height === 'number' ? `${props.height}px` : props.height
     }

@@ -172,7 +172,7 @@
           name="Close"
           :width="12"
           :height="12"
-          :size="170"
+          :size="38"
           @click="() => emit('update:visible', false)"
         ></yt-icon>
       </view>

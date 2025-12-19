@@ -2,16 +2,20 @@
   import { computed } from 'vue'
 
   interface Props {
-    visible: boolean
-    duration: number
-    zIndex: number
-    bgColor: string
+    visible?: boolean
+    duration?: number
+    zIndex?: number
+    bgColor?: string
+    width?: number | string
+    height?: number | string
   }
   const props = withDefaults(defineProps<Props>(), {
     visible: false,
     duration: 200,
     zIndex: 500,
-    bgColor: '#00000080'
+    bgColor: '#00000080',
+    width: '100%',
+    height: '100%'
   })
 
   const emit = defineEmits<{
@@ -22,7 +26,9 @@
     return {
       backgroundColor: props.bgColor,
       transition: `opacity ${props.duration}ms ease-out, visibility ${props.duration}ms linear`,
-      zIndex: props.zIndex
+      zIndex: props.zIndex,
+      width: typeof props.width === 'number' ? `${props.width}px` : props.width,
+      height: typeof props.height === 'number' ? `${props.height}px` : props.height
     }
   })
   const overlayClass = computed(() => {

@@ -32,7 +32,7 @@ import Passed from '../../assets/icons/passed.webp'
 import Unpassed from '../../assets/icons/unpassed.webp'
 import Success from '../../assets/icons/success.webp'
 import Time from '../../assets/icons/time.webp'
-import TopTabbarActive from '../../assets/icons/top_tabbar_active.webp'
+import Slider from '../../assets/icons/slider.webp'
 import Close from '../../assets/icons/close.webp'
 import Search from '../../assets/icons/search.webp'
 
@@ -67,7 +67,7 @@ export const iconMap: Record<string, string> = {
   Unpassed,
   Success,
   Time,
-  TopTabbarActive,
+  Slider,
   Close,
   Search
 }

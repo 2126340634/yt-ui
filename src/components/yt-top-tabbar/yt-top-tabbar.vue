@@ -1,19 +1,26 @@
 <script setup lang="ts">
-  import { computed, CSSProperties } from 'vue'
+  import { computed, CSSProperties, ref } from 'vue'
 
   interface Props {
     list: string[]
-    activeIndex: number
+    modelValue?: number
     zIndex?: number
     fixed?: boolean
   }
 
   const props = withDefaults(defineProps<Props>(), {
     list: () => [],
-    activeIndex: 0,
+    modelValue: 0,
     zIndex: 500,
     fixed: true
   })
+
+  const emit = defineEmits<{
+    change: [e: Event, activeIndex: number]
+    'update:modelValue': [activeIndex: number]
+  }>()
+
+  const activeIndex = ref(props.modelValue)
 
   const topTabbarStyle = computed(() => {
     return {
@@ -21,6 +28,20 @@
       position: props.fixed ? 'fixed' : 'relative'
     } as CSSProperties
   })
+
+  const sliderContainerStyle = computed(() => {
+    return {
+      width: `${100 / props.list.length}%`,
+      transform: `translateX(${activeIndex.value * 100}%)`
+    }
+  })
+
+  function handleClick(e: Event, index: number) {
+    if (index === activeIndex.value) return
+    activeIndex.value = index
+    emit('change', e, index)
+    emit('update:modelValue', index)
+  }
 </script>
 
 <template>
@@ -28,9 +49,11 @@
     class="yt-top-tabbar"
     :style="topTabbarStyle"
   >
+    <!-- top-tabbar -->
     <view
       class="yt-top-tabbar--item"
       v-for="(name, index) in list"
+      @click="handleClick($event, index)"
     >
       <span
         :class="[
@@ -42,17 +65,16 @@
       >
         {{ name }}
       </span>
+    </view>
+    <!-- slider -->
+    <view
+      class="yt-top-tabbar--slider-container"
+      :style="sliderContainerStyle"
+    >
       <yt-icon
-        name="TopTabbarActive"
-        :class="[
-          'yt-top-tabbar--item-icon',
-          {
-            active: index === activeIndex
-          }
-        ]"
-        :width="120"
-        :height="60"
-        :size="20"
+        name="Slider"
+        class="yt-top-tabbar--slider-container-item"
+        :size="12"
       />
     </view>
   </view>

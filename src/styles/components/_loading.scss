@@ -1,0 +1,32 @@
+@use '../anim' as anim;
+@use '../mixins' as mixins;
+@use '../var' as var;
+
+.yt-loading {
+  @include mixins.inline-flex-center(column);
+  transition: opacity var.$transition-duration-medium var.$easing-linear;
+  opacity: 0;
+
+  &--inner-circle {
+    animation: loading-rotate-animation anim.$animation-duration-slow anim.$ease-in-out-back
+      infinite;
+    border: 5px solid #eeeeee80;
+    border-top-width: 5px;
+    border-top-style: solid;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+
+  &--text {
+    animation: text-flash-animation anim.$animation-duration-normal var.$easing-linear infinite
+      alternate;
+    margin-top: 8px;
+    font-size: 14px;
+    color: #999;
+  }
+
+  &--visible {
+    opacity: 1;
+  }
+}
