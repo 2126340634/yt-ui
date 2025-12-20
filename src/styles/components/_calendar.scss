@@ -21,6 +21,7 @@
     padding: 0 8% 16px 8%;
     box-sizing: border-box;
     color: #fff;
+    transition: background var.$transition-duration-slow var.$easing-ease-in-out;
 
     &-month-text,
     &-year-month {

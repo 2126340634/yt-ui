@@ -159,7 +159,7 @@
     const deltaX = touchState.value.curX - touchState.value.startX
     const deltaY = touchState.value.curY - touchState.value.startY
     if (touchState.value.isDragging && Math.abs(deltaX) > 80 && Math.abs(deltaY) < 50) {
-      changeMonth(deltaX < 0 ? 'prev' : 'next')
+      changeMonth(deltaX > 0 ? 'prev' : 'next')
     }
     touchState.value = {
       curX: 0,
@@ -179,13 +179,13 @@
   const arrowScale = computed(() => {
     if (!touchState.value.isDragging) return { leftScale: 1, rightScale: 1 }
     const deltaX = touchState.value.curX - touchState.value.startX
-    const leftScale =
-      deltaX < 0 ? 1 + Math.abs(touchState.value.curX - touchState.value.startX) * 0.012 : 1
     const rightScale =
+      deltaX < 0 ? 1 + Math.abs(touchState.value.curX - touchState.value.startX) * 0.012 : 1
+    const leftScale =
       deltaX > 0 ? 1 + Math.abs(touchState.value.curX - touchState.value.startX) * 0.012 : 1
     return {
-      leftScale: Math.min(Math.max(1, leftScale), 2),
-      rightScale: Math.min(Math.max(1, rightScale), 2)
+      leftScale: Math.min(Math.max(1, leftScale), 1.5),
+      rightScale: Math.min(Math.max(1, rightScale), 1.5)
     }
   })
 

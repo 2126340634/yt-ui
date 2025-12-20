@@ -2,8 +2,6 @@
 @use '../mixins' as mixins;
 @use '../anim' as anim;
 
-$standard-item-width: 60px;
-$standard-item-height: 60px;
 $margin-top-offset: -16px;
 $center-item-width: 48px;
 $center-item-height: 48px;
@@ -31,6 +29,8 @@ $center-item-height: 48px;
   &--item {
     @include mixins.inline-flex-center(column);
     margin-top: $margin-top-offset;
+    width: 60px;
+    height: 60px;
 
     &-active {
       animation: tabbar-active-animation anim.$animation-duration-fast anim.$ease-out-back forwards;
@@ -95,16 +95,10 @@ $center-item-height: 48px;
     }
   }
 
-  &--icon {
-    width: $standard-item-width;
-    height: $standard-item-height;
-  }
-
   &--image {
-    width: $standard-item-width;
-    height: $standard-item-height;
-    transform: scale(0.36);
-    object-fit: fill;
+    width: 100%;
+    height: 100%;
+    transform: scale(0.4);
   }
 
   &--text {

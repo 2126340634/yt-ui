@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import { ThemeColor } from '../../types/theme-types'
+  import YtInput from '../yt-input/yt-input.vue'
 
   interface Props {
     theme?: ThemeColor | 'none'
@@ -59,6 +60,11 @@
     emit('search', currentValue.value)
   }
 
+  const ytInputRef = ref<InstanceType<typeof YtInput> | null>(null)
+  function handleClear() {
+    ytInputRef.value?.clear()
+  }
+
   defineOptions({
     name: 'YtSearch'
   })
@@ -66,17 +72,18 @@
 
 <template>
   <view class="yt-search">
+    <!-- search-icon -->
     <yt-icon
       name="Search"
       class="yt-search--icon"
-      :size="16"
+      :size="13"
       :width="28"
       :height="28"
     />
     <yt-input
-      :height="28"
+      ref="ytInputRef"
       confirmType="search"
-      :padding="showButton ? '0 55px 0 28px' : '0 4px 0 28px'"
+      :padding="showButton ? '0 75px 0 28px' : '0 30px 0 28px'"
       class="yt-search--input"
       :theme="theme"
       :value="value"
@@ -92,6 +99,16 @@
       @confirm="handleConfirm"
       @keyboardHeightChange="handleKeyboardHeightChange"
     />
+    <!-- clear-button -->
+    <span
+      v-show="currentValue"
+      class="yt-search--clear"
+      :style="{ right: showButton ? '52px' : '4px' }"
+      @click="handleClear"
+    >
+      X
+    </span>
+    <!-- search-button -->
     <yt-button
       v-if="showButton"
       class="yt-search--button"
