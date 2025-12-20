@@ -142,6 +142,7 @@
     v-if="shouldRender"
     :class="popupClass"
     :style="popupStyle"
+    @touchmove.stop
   >
     <view class="yt-popup--header">
       <view

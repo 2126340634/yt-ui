@@ -51,7 +51,7 @@ $component-themes: (
     'magic': $theme-magic,
     'blossom': $theme-blossom,
     'sunshine': $theme-sunshine,
-    'classic': #333,
+    'classic': #999,
     'forest-sky': $theme-forest,
     'ocean-sky': $theme-ocean,
     'magic-sky': $theme-magic,
@@ -114,6 +114,20 @@ $component-themes: (
     'blossom-sky': $theme-blossom,
     'sunshine-sky': $theme-sunshine,
     'none': #333
+  ),
+  'notice-bar': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #fff,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #ffffff00
   )
 );
 
@@ -144,6 +158,26 @@ $component-themes: (
       background: #f50;
     }
   }
+  // fab
+  .yt-fab--theme-#{$name} {
+    .yt-fab--inner-circle {
+      background: #{$color};
+      @if $name == 'classic' or $name == 'none' {
+        background: #999;
+      }
+    }
+  }
+  // tag-primary
+  .yt-tag--primary-#{$name} {
+    background: #{$color};
+    color: #fff;
+    border-color: #{$color};
+    @if $name == 'classic' or $name == 'none' {
+      background: #fff;
+      color: #333;
+      border-color: #33333330;
+    }
+  }
 }
 
 // dots
@@ -168,13 +202,13 @@ $component-themes: (
 @each $name, $color in map.get($component-themes, 'input') {
   .yt-input--theme-#{$name} {
     box-sizing: border-box;
-    border: 1px #{$color} solid;
+    border: 1px rgba($color, 0.5) solid;
     border-radius: 8px;
   }
   // textarea
   .yt-textarea--theme-#{$name} {
     box-sizing: border-box;
-    border: 1px #{$color} solid;
+    border: 1px rgba($color, 0.5) solid;
     border-radius: 8px;
   }
 }
@@ -222,6 +256,17 @@ $component-themes: (
   .yt-loading--theme-#{$name} {
     .yt-loading--inner-circle {
       border-top-color: #{$color};
+    }
+  }
+}
+
+// notice-bar
+@each $name, $color in map.get($component-themes, 'notice-bar') {
+  .yt-notice-bar--theme-#{$name} {
+    background: rgba($color, 0.1);
+    color: #{$color};
+    @if $name == 'classic' or $name == 'none' {
+      color: #333333aa;
     }
   }
 }

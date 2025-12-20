@@ -9,6 +9,11 @@
     buffer?: number // item预渲染缓冲数量, 防止闪烁
     estimatedSize?: number
     showScrollbar?: boolean
+    refresher?: boolean
+    threshold?: number
+    triggered?: boolean
+    refresherBgColor?: string
+    refresherStyle?: 'black' | 'white' | 'none'
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -18,7 +23,12 @@
     direction: 'vertical',
     buffer: 5,
     estimatedSize: 30,
-    showScrollbar: false
+    showScrollbar: false,
+    refresher: false,
+    threshold: 50,
+    triggered: false,
+    refresherBgColor: '#fff',
+    refresherStyle: 'black'
   })
 
   const emit = defineEmits<{
@@ -200,8 +210,17 @@
     :scroll-x="!isVertical"
     :show-scrollbar="showScrollbar"
     @scroll="handleScroll"
+    :refresher-enabled="refresher"
+    :refresher-threshold="threshold"
+    :refresher-triggered="triggered"
+    :refresher-background="refresherBgColor"
+    :refresher-default-style="refresherStyle"
     @scrolltoupper="$emit('scrollToUpper')"
     @scrolltolower="$emit('scrollToLower')"
+    @refresherpulling="$emit('pull')"
+    @refresherrefresh="$emit('refresh')"
+    @refresherrestore="$emit('restore')"
+    @refresherabort="$emit('abort')"
   >
     <view
       class="yt-virtual-list--placeholder"

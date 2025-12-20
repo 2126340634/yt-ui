@@ -126,7 +126,6 @@
       <img
         v-else
         :src="activeIndex === index ? item.activeIcon : item.icon"
-        alt="ICON"
         class="yt-tabbar--image"
       />
       <span
@@ -162,7 +161,7 @@
           <image
             v-else
             :src="item.icon"
-            alt="ICON"
+            mode="aspectFill"
             class="yt-tabbar--item-center-inner-image"
           />
         </template>
@@ -177,7 +176,7 @@
         <image
           v-else
           :src="centerIcon"
-          alt="ICON"
+          mode="aspectFill"
           class="yt-tabbar--item-center-inner-image"
         />
       </view>

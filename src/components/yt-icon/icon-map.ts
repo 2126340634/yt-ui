@@ -24,17 +24,29 @@ import DefaultAvatar from '../../assets/icons/default_avatar.webp'
 import DoorEnter from '../../assets/icons/door_enter.webp'
 import DoorExit from '../../assets/icons/door_exit.webp'
 import Edit from '../../assets/icons/edit.webp'
-import Fail from '../../assets/icons/fail.webp'
 import HotTopic from '../../assets/icons/hot_topic.webp'
 import Identity from '../../assets/icons/identity.webp'
 import Official from '../../assets/icons/official.webp'
 import Passed from '../../assets/icons/passed.webp'
 import Unpassed from '../../assets/icons/unpassed.webp'
-import Success from '../../assets/icons/success.webp'
+import SuccessResult from '../../assets/icons/success_result.webp'
+import FailResult from '../../assets/icons/fail_result.webp'
+import InfoResult from '../../assets/icons/info_result.webp'
 import Time from '../../assets/icons/time.webp'
 import Slider from '../../assets/icons/slider.webp'
 import Close from '../../assets/icons/close.webp'
 import Search from '../../assets/icons/search.webp'
+import Plus from '../../assets/icons/plus.webp'
+import Fail from '../../assets/icons/fail.webp'
+import Done from '../../assets/icons/done.webp'
+import Empty from '../../assets/icons/empty.webp'
+import Champion from '../../assets/icons/champion.webp'
+import Error from '../../assets/icons/error.webp'
+import FirstPlace from '../../assets/icons/first_place.webp'
+import SecondPlace from '../../assets/icons/second_place.webp'
+import ThirdPlace from '../../assets/icons/third_place.webp'
+import Winner from '../../assets/icons/winner.webp'
+import Read from '../../assets/icons/read.webp'
 
 export const iconMap: Record<string, string> = {
   Home,
@@ -59,15 +71,27 @@ export const iconMap: Record<string, string> = {
   DoorEnter,
   DoorExit,
   Edit,
-  Fail,
   HotTopic,
   Identity,
   Official,
   Passed,
   Unpassed,
-  Success,
+  SuccessResult,
+  FailResult,
+  InfoResult,
   Time,
   Slider,
   Close,
-  Search
+  Search,
+  Plus,
+  Fail,
+  Done,
+  Empty,
+  Champion,
+  Error,
+  FirstPlace,
+  SecondPlace,
+  ThirdPlace,
+  Winner,
+  Read
 }

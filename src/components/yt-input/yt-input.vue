@@ -111,6 +111,13 @@
       unregisterField(props.name)
     }
   })
+
+  defineExpose({
+    clear
+  })
+  function clear() {
+    handleInput({ detail: { value: '' } })
+  }
 </script>
 
 <template>

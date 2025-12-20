@@ -54,6 +54,7 @@
     @click="handleClick"
     :class="overlayClass"
     :style="overlayStyle"
+    @touchmove.stop
   />
 </template>
 
