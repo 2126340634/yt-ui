@@ -102,6 +102,7 @@
     >
       <view
         v-for="(item, index) in menuList"
+        :key="index"
         class="yt-fab--pop-menu-item"
         @click="handleMenuItemClick($event, index)"
       >

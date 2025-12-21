@@ -17,7 +17,7 @@
     overflowCount: 99,
     dot: false,
     offset: () => [],
-    zIndex: 500
+    zIndex: 100
   })
 
   const badgeClass = computed(() => {

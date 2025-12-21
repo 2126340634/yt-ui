@@ -106,6 +106,7 @@
   >
     <view
       v-for="(item, index) in validatedList"
+      :key="index"
       :class="[
         'yt-tabbar--item',
         `yt-tabbar--item-index-${index}`,
@@ -149,7 +150,10 @@
         class="yt-tabbar--item-center-inner-items"
         :style="centerInnerStyle"
       >
-        <template v-for="item in validatedList">
+        <template
+          v-for="(item, index) in validatedList"
+          :key="index"
+        >
           <yt-icon
             v-if="iconMap[item.icon]"
             :name="item.icon"
