@@ -1,6 +1,6 @@
 # yt-ui
 
-A simple, lightweight UI library for [指尖移通微信小程序] with Vue 3 + TypeScript.
+A simple, lightweight UI library for [指尖移通 5.0 微信小程序] with Vue 3 + TypeScript.
 
 ## ✨ Features
 

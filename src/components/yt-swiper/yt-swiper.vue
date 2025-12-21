@@ -1,10 +1,11 @@
 <script setup lang="ts">
-  import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+  import { computed, nextTick, onUnmounted, ref } from 'vue'
   import { ThemeColor } from '../../types/theme-types'
   import { useInterval } from '../../hooks/useInterval'
 
   interface Props {
     theme?: ThemeColor | 'none'
+    disabled?: boolean
     showBgColor?: boolean
     list: any[]
     width?: number | string
@@ -32,16 +33,17 @@
 
   const props = withDefaults(defineProps<Props>(), {
     theme: 'none',
-    showBgColor: true,
+    disabled: false,
+    showBgColor: false,
     list: () => [],
     width: '100%',
     height: '100%',
     direction: 'horizontal',
     duration: 500,
-    showArrow: true,
+    showArrow: false,
     arrowColor: 'light',
     arrowSize: 16,
-    showDots: true,
+    showDots: false,
     dotsSize: 32,
     maxDots: 7,
     dotsSide: 'right',
@@ -77,6 +79,7 @@
 
   const emit = defineEmits<{
     click: [e: Event, index: number]
+    change: [index: number]
   }>()
 
   function handleClick(e: Event, index: number) {
@@ -89,6 +92,7 @@
   const isAnimating = ref(false)
   let lastTouchTime = 0
   const THTROTTLE_DELAY = 16 // 60FPS
+  const MIN_SWIPE_THRESHOLD = 80
   // autoplay
   const resumeTimer = ref<NodeJS.Timeout | null>(null)
   const touchState = ref({
@@ -138,8 +142,12 @@
     }
   })
   const draggerTransform = computed(() => {
-    const translateX = `translateX(max(-50% ,min(${touchState.value.deltaX * 0.7}px, 50%)))`
-    const translateY = `translateY(max(-50% ,min(${touchState.value.deltaY * 0.7}px, 50%)))`
+    const translateX = props.disabled
+      ? 'translateX(0)'
+      : `translateX(max(-50% ,min(${touchState.value.deltaX * 0.7}px, 50%)))`
+    const translateY = props.disabled
+      ? 'translateY(0)'
+      : `translateY(max(-50% ,min(${touchState.value.deltaY * 0.7}px, 50%)))`
     return {
       translate: isHorizontal.value ? translateX : translateY,
       horizontalNext: isHorizontal.value && touchState.value.deltaX < -swipeThreshold.value,
@@ -151,7 +159,7 @@
   const swipeThreshold = computed(() => {
     const systemInfo = uni.getSystemInfoSync()
     const threshold = isHorizontal.value ? systemInfo.windowWidth / 3 : systemInfo.windowHeight / 3
-    return Math.min(threshold, 50)
+    return Math.min(threshold, MIN_SWIPE_THRESHOLD)
   })
   const swiperDraggerStyle = computed(() => {
     return {
@@ -195,8 +203,12 @@
   }
   function handlePrev() {
     if (!canAnimate()) return
+    if (!props.loop && curIndex.value === 0) return
+    if (props.disabled) return
+
     isAnimating.value = true
     curIndex.value--
+    emit('change', getRealIndex(curIndex.value))
     if (props.loop) {
       if (curIndex.value === 0) {
         handleLoopJump(visibleList.value.length - 2)
@@ -215,8 +227,12 @@
   }
   function handleNext() {
     if (!canAnimate()) return
+    if (!props.loop && curIndex.value === props.list.length - 1) return
+    if (props.disabled) return
+
     isAnimating.value = true
     curIndex.value++
+    emit('change', getRealIndex(curIndex.value))
     if (props.loop) {
       if (curIndex.value === visibleList.value.length - 1) {
         handleLoopJump(1)
@@ -272,7 +288,8 @@
     })`
     // shadow
     const boxShadow =
-      isCurrentCard || index === curIndex.value + 1 || index === curIndex.value - 1
+      isCard.value &&
+      (isCurrentCard || index === curIndex.value + 1 || index === curIndex.value - 1)
         ? '0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.2)'
         : 'none'
     // border-radius
@@ -419,6 +436,7 @@
         <view
           class="yt-swiper--container-item"
           v-for="(item, index) in visibleList"
+          :key="index"
           @click="handleClick($event, getRealIndex(index))"
           :style="getCardStyle(index)"
         >

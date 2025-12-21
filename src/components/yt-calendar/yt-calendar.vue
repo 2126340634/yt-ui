@@ -237,13 +237,19 @@
       @touchcancel="handleTouchEnd"
     >
       <view class="yt-calendar--body-week">
-        <span v-for="day in calendar.weekDays">{{ day }}</span>
+        <span
+          v-for="(day, index) in calendar.weekDays"
+          :key="index"
+        >
+          {{ day }}
+        </span>
       </view>
       <view
         :class="['yt-calendar--body-grid', { 'yt-calendar--body-grid-loading': props.loading }]"
       >
         <span
-          v-for="item in calendarData"
+          v-for="(item, index) in calendarData"
+          :key="index"
           :class="[
             'yt-calendar--body-grid-item',
             {

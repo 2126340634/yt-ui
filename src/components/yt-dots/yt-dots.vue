@@ -66,6 +66,7 @@
   >
     <view
       v-for="(_, index) in total"
+      :key="index"
       :class="getDotsItemOuterClass(index)"
     >
       <view

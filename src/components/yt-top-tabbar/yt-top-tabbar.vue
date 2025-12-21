@@ -53,6 +53,7 @@
     <view
       class="yt-top-tabbar--item"
       v-for="(name, index) in list"
+      :key="index"
       @click="handleClick($event, index)"
     >
       <span
