@@ -114,3 +114,15 @@ $ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     transform: translateX(0);
   }
 }
+
+// collapse-content
+@keyframes collapse-content-slide-in-animation {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
