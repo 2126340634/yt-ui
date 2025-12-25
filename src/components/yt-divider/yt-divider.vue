@@ -1,11 +1,10 @@
 <script setup lang="ts">
   import { computed, useSlots } from 'vue'
+  import { AlignType } from '../../types/prop-types'
 
   interface Props {
     direction?: 'horizontal' | 'vertical'
-    height?: number | string
-    width?: number | string
-    align?: 'left' | 'center' | 'right' | 'start' | 'end'
+    align?: AlignType
     type?: 'solid' | 'dashed' | 'dotted'
     margin?: number | string
     lineColor?: string
@@ -15,40 +14,24 @@
 
   const props = withDefaults(defineProps<Props>(), {
     direction: 'horizontal',
-    height: 240,
-    width: '100%',
     align: 'center',
     type: 'solid',
-    margin: '32px',
+    margin: 32,
     lineColor: '#DCDFE6',
     textColor: '#3e3e3e60',
     textSize: 16
   })
 
   const hasContent = computed(() => {
-    return useSlots().default
+    return !!useSlots().default
   })
   const isHorizontal = computed(() => {
     return props.direction === 'horizontal'
   })
-  const containerHeight = computed(() => {
-    return isHorizontal.value
-      ? 'fit-content'
-      : typeof props.height === 'number'
-      ? `${props.height}px`
-      : props.height
-  })
-  const containerWidth = computed(() => {
-    return isHorizontal.value
-      ? typeof props.width === 'number'
-        ? `${props.width}px`
-        : props.width
-      : 'fit-content'
-  })
   const dividerContainerStyle = computed(() => {
     return {
-      height: containerHeight.value,
-      width: containerWidth.value,
+      height: isHorizontal.value ? 'fit-content' : '100%',
+      width: isHorizontal.value ? '100%' : 'fit-content',
       '--divider-direction': isHorizontal.value ? 'row' : 'column'
     }
   })
@@ -56,22 +39,25 @@
     return ['yt-divider', `yt-divider--${props.direction}`, `yt-divider--${props.align}`]
   })
   const dividerStyle = computed(() => {
+    const width = isHorizontal.value ? '100%' : '1px'
+    const height = isHorizontal.value ? '1px' : '100%'
+    const margin = typeof props.margin === 'number' ? `${props.margin}px` : props.margin
     if (props.type !== 'solid') {
       return {
         borderColor: props.lineColor,
         borderWidth: isHorizontal.value ? '1px 0 0 0' : '0 0 0 1px',
         borderStyle: props.type,
-        '--divider-margin': typeof props.margin === 'number' ? `${props.margin}px` : props.margin,
-        width: isHorizontal.value ? '100%' : '1px',
-        height: isHorizontal.value ? '1px' : '100%'
+        '--divider-margin': margin,
+        width,
+        height
       }
     } else {
       return {
         backgroundColor: props.lineColor,
         [isHorizontal.value ? 'height' : 'width']: '1px',
-        '--divider-margin': typeof props.margin === 'number' ? `${props.margin}px` : props.margin,
-        width: isHorizontal.value ? '100%' : '1px',
-        height: isHorizontal.value ? '1px' : '100%'
+        '--divider-margin': margin,
+        width,
+        height
       }
     }
   })

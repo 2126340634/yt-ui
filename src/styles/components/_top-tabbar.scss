@@ -34,7 +34,7 @@
     @include mixins.inline-flex-center;
     position: absolute;
     left: 0;
-    top: 44px;
+    top: 25px;
     transition: transform anim.$animation-duration-fast anim.$ease-out-back;
   }
 }

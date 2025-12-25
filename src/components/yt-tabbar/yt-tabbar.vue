@@ -124,10 +124,11 @@
         class="yt-tabbar--icon"
         :size="9"
       />
-      <img
+      <image
         v-else
         :src="activeIndex === index ? item.activeIcon : item.icon"
         class="yt-tabbar--image"
+        mode="aspectFit"
       />
       <span
         v-if="props.showText"

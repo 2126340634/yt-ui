@@ -1,0 +1,40 @@
+@use '../var' as var;
+@use '../mixins' as mixins;
+
+.yt-segment {
+  @include mixins.inline-flex-center;
+  width: fit-content;
+  height: fit-content;
+
+  &--text {
+    border-width: 1px;
+    border-style: solid;
+    transition: background var.$transition-duration-fast var.$easing-ease-out;
+
+    &-first {
+      border-top-left-radius: var.$border-radius-medium;
+      border-bottom-left-radius: var.$border-radius-medium;
+    }
+
+    &-last {
+      border-top-right-radius: var.$border-radius-medium;
+      border-bottom-right-radius: var.$border-radius-medium;
+    }
+  }
+
+  // size
+  &--small &--text {
+    font-size: var.$font-size-xs;
+    padding: var.$spacing-xs var.$spacing-medium;
+  }
+
+  &--medium &--text {
+    font-size: var.$font-size-small;
+    padding: var.$spacing-xs var.$spacing-large;
+  }
+
+  &--large &--text {
+    font-size: var.$font-size-medium;
+    padding: var.$spacing-xs var.$spacing-large;
+  }
+}
