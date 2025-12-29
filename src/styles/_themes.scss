@@ -170,6 +170,20 @@ $component-themes: (
     'blossom-sky': $theme-blossom,
     'sunshine-sky': $theme-sunshine,
     'none': #333
+  ),
+  'schedule': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #333,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #333
   )
 );
 
@@ -337,6 +351,40 @@ $component-themes: (
       }
       .yt-steps--item-icon-text,
       .yt-steps--item-text {
+        color: #{$color};
+      }
+    }
+  }
+}
+
+// schedule
+@each $name, $color in map.get($component-themes, 'schedule') {
+  .yt-schedule--theme-#{$name} {
+    // week text
+    .yt-schedule--header-time-week {
+      color: #{$color};
+    }
+    .yt-schedule--week-text-active {
+      color: #{$color};
+      text-decoration-color: #{$color};
+    }
+    // selected border
+    .yt-schedule--date-container-active {
+      border-color: #{$color};
+      color: #{$color};
+    }
+
+    // dot background of current week
+    .yt-schedule--date-container-current-week {
+      .yt-schedule--date-container-dot {
+        background: #{$color};
+      }
+    }
+
+    // text color of today
+    .yt-schedule--date-container-today {
+      .yt-schedule--date-container-day,
+      .yt-schedule--date-container-date {
         color: #{$color};
       }
     }

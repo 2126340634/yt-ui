@@ -130,17 +130,13 @@
       display: 'flex',
       flexDirection: isVertical.value ? 'column' : 'row',
       [isVertical.value ? 'width' : 'height']: '100%',
-      alignItems: isVertical.value ? 'flex-start' : 'stretch'
+      alignItems: isVertical.value ? 'flex-start' : 'stretch',
+      '--container-item-width': isVertical.value ? '100%' : 'fit-content',
+      '--container-item-height': isVertical.value ? 'fit-content' : '100%'
     } as CSSProperties
   })
-  const itemStyle = computed(() => {
-    return {
-      [isVertical.value ? 'width' : 'height']: '100%',
-      boxSizing: 'border-box',
-      flexShrink: 0
-    } as CSSProperties
-  })
-  const measureItem = () => {
+  const measureItem = async () => {
+    await nextTick()
     const start = visibleRange.value.start
     uni
       .createSelectorQuery()
@@ -161,14 +157,6 @@
       })
       .exec()
   }
-  const getItemKey = computed(() => {
-    return (item: any, index: number) => {
-      if (typeof item === 'object' && item !== null && props.itemKey) {
-        return item[props.itemKey] || visibleRange.value.start + index
-      }
-      return visibleRange.value.start + index
-    }
-  })
 
   onMounted(async () => {
     await nextTick()
@@ -215,7 +203,6 @@
   watch(
     () => visibleRange.value,
     async () => {
-      await nextTick()
       measureItem()
     },
     { immediate: true }
@@ -262,9 +249,8 @@
     >
       <view
         v-for="(item, index) in visibleList"
-        :key="getItemKey(item, index)"
+        :key="item[props.itemKey]"
         class="yt-virtual-list--container-item"
-        :style="itemStyle"
       >
         <slot
           name="list-item"
@@ -281,5 +267,11 @@
     ::-webkit-scrollbar {
       display: none;
     }
+  }
+  .yt-virtual-list--container-item {
+    width: var(--container-item-width);
+    height: var(--container-item-height);
+    box-sizing: border-box;
+    flex-shrink: 0;
   }
 </style>

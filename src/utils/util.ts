@@ -62,3 +62,11 @@ export const debounce = <T extends (...args: any[]) => any>(
 
   return debounced as T & { cancel: () => void }
 }
+
+// 获取课程的坐标
+export const getLessonCoordinates = (index: number) => {
+  return {
+    x: (index % 7) + 1,
+    y: Math.floor(index / 7) + 1
+  }
+}

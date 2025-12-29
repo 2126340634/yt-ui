@@ -25,31 +25,6 @@ $ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 }
 
-// scale-stronger-bounce
-@keyframes scale-bounce-strong {
-  0% {
-    transform: scale(1);
-  }
-  15% {
-    transform: scale(0.7);
-  }
-  30% {
-    transform: scale(1.25);
-  }
-  45% {
-    transform: scale(0.9);
-  }
-  60% {
-    transform: scale(1.1);
-  }
-  75% {
-    transform: scale(0.95);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
 // tabbar-item-active-translate-up
 @keyframes tabbar-active-animation {
   0% {
@@ -124,5 +99,23 @@ $ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   100% {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+// schedule-item-scale-bounce
+@keyframes grid-item-slide-in-animation {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.1);
+  }
+  40% {
+    transform: translateY(-3px) scale(1.03);
+  }
+  70% {
+    transform: translateY(1px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }

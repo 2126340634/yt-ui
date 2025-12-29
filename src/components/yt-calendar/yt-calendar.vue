@@ -169,21 +169,18 @@
     touchState.value.startX = e.touches[0].clientX
     touchState.value.startY = e.touches[0].clientY
   }
-  const handleTouchMove = throttle(
-    (e: any) => {
-      if (props.loading) return
-      touchState.value.curX = e.touches[0].clientX
-      touchState.value.curY = e.touches[0].clientY
-      if (
-        Math.abs(touchState.value.curX - touchState.value.startX) ||
-        Math.abs(touchState.value.curY - touchState.value.startY) > 5
-      ) {
-        touchState.value.isDragging = true
-      }
-    },
-    16,
-    { leading: true, trailing: false }
-  )
+  function handleTouchMove(e: TouchEvent) {
+    if (props.loading) return
+    e.preventDefault()
+    const touches = e.touches[0]
+    touchState.value.curX = touches.clientX
+    touchState.value.curY = touches.clientY
+    const absDeltaX = Math.abs(touchState.value.curX - touchState.value.startX)
+    const absDeltaY = Math.abs(touchState.value.curY - touchState.value.startY)
+    if (absDeltaX > 5 || absDeltaY > 5) {
+      touchState.value.isDragging = true
+    }
+  }
   function handleTouchEnd() {
     const deltaX = touchState.value.curX - touchState.value.startX
     const deltaY = touchState.value.curY - touchState.value.startY
@@ -299,16 +296,13 @@
 
   .yt-calendar--body {
     opacity: v-bind(calendarOpacity);
-    transition: opacity var.$transition-duration-fast var.$easing-ease-out;
   }
 
   .arrow-left {
     transform: scale(v-bind('arrowScale.leftScale'));
-    transition: transform var.$transition-duration-medium var.$easing-ease-out;
   }
 
   .arrow-right {
     transform: scale(v-bind('arrowScale.rightScale'));
-    transition: transform var.$transition-duration-medium var.$easing-ease-out;
   }
 </style>

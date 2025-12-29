@@ -1,0 +1,272 @@
+@use '../var' as var;
+@use '../mixins' as mixins;
+@use '../anim' as anim;
+
+$header-height: 30px;
+$week-height: 35px;
+$date-height: 40px;
+$table-height: calc(100% - $header-height - $week-height - $date-height);
+$week-item-width: 60px;
+$month-text-width: 25px;
+$dot-size: 2px;
+$table-item-height: 50px;
+$grid-row-delay: 0.2s;
+
+.yt-schedule {
+  overflow: hidden;
+
+  &--header {
+    overflow: hidden;
+    display: flex;
+    margin: 0 auto;
+    width: 100%;
+    height: $header-height;
+    justify-content: space-between;
+    align-items: center;
+
+    &-clear {
+      @include mixins.inline-flex-center;
+      height: 100%;
+      width: 60px;
+      color: #999;
+      font-size: 12px;
+    }
+
+    &-time {
+      @include mixins.inline-flex-center;
+      color: #333;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    &-arrow-text {
+      color: #99999980;
+    }
+
+    &-arrow {
+      transition: transform var.$transition-duration-medium var.$easing-ease-out;
+      transform: rotateZ(0);
+    }
+  }
+
+  &--week {
+    white-space: nowrap;
+    width: 100%;
+    height: 0;
+    box-sizing: border-box;
+    position: relative;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    &-text {
+      @include mixins.inline-flex-center;
+      height: 100%;
+      width: $week-item-width;
+      flex-shrink: 0;
+      font-size: 14px;
+      color: #999;
+      white-space: nowrap;
+      text-decoration-line: underline;
+      text-decoration-style: solid;
+      text-decoration-color: transparent;
+      text-underline-offset: 8px;
+    }
+  }
+
+  &--date {
+    display: flex;
+    width: calc(100% - $month-text-width);
+    padding: 4px 0 calc(4px - $dot-size) $month-text-width;
+    height: $date-height;
+    align-items: center;
+    justify-content: space-around;
+    color: #999;
+    font-size: 12px;
+    background: #eeeeee50;
+    position: relative;
+
+    &-month {
+      @include mixins.inline-flex-center;
+      width: $month-text-width;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      white-space: nowrap;
+    }
+
+    &-container {
+      @include mixins.inline-flex-center(column);
+      flex: 1;
+      gap: 2px;
+      border-width: 1px;
+      border-style: dashed;
+      border-color: transparent;
+      border-radius: 6px;
+
+      &-current-week {
+        .yt-schedule--date-container-dot {
+          opacity: 1;
+        }
+      }
+
+      &-dot {
+        opacity: 0;
+        width: $dot-size;
+        height: $dot-size;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  &--table {
+    display: flex;
+    width: 100%;
+    height: $table-height;
+    overflow: hidden auto;
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    &-swiper {
+      width: 100%;
+      height: fit-content;
+    }
+
+    &-time {
+      flex-shrink: 0;
+      width: $month-text-width;
+      height: fit-content;
+      background: #eeeeee50;
+
+      &-item {
+        @include mixins.inline-flex-center(column);
+        flex-shrink: 0;
+        width: 100%;
+        height: $table-item-height;
+        white-space: nowrap;
+        color: #999;
+
+        &-title {
+          font-weight: 600;
+          font-size: 13px;
+        }
+
+        &-subtitle {
+          font-size: 8px;
+        }
+      }
+    }
+
+    &-grid {
+      width: 100%;
+      height: $table-height;
+      display: grid;
+      grid-template-rows: repeat(var(--grid-rows), 1fr);
+      grid-template-columns: repeat(var(--grid-cols), 1fr);
+      place-items: center;
+      position: relative;
+
+      &-item {
+        width: 100%;
+        height: calc($table-item-height * 2);
+        border-bottom: 1px dashed #99999980;
+        box-sizing: border-box;
+        padding: 1px;
+        overflow: hidden;
+      }
+
+      &-item-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        padding: 4px 2px;
+        box-sizing: border-box;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        background: var(--grid-item-box-color);
+        border-radius: 6px;
+        color: #fff;
+        text-align: center;
+        position: relative;
+        opacity: var(--grid-item-box-opacity);
+        transform: var(--grid-item-box-transform);
+
+        &-active {
+          animation: grid-item-slide-in-animation anim.$animation-duration-fast anim.$ease-out-back
+            var(--grid-item-anim-delay) forwards;
+        }
+      }
+
+      &-item-name,
+      &-item-location {
+        width: 100%;
+        max-height: $table-item-height;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+      }
+
+      &-item-name {
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      &-item-location {
+        font-size: 11px;
+      }
+
+      &-item-conflict {
+        position: absolute;
+        right: 0;
+        top: -4px;
+        font-size: 14px;
+        color: #ffcc00;
+      }
+
+      &-empty {
+        pointer-events: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 60px;
+        color: #99999920;
+      }
+
+      &-loading {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+      }
+    }
+  }
+}
+
+.yt-schedule-show-week {
+  .yt-schedule--week {
+    height: $week-height;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+    transition: transform anim.$animation-duration-fast anim.$ease-bounce,
+      opacity var.$transition-duration-fast var.$easing-ease-out;
+  }
+  .yt-schedule--header-arrow {
+    transform: rotateZ(180deg);
+  }
+}

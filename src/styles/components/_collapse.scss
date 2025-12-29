@@ -4,11 +4,19 @@
 $item-width: calc(100% - 16px);
 
 .yt-collapse {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   &--item {
     width: $item-width;
     margin: 0 auto;
     height: fit-content;
     display: flex;
+    justify-content: var(--item-justify-content);
+    padding: var(--item-padding);
     align-items: center;
     border-bottom-width: 1px;
     border-bottom-style: solid;
@@ -39,11 +47,9 @@ $item-width: calc(100% - 16px);
     overflow: hidden;
     transform: translateY(-20px);
     opacity: 0;
-    display: none;
     border-bottom: 1px solid transparent;
 
     &-active {
-      display: block;
       border-bottom: 1px solid #e5e7eb;
       animation: collapse-content-slide-in-animation anim.$animation-duration-fast anim.$ease-bounce
         forwards;

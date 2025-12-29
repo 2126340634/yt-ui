@@ -31,9 +31,10 @@
     transition-property: transform;
     transition-timing-function: var.$easing-ease-out;
     transition-duration: var.$transition-duration-slow;
+    will-change: transform;
 
     &-swipping {
-      transition-duration: var.$transition-duration-fast;
+      transition-duration: 0s;
     }
   }
 
@@ -43,6 +44,7 @@
     display: flex;
     align-items: center;
     transition: transform var(--swiper-translate-duration) var.$easing-ease-out;
+    will-change: transform;
 
     &-item {
       width: 100%;

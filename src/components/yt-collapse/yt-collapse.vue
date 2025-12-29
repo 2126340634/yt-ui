@@ -1,25 +1,23 @@
 <script setup lang="ts">
-  import { computed, ref, useSlots } from 'vue'
+  import { computed, ref, shallowRef, watchEffect } from 'vue'
 
   interface Props {
-    titleList: { title: string; [key: string]: string }[]
-    itemKey: string
-    buffer?: number
+    titleList: string[]
     iconSide?: 'left' | 'right'
     gap?: number | string
   }
 
   const props = withDefaults(defineProps<Props>(), {
-    list: () => [],
-    itemKey: '',
-    buffer: 5,
+    titleList: () => [],
     iconSide: 'right',
     gap: 8
   })
 
-  const slots = useSlots()
-
-  if (!props.itemKey) console.warn('[yt-collapse] 缺少参数itemKey')
+  // props的reactive转为shallowRef，避免深度监听每个属性
+  const safeList = shallowRef<string[]>([])
+  watchEffect(() => {
+    safeList.value = props.titleList
+  })
 
   const emit = defineEmits<{
     change: [{ index: number; activeIndexes: number[] }]
@@ -28,38 +26,32 @@
   const isIconLeftSide = computed(() => {
     return props.iconSide === 'left'
   })
-  const collapseItemClass = computed(() => {
-    return (index: number) => ({
-      'yt-collapse--item': true,
-      'yt-collapse--item-active': isExpanded.value(index)
-    })
+  const collapseStyle = computed(() => {
+    return {
+      '--item-justify-content': isIconLeftSide.value ? 'start' : 'space-between',
+      '--item-padding': `${typeof props.gap === 'number' ? `${props.gap}px` : props.gap} 0`
+    }
   })
-  const collapseItemStyle = computed(() => {
-    const paddingVertical = typeof props.gap === 'number' ? `${props.gap}px` : props.gap
-    return (index: number) => ({
-      justifyContent: isIconLeftSide.value ? 'start' : 'space-between',
-      borderTop: index === 0 ? '1px solid #e5e7eb' : 'none',
-      padding: `${paddingVertical} 0`
-    })
+  const collapseItemClass = (index: number) => ({
+    'yt-collapse--item': true,
+    'yt-collapse--item-active': isExpanded(index)
   })
-  const collapseContentClass = computed(() => {
-    return (index: number) => ({
-      'yt-collapse--content': true,
-      'yt-collapse--content-active': isExpanded.value(index)
-    })
-  })
-  const hasContent = computed(() => {
-    return (slotName: string) => !!slots[`collapse-item-${slotName}`]
+  const collapseItemStyle = (index: number) => {
+    return {
+      borderTop: index === 0 ? '1px solid #e5e7eb' : 'none'
+    }
+  }
+  const collapseContentClass = (index: number) => ({
+    'yt-collapse--content': true,
+    'yt-collapse--content-active': isExpanded(index)
   })
 
   const expandedSet = ref<Set<number>>(new Set())
 
-  const isExpanded = computed(() => {
-    return (index: number) => expandedSet.value.has(index)
-  })
+  const isExpanded = (index: number) => expandedSet.value.has(index)
 
   function toggleExpand(index: number) {
-    if (isExpanded.value(index)) {
+    if (isExpanded(index)) {
       expandedSet.value.delete(index)
     } else {
       expandedSet.value.add(index)
@@ -74,13 +66,11 @@
 </script>
 
 <template>
-  <yt-virtual-list
-    :list="titleList"
-    :itemKey="itemKey"
-    :buffer="buffer"
-    :estimatedSize="60"
+  <view
+    class="yt-collapse"
+    :style="collapseStyle"
   >
-    <template #list-item="{ item, index }">
+    <template v-for="(title, index) in safeList">
       <!-- collapse-item -->
       <view
         @click="toggleExpand(index)"
@@ -95,7 +85,7 @@
           :width="30"
           :height="30"
         />
-        <span class="yt-collapse--item-title">{{ item.title }}</span>
+        <span class="yt-collapse--item-title">{{ title }}</span>
         <yt-icon
           class="yt-collapse--item-icon"
           v-if="!isIconLeftSide"
@@ -107,17 +97,17 @@
       </view>
       <!-- collapse-item-content -->
       <view
-        v-if="hasContent(item[itemKey])"
         :class="collapseContentClass(index)"
+        v-show="isExpanded(index)"
       >
         <slot
-          :name="`collapse-item-${item[itemKey]}`"
+          :name="`collapse-item-${index}`"
+          :title="title"
           :index="index"
-          :isAcitve="isExpanded(index)"
         />
       </view>
     </template>
-  </yt-virtual-list>
+  </view>
 </template>
 
 <style lang="scss" scoped>
