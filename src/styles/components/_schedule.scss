@@ -197,10 +197,15 @@ $grid-row-delay: 0.2s;
         color: #fff;
         text-align: center;
         position: relative;
-        opacity: var(--grid-item-box-opacity);
+        opacity: 0;
         transform: var(--grid-item-box-transform);
 
         &-active {
+          animation: grid-item-opacity-animation anim.$animation-duration-fast anim.$ease-out-back
+            var(--grid-item-anim-delay) forwards;
+        }
+
+        &-active-anim {
           animation: grid-item-slide-in-animation anim.$animation-duration-fast anim.$ease-out-back
             var(--grid-item-anim-delay) forwards;
         }
@@ -242,16 +247,6 @@ $grid-row-delay: 0.2s;
         transform: translate(-50%, -50%);
         font-size: 60px;
         color: #99999920;
-      }
-
-      &-loading {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
       }
     }
   }

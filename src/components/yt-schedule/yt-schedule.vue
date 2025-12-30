@@ -4,6 +4,7 @@
   import { getLessonCoordinates } from '../../utils/util'
   import { defaultColorList } from '../../configs/scheduleConfig'
   import { ThemeColor } from '../../types/theme-types'
+  import { onHide, onShow } from '@dcloudio/uni-app'
 
   export interface CourseData {
     type: 'course' | 'agenda'
@@ -92,7 +93,7 @@
   const weekDate: ComputedRef<WeekDate> = computed(() => {
     return schedule.getWeekDate(curWeek.value + 1) || []
   })
-  const weekMonth = computed(() => {
+  const weekMonth: ComputedRef<number | ''> = computed(() => {
     return schedule.getMonthOfStartDate(curWeek.value + 1)
   })
   const weekList = computed(() => {
@@ -133,18 +134,23 @@
     'yt-schedule--week-text': true,
     'yt-schedule--week-text-active': curWeek.value === index
   })
-  const gridItemBoxClass = (weekIndex: number) => ({
-    'yt-schedule--table-grid-item-box': true,
-    'yt-schedule--table-grid-item-box-active': props.animation && weekIndex === curWeek.value
-  })
+  const gridItemBoxClass = (weekIndex: number) => {
+    const isCurWeek = weekIndex === curWeek.value
+    const animEnabled = props.animation
+    return {
+      'yt-schedule--table-grid-item-box': true,
+      'yt-schedule--table-grid-item-box-active-anim': animEnabled && isCurWeek,
+      'yt-schedule--table-grid-item-box-active': !animEnabled && isCurWeek
+    }
+  }
   const gridItemBoxStyle = (weekIndex: number, index: number) => {
     const course = getCachedCourse(weekIndex, index)
+    if (!course) return null
     const row = Math.floor(index / 7) + 1
     return {
-      '--grid-item-box-opacity': props.animation ? 0 : 1,
       '--grid-item-box-transform': props.animation ? 'translateY(15px) scale(0.1)' : 'none',
-      '--grid-item-box-color': course?.color,
-      '--grid-item-anim-delay': `${(row - 1) * 0.05}s`
+      '--grid-item-box-color': course.color,
+      '--grid-item-anim-delay': `${(row - 1) * 0.04}s`
     }
   }
   const dateContainerClass = (index: number) => ({
@@ -162,9 +168,10 @@
     if (weekMapsCache.value.has(weekIndex)) return
     const map = new Map<string, CourseData>()
     const week = weekIndex + 1
+    const { course, agenda } = props.data
     // 填充当前周课表数据
     const fillCourse = () => {
-      props.data.course.forEach(course => {
+      course.forEach(course => {
         if (course.z.includes(week)) {
           const key = `${course.x}-${course.y}`
           if (!colorCache[course.name]) {
@@ -175,7 +182,7 @@
             name: course.name,
             location: course.location,
             teacher: course.teacher,
-            class: course.class || '',
+            class: course.class,
             color: colorCache[course.name]
           })
         }
@@ -183,7 +190,7 @@
     }
     // 填充当前周日程数据
     const fillAgenda = () => {
-      props.data.agenda.forEach(agenda => {
+      agenda.forEach(agenda => {
         if (agenda.z.includes(week)) {
           const key = `${agenda.x}-${agenda.y}`
           // 检测并标记冲突
@@ -205,24 +212,18 @@
     fillAgenda()
     weekMapsCache.value.set(weekIndex, map)
   }
-  const courseCache = computed(() => {
-    const cache: Record<string, CourseData | null> = {}
-    const weeks = props.weeks
-    const cur = curWeek.value
-    const prev = (cur - 1 + weeks) % weeks
-    const next = (cur + 1) % weeks
-    for (const weekIndex of [cur, prev, next]) {
-      if (!weekMapsCache.value.has(weekIndex)) continue
-      const map = weekMapsCache.value.get(weekIndex)!
-      for (const index of gridIndexes.value) {
-        const { x, y } = getLessonCoordinates(index)
-        cache[`${weekIndex}-${index}`] = map.get(`${x}-${y}`) || null
-      }
-    }
-    return cache
+  function hasCourses(weekIndex: number) {
+    return !!weekMapsCache.value.get(weekIndex)?.size
+  }
+  // 缓存每一格坐标
+  const gridCoords = computed(() => {
+    return gridList.value.map((_, index) => getLessonCoordinates(index))
   })
+  // 获取某一格课程
   function getCachedCourse(weekIndex: number, index: number) {
-    return courseCache.value[`${weekIndex}-${index}`]
+    const coord = gridCoords.value[index]
+    const key = `${coord.x}-${coord.y}`
+    return weekMapsCache.value.get(weekIndex)?.get(key)
   }
   function handleWeekClick(index: number) {
     enableAutoScrollWeek.value = false
@@ -255,39 +256,47 @@
     })
   }
   function shouldRender(weekIndex: number) {
-    const weeks = props.weeks
-    const diff = Math.abs(weekIndex - curWeek.value)
-    return diff <= 1 || diff === weeks - 1
+    return curWeek.value === weekIndex
   }
+  function handleClearAgenda() {}
+  // 加载三页数据
   function lazyLoadCourses() {
     const weeks = props.weeks
     const cur = curWeek.value
     const prev = (cur - 1 + weeks) % weeks
     const next = (cur + 1) % weeks
-    loadCourse(cur)
-    loadCourse(prev)
-    loadCourse(next)
+    for (let weekIndex of [cur, prev, next]) {
+      loadCourse(weekIndex)
+    }
+  }
+  // 清空所有缓存
+  function clearCache() {
+    colorCache = {}
+    colorCounter = 0
+    weekMapsCache.value.forEach(map => map.clear())
+    weekMapsCache.value.clear()
   }
 
+  // 课表数据变化重新加载
   watch(
-    [() => props.data, () => props.animation],
+    () => props.data?.course,
     () => {
-      colorCache = {}
-      colorCounter = 0
-      weekMapsCache.value.clear()
+      clearCache()
       lazyLoadCourses()
     },
     {
-      deep: true
+      deep: true,
+      flush: 'post'
     }
   )
 
+  // 加载当前三页数据
   watch(
     () => curWeek.value,
     () => {
       lazyLoadCourses()
     },
-    { immediate: true }
+    { immediate: true, flush: 'post' }
   )
 
   onUnmounted(() => {
@@ -295,6 +304,21 @@
       clearTimeout(loadingTimer)
       loadingTimer = null
     }
+    clearCache()
+  })
+
+  let isLeaving = false
+  onShow(() => {
+    if (isLeaving) {
+      isLeaving = false
+      lazyLoadCourses()
+    }
+  })
+
+  // 小程序切换页面清理缓存，防止内存占用过大
+  onHide(() => {
+    isLeaving = true
+    clearCache()
   })
 
   defineOptions({
@@ -314,7 +338,7 @@
     >
       <view
         class="yt-schedule--header-clear"
-        @click.stop
+        @click.stop="handleClearAgenda"
       >
         清空日程
       </view>
@@ -429,20 +453,11 @@
             </view>
             <!-- empty-tip -->
             <view
-              v-if="!weekMapsCache.get(weekIndex)?.size"
+              v-if="!hasCourses(weekIndex)"
               class="yt-schedule--table-grid-empty"
             >
               Empty
             </view>
-            <!-- loading -->
-            <yt-loading
-              class="yt-schedule--table-grid-loading"
-              :theme="theme"
-              :visible="loading"
-              overlay
-              bgColor="#fff"
-              :duration="0"
-            />
           </view>
         </template>
       </yt-swiper>

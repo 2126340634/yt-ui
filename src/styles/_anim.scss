@@ -102,6 +102,15 @@ $ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 }
 
+@keyframes grid-item-opacity-animation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 // schedule-item-scale-bounce
 @keyframes grid-item-slide-in-animation {
   0% {

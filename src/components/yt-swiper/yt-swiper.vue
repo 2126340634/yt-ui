@@ -96,7 +96,7 @@
   const MIN_SWIPE_THRESHOLD = 50
   // autoplay
   let resumeTimer: NodeJS.Timeout | null = null
-  const touchState = ref({
+  const touchState = shallowRef({
     startX: 0,
     startY: 0,
     isSwiping: false,
@@ -143,15 +143,15 @@
       '--swiper-translate-duration': enableTransition.value ? `${props.duration * 0.001}s` : '0s'
     }
   })
-  const draggerTransform = ref('translate(0)')
+  const draggerTransform = ref('translate(0')
   function updateDraggerTransform() {
     const { deltaX, deltaY } = touchState.value
     const activeDeltaX = touchState.value.direction === 'horizontal' ? deltaX : 0
     const activeDeltaY = touchState.value.direction === 'vertical' ? deltaY : 0
     if (isHorizontal.value) {
-      draggerTransform.value = props.disabled ? 'translateX(0)' : `translateX(${activeDeltaX}px)`
+      draggerTransform.value = props.disabled ? 'translate(0)' : `translateX(${activeDeltaX}px)`
     } else {
-      draggerTransform.value = props.disabled ? 'translateY(0)' : `translateY(${activeDeltaY}px)`
+      draggerTransform.value = props.disabled ? 'translate(0)' : `translateY(${activeDeltaY}px)`
     }
   }
   const swipeThreshold = computed(() => {
@@ -369,18 +369,21 @@
     const touches = e.touches[0]
     const deltaX = touches.clientX - touchState.value.startX
     const deltaY = touches.clientY - touchState.value.startY
-    if (!touchState.value.direction) {
+    let direction = touchState.value.direction
+    if (!direction) {
       const absX = Math.abs(deltaX)
       const absY = Math.abs(deltaY)
       if (absX < 5 && absY < 5) return
-      touchState.value.direction = absX > absY ? 'horizontal' : 'vertical'
+      direction = absX > absY ? 'horizontal' : 'vertical'
     }
-    if (touchState.value.direction !== props.direction) return
+    if (direction !== props.direction) return
     e.preventDefault()
-    touchState.value.deltaX = deltaX
-    touchState.value.deltaY = deltaY
-    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-      touchState.value.isSwiping = true
+    touchState.value = {
+      ...touchState.value,
+      direction,
+      deltaX,
+      deltaY,
+      isSwiping: Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5
     }
 
     updateDraggerTransform()

@@ -19,10 +19,6 @@
     .yt-swiper--container {
       transform-style: preserve-3d;
     }
-
-    .yt-swiper--container-item {
-      backface-visibility: hidden;
-    }
   }
 
   &--dragger {
@@ -51,6 +47,7 @@
       height: 100%;
       flex-shrink: 0;
       transition: transform var(--swiper-translate-duration) var.$easing-ease-out;
+      backface-visibility: hidden;
     }
 
     &-horizontal {

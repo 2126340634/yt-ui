@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, toRaw } from 'vue'
+  import { computed, ref, shallowRef, toRaw } from 'vue'
   import { ThemeColor } from '../../types/theme-types'
   import { Calendar, useCalendar } from '../../hooks/useCalendar'
   import { throttle } from '../../utils/util'
@@ -105,7 +105,7 @@
     year: date.value.getFullYear(),
     month: date.value.getMonth() + 1
   })
-  const touchState = ref({
+  const touchState = shallowRef({
     curX: 0,
     curY: 0,
     startX: 0,
@@ -166,19 +166,24 @@
   }
   function handleTouchStart(e: any) {
     if (props.loading) return
-    touchState.value.startX = e.touches[0].clientX
-    touchState.value.startY = e.touches[0].clientY
+    const touches = e.touches[0]
+    touchState.value = {
+      ...touchState.value,
+      startX: touches.clientX,
+      startY: touches.clientY
+    }
   }
   function handleTouchMove(e: TouchEvent) {
     if (props.loading) return
     e.preventDefault()
     const touches = e.touches[0]
-    touchState.value.curX = touches.clientX
-    touchState.value.curY = touches.clientY
     const absDeltaX = Math.abs(touchState.value.curX - touchState.value.startX)
     const absDeltaY = Math.abs(touchState.value.curY - touchState.value.startY)
-    if (absDeltaX > 5 || absDeltaY > 5) {
-      touchState.value.isDragging = true
+    touchState.value = {
+      ...touchState.value,
+      curX: touches.clientX,
+      curY: touches.clientY,
+      isDragging: absDeltaX > 5 || absDeltaY > 5
     }
   }
   function handleTouchEnd() {
