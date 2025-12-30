@@ -89,9 +89,13 @@
       &-item {
         border-radius: 8px;
         padding: 4px;
-        color: #333;
+        color: #333333aa;
         z-index: 1;
         position: relative;
+        border-width: 1px;
+        border-style: solid;
+        border-color: transparent;
+        transition: border-color var.$transition-duration-fast var.$easing-ease-out;
       }
 
       &-item-prev-month {
@@ -117,10 +121,6 @@
         font-size: 10px;
         right: 6px;
         top: 0;
-      }
-
-      &-item-today {
-        color: #000;
       }
 
       &-background-text {

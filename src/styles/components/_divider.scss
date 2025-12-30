@@ -5,40 +5,20 @@ $divider-margin: 1em;
 // line with text
 .yt-divider--container {
   @include mixins.inline-flex-center(var(--divider-direction));
-  width: 100%;
-  height: 100%;
 }
 
 .yt-divider {
-  width: 100%;
-  height: 100%;
   @include mixins.inline-flex-center(var(--divider-direction));
 
   // horizontal
-  &--horizontal {
-    margin: $divider-margin;
-  }
-
-  &--horizontal.start-line {
-    margin-top: var(--divider-margin);
-    margin-bottom: var(--divider-margin);
-  }
-
+  &--horizontal.start-line,
   &--horizontal.end-line {
     margin-top: var(--divider-margin);
     margin-bottom: var(--divider-margin);
   }
 
   // vertical
-  &--vertical {
-    margin: $divider-margin;
-  }
-
-  &--vertical.start-line {
-    margin-left: var(--divider-margin);
-    margin-right: var(--divider-margin);
-  }
-
+  &--vertical.start-line,
   &--vertical.end-line {
     margin-left: var(--divider-margin);
     margin-right: var(--divider-margin);
@@ -66,11 +46,6 @@ $divider-margin: 1em;
 }
 
 // line without text
-.single-line {
-  width: 100%;
-  height: 100%;
-}
-
 .yt-divider--horizontal.single-line {
   margin-top: var(--divider-margin);
   margin-bottom: var(--divider-margin);

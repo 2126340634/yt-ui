@@ -16,7 +16,7 @@
     size: 24,
     width: 60,
     height: 60,
-    fit: 'widthFix'
+    fit: 'aspectFit'
   })
 
   const emit = defineEmits<{

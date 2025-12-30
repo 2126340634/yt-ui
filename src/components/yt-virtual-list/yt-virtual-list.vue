@@ -3,6 +3,7 @@
 
   interface Props {
     list: any[]
+    itemKey: string
     width?: number | string
     height?: number | string
     direction?: 'vertical' | 'horizontal'
@@ -18,6 +19,7 @@
 
   const props = withDefaults(defineProps<Props>(), {
     list: () => [],
+    itemKey: '',
     width: '100%',
     height: '100%',
     direction: 'vertical',
@@ -30,6 +32,8 @@
     refresherBgColor: '#fff',
     refresherStyle: 'black'
   })
+
+  if (!props.itemKey) console.warn('[yt-virtual-list] 缺少参数itemKey')
 
   const emit = defineEmits<{
     scroll: [e: any]
@@ -126,31 +130,30 @@
       display: 'flex',
       flexDirection: isVertical.value ? 'column' : 'row',
       [isVertical.value ? 'width' : 'height']: '100%',
-      alignItems: isVertical.value ? 'flex-start' : 'stretch'
+      alignItems: isVertical.value ? 'flex-start' : 'stretch',
+      '--container-item-width': isVertical.value ? '100%' : 'fit-content',
+      '--container-item-height': isVertical.value ? 'fit-content' : '100%'
     } as CSSProperties
   })
-  const itemStyle = computed(() => {
-    return {
-      [isVertical.value ? 'width' : 'height']: '100%',
-      boxSizing: 'border-box',
-      flexShrink: 0
-    } as CSSProperties
-  })
-  const measureItem = (index: number) => {
-    const itemIndex = visibleRange.value.start + index
-    if (measured.has(itemIndex)) return
+  const measureItem = async () => {
+    await nextTick()
+    const start = visibleRange.value.start
     uni
       .createSelectorQuery()
       .in(instance?.proxy)
-      .select(`.item-${itemIndex}`)
+      .selectAll(`.yt-virtual-list--container-item`)
       .boundingClientRect((res: any) => {
-        if (res) {
+        const rects = res as any[]
+        if (!rects || !rects.length) return
+        rects.forEach((res, index) => {
+          const itemIndex = start + index
+          if (measured.has(itemIndex)) return
           const size = isVertical.value ? res.height : res.width
           if (size > 0 && itemSizes.value[itemIndex] !== size) {
             itemSizes.value[itemIndex] = size
             measured.add(itemIndex)
           }
-        }
+        })
       })
       .exec()
   }
@@ -164,29 +167,43 @@
       .boundingClientRect((res: any) => {
         if (res) {
           containerSize.value = isVertical.value ? res.height : res.width
+        } else {
+          console.warn('[yt-virtual-list] 未获取到列表容器大小')
         }
       })
       .exec()
   })
 
-  // 监测数据源变化
+  // 清空列表高度缓存
+  const resetCache = () => {
+    itemSizes.value = []
+    measured.clear()
+  }
+
   watch(
     () => props.list,
-    () => {
-      itemSizes.value = []
-      measured.clear()
+    (newList: any[], oldList: any[]) => {
+      // 首次测量无需清空
+      if (!oldList || !oldList.length) return
+      if (!newList || !newList.length) {
+        resetCache()
+        return
+      }
+      const oldFirstKey = oldList?.[0]?.[props.itemKey]
+      const newFirstKey = newList?.[0]?.[props.itemKey]
+      // 首项key值变化(说明列表被替换)或者有删除操作
+      if (oldFirstKey !== newFirstKey || newList.length < oldList.length) {
+        resetCache()
+      }
     },
-    { deep: true }
+    { deep: false }
   )
 
-  // 测量可视区域item大小
+  // 测量item高度
   watch(
     () => visibleRange.value,
     async () => {
-      await nextTick()
-      for (let i = 0; i < visibleList.value.length; i++) {
-        measureItem(i)
-      }
+      measureItem()
     },
     { immediate: true }
   )
@@ -232,9 +249,8 @@
     >
       <view
         v-for="(item, index) in visibleList"
-        :key="index"
-        :class="['yt-virtual-list--container-item', `item-${visibleRange.start + index}`]"
-        :style="itemStyle"
+        :key="item[props.itemKey]"
+        class="yt-virtual-list--container-item"
       >
         <slot
           name="list-item"
@@ -251,5 +267,11 @@
     ::-webkit-scrollbar {
       display: none;
     }
+  }
+  .yt-virtual-list--container-item {
+    width: var(--container-item-width);
+    height: var(--container-item-height);
+    box-sizing: border-box;
+    flex-shrink: 0;
   }
 </style>

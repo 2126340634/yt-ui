@@ -79,13 +79,13 @@ $component-themes: (
     'magic': $theme-magic,
     'blossom': $theme-blossom,
     'sunshine': $theme-sunshine,
-    'classic': #333,
+    'classic': #000,
     'forest-sky': $theme-forest,
     'ocean-sky': $theme-ocean,
     'magic-sky': $theme-magic,
     'blossom-sky': $theme-blossom,
     'sunshine-sky': $theme-sunshine,
-    'none': #ffffff00
+    'none': #000
   ),
   'calendar-header': (
     'forest': $theme-forest,
@@ -93,13 +93,13 @@ $component-themes: (
     'magic': $theme-magic,
     'blossom': $theme-blossom,
     'sunshine': $theme-sunshine,
-    'classic': linear-gradient(135deg, #33333350, #eee),
+    'classic': linear-gradient(135deg, #33333380, #33333333),
     'forest-sky': $theme-gradient-forest-sky,
     'ocean-sky': $theme-gradient-ocean-sky,
     'magic-sky': $theme-gradient-magic-sky,
     'blossom-sky': $theme-gradient-blossom-sky,
     'sunshine-sky': $theme-gradient-sunshine-sky,
-    'none': linear-gradient(135deg, #33333350, #eee)
+    'none': linear-gradient(135deg, #33333380, #33333333)
   ),
   'loading': (
     'forest': $theme-forest,
@@ -128,6 +128,62 @@ $component-themes: (
     'blossom-sky': $theme-blossom,
     'sunshine-sky': $theme-sunshine,
     'none': #ffffff00
+  ),
+  'card': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #333,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #333
+  ),
+  'segment': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #999,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #999
+  ),
+  'steps': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #333,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #333
+  ),
+  'schedule': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #333,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #333
   )
 );
 
@@ -197,7 +253,6 @@ $component-themes: (
     }
   }
 }
-
 // input
 @each $name, $color in map.get($component-themes, 'input') {
   .yt-input--theme-#{$name} {
@@ -212,26 +267,23 @@ $component-themes: (
     border-radius: 8px;
   }
 }
-
 // avatar
 @each $name, $color in map.get($component-themes, 'avatar') {
   .yt-avatar--theme-#{$name} {
     border: 1px solid #{$color};
   }
 }
-
 // calendar
 @each $name, $color in map.get($component-themes, 'calendar') {
   .yt-calendar--theme-#{$name} {
     .yt-calendar--body-grid-item-today {
       background: rgba($color, 0.05);
-      border: 1px solid #{$color};
+      border-color: #{$color};
       color: #{$color};
-      @if $name == 'none' {
-        background: rgba(#333, 0.05);
-        border: 1px solid #333;
-        color: #333;
-      }
+    }
+    .yt-calendar--body-grid-item-secondary {
+      background: transparent;
+      border-color: transparent;
     }
     .yt-calendar--body-week {
       color: rgba($color, 0.8);
@@ -241,7 +293,6 @@ $component-themes: (
     }
   }
 }
-
 // calendar-header
 @each $name, $color in map.get($component-themes, 'calendar-header') {
   .yt-calendar--theme-#{$name} {
@@ -250,7 +301,6 @@ $component-themes: (
     }
   }
 }
-
 // loading-inner-circle
 @each $name, $color in map.get($component-themes, 'loading') {
   .yt-loading--theme-#{$name} {
@@ -259,7 +309,6 @@ $component-themes: (
     }
   }
 }
-
 // notice-bar
 @each $name, $color in map.get($component-themes, 'notice-bar') {
   .yt-notice-bar--theme-#{$name} {
@@ -267,6 +316,77 @@ $component-themes: (
     color: #{$color};
     @if $name == 'classic' or $name == 'none' {
       color: #333333aa;
+    }
+  }
+}
+// card
+@each $name, $color in map.get($component-themes, 'card') {
+  .yt-card--theme-#{$name} {
+    .yt-card--decoration {
+      color: #{$color};
+    }
+  }
+}
+// segment
+@each $name, $color in map.get($component-themes, 'segment') {
+  .yt-segment--theme-#{$name} {
+    .yt-segment--text {
+      border-color: #{$color};
+      color: #{$color};
+
+      &-active {
+        background: #{$color};
+        color: #fff;
+      }
+    }
+  }
+}
+// steps
+@each $name, $color in map.get($component-themes, 'steps') {
+  .yt-steps--theme-#{$name} {
+    .yt-steps--item-active {
+      .yt-steps--item-icon,
+      .yt-steps--item-line {
+        border-color: #{$color};
+      }
+      .yt-steps--item-icon-text,
+      .yt-steps--item-text {
+        color: #{$color};
+      }
+    }
+  }
+}
+
+// schedule
+@each $name, $color in map.get($component-themes, 'schedule') {
+  .yt-schedule--theme-#{$name} {
+    // week text
+    .yt-schedule--header-time-week {
+      color: #{$color};
+    }
+    .yt-schedule--week-text-active {
+      color: #{$color};
+      text-decoration-color: #{$color};
+    }
+    // selected border
+    .yt-schedule--date-container-active {
+      border-color: #{$color};
+      color: #{$color};
+    }
+
+    // dot background of current week
+    .yt-schedule--date-container-current-week {
+      .yt-schedule--date-container-dot {
+        background: #{$color};
+      }
+    }
+
+    // text color of today
+    .yt-schedule--date-container-today {
+      .yt-schedule--date-container-day,
+      .yt-schedule--date-container-date {
+        color: #{$color};
+      }
     }
   }
 }

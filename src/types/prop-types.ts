@@ -12,6 +12,8 @@ export type BorderStyle =
   | 'inset' // 3D内嵌边框（部分平台支持）
   | 'outset' // 3D外凸边框（部分平台支持）
 
+export type AlignType = 'left' | 'center' | 'right' | 'start' | 'end'
+
 export type InputType =
   | 'text' // 文本输入键盘
   | 'number' // 数字输入键盘

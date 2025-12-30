@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, nextTick, onUnmounted, ref } from 'vue'
+  import { computed, onUnmounted, ref, shallowRef, watch } from 'vue'
   import { ThemeColor } from '../../types/theme-types'
   import { useInterval } from '../../hooks/useInterval'
 
@@ -8,6 +8,7 @@
     disabled?: boolean
     showBgColor?: boolean
     list: any[]
+    modelValue?: number | null
     width?: number | string
     height?: number | string
     direction?: 'horizontal' | 'vertical'
@@ -21,7 +22,6 @@
     dotsSide?: 'left' | 'right'
     dotsOffset?: number | string
     loop?: boolean
-    lazy?: boolean
     autoplay?: boolean
     interval?: number
     type?: 'default' | 'card'
@@ -36,6 +36,7 @@
     disabled: false,
     showBgColor: false,
     list: () => [],
+    modelValue: null,
     width: '100%',
     height: '100%',
     direction: 'horizontal',
@@ -49,7 +50,6 @@
     dotsSide: 'right',
     dotsOffset: '15%',
     loop: true,
-    lazy: true,
     autoplay: false,
     interval: 2000,
     type: 'default',
@@ -65,7 +65,7 @@
 
   const { pause, resume, clear } = useInterval(
     () => {
-      if (props.autoplay && !isAnimating.value && props.list.length > 1) {
+      if (props.autoplay && !isAnimating && props.list.length > 1) {
         if (!props.loop && curIndex.value === visibleList.value.length - 1) {
           curIndex.value = 0
           return
@@ -80,25 +80,27 @@
   const emit = defineEmits<{
     click: [e: Event, index: number]
     change: [index: number]
+    'update:modelValue': [modelValue: number]
   }>()
 
-  function handleClick(e: Event, index: number) {
-    emit('click', e, index)
+  function handleClick(e: Event) {
+    emit('click', e, realCurIndex.value)
   }
 
   // swiper
+  const systemInfo = uni.getSystemInfoSync()
   const curIndex = ref(props.loop && props.list.length > 1 ? 1 : 0)
   const enableTransition = ref(true)
-  const isAnimating = ref(false)
-  let lastTouchTime = 0
-  const THTROTTLE_DELAY = 16 // 60FPS
-  const MIN_SWIPE_THRESHOLD = 80
+  let isAnimating = false
+  let endAnimTimer: NodeJS.Timeout | null = null
+  const MIN_SWIPE_THRESHOLD = 50
   // autoplay
-  const resumeTimer = ref<NodeJS.Timeout | null>(null)
-  const touchState = ref({
+  let resumeTimer: NodeJS.Timeout | null = null
+  const touchState = shallowRef({
     startX: 0,
     startY: 0,
     isSwiping: false,
+    direction: '' as 'horizontal' | 'vertical' | '',
     deltaX: 0,
     deltaY: 0
   })
@@ -141,29 +143,26 @@
       '--swiper-translate-duration': enableTransition.value ? `${props.duration * 0.001}s` : '0s'
     }
   })
-  const draggerTransform = computed(() => {
-    const translateX = props.disabled
-      ? 'translateX(0)'
-      : `translateX(max(-50% ,min(${touchState.value.deltaX * 0.7}px, 50%)))`
-    const translateY = props.disabled
-      ? 'translateY(0)'
-      : `translateY(max(-50% ,min(${touchState.value.deltaY * 0.7}px, 50%)))`
-    return {
-      translate: isHorizontal.value ? translateX : translateY,
-      horizontalNext: isHorizontal.value && touchState.value.deltaX < -swipeThreshold.value,
-      horizontalPrev: isHorizontal.value && touchState.value.deltaX > swipeThreshold.value,
-      verticalNext: !isHorizontal.value && touchState.value.deltaY < -swipeThreshold.value,
-      verticalPrev: !isHorizontal.value && touchState.value.deltaY > swipeThreshold.value
+  const draggerTransform = ref('translate(0')
+  function updateDraggerTransform() {
+    const { deltaX, deltaY } = touchState.value
+    const activeDeltaX = touchState.value.direction === 'horizontal' ? deltaX : 0
+    const activeDeltaY = touchState.value.direction === 'vertical' ? deltaY : 0
+    if (isHorizontal.value) {
+      draggerTransform.value = props.disabled ? 'translate(0)' : `translateX(${activeDeltaX}px)`
+    } else {
+      draggerTransform.value = props.disabled ? 'translate(0)' : `translateY(${activeDeltaY}px)`
     }
-  })
+  }
   const swipeThreshold = computed(() => {
-    const systemInfo = uni.getSystemInfoSync()
-    const threshold = isHorizontal.value ? systemInfo.windowWidth / 3 : systemInfo.windowHeight / 3
+    const threshold =
+      (isHorizontal.value ? systemInfo.windowWidth / 3 : systemInfo.windowHeight / 3) ||
+      MIN_SWIPE_THRESHOLD
     return Math.min(threshold, MIN_SWIPE_THRESHOLD)
   })
   const swiperDraggerStyle = computed(() => {
     return {
-      transform: draggerTransform.value.translate
+      transform: draggerTransform.value
     }
   })
   const swiperDraggerClass = computed(() => {
@@ -179,36 +178,47 @@
       flexDirection: (isHorizontal.value ? 'row' : 'column') as 'row' | 'column'
     }
   })
+  const realCurIndex = computed(() => getRealIndex(curIndex.value))
 
   /**
    * swiper相关函数
    */
   function canAnimate() {
-    return props.list.length && !isAnimating.value
+    return props.list.length && !isAnimating
   }
   function endAnim() {
-    setTimeout(() => {
-      isAnimating.value = false
+    if (endAnimTimer) clearTimeout(endAnimTimer)
+    endAnimTimer = setTimeout(() => {
+      isAnimating = false
     }, props.duration)
   }
-  function handleLoopJump(targetIndex: number) {
-    setTimeout(async () => {
+  async function handleLoopJump(targetIndex: number, wait: boolean = true) {
+    const execute = async () => {
       enableTransition.value = false
-      await nextTick() // 等待以上执行完成
       curIndex.value = targetIndex
-      await new Promise(resolve => setTimeout(resolve, 50)) // 等待3帧 更新位置以及确保完成
-      enableTransition.value = true
-      isAnimating.value = false
-    }, props.duration)
+      // 等待3帧 更新位置以及确保完成
+      setTimeout(() => {
+        enableTransition.value = true
+        isAnimating = false
+      }, 50)
+    }
+    if (wait) {
+      setTimeout(async () => {
+        await execute()
+      }, props.duration)
+    } else {
+      await execute()
+    }
   }
   function handlePrev() {
     if (!canAnimate()) return
     if (!props.loop && curIndex.value === 0) return
     if (props.disabled) return
 
-    isAnimating.value = true
+    isAnimating = true
     curIndex.value--
-    emit('change', getRealIndex(curIndex.value))
+    emit('change', realCurIndex.value)
+    emit('update:modelValue', realCurIndex.value)
     if (props.loop) {
       if (curIndex.value === 0) {
         handleLoopJump(visibleList.value.length - 2)
@@ -218,10 +228,10 @@
     } else {
       if (curIndex.value > 0) {
         setTimeout(() => {
-          isAnimating.value = false
+          isAnimating = false
         }, props.duration)
       } else {
-        isAnimating.value = false
+        isAnimating = false
       }
     }
   }
@@ -230,9 +240,10 @@
     if (!props.loop && curIndex.value === props.list.length - 1) return
     if (props.disabled) return
 
-    isAnimating.value = true
+    isAnimating = true
     curIndex.value++
-    emit('change', getRealIndex(curIndex.value))
+    emit('change', realCurIndex.value)
+    emit('update:modelValue', realCurIndex.value)
     if (props.loop) {
       if (curIndex.value === visibleList.value.length - 1) {
         handleLoopJump(1)
@@ -242,21 +253,27 @@
     } else {
       if (curIndex.value < props.list.length - 1) {
         setTimeout(() => {
-          isAnimating.value = false
+          isAnimating = false
         }, props.duration)
       } else {
-        isAnimating.value = false
+        isAnimating = false
       }
     }
   }
-  const visibleList = computed(() => {
-    const length = props.list.length
-    if (!length) return []
-    if (props.loop && length > 1) {
-      return [props.list[length - 1], ...props.list, props.list[0]]
-    }
-    return props.list
-  })
+  const visibleList = shallowRef<any[]>([])
+  watch(
+    () => [props.list, props.loop] as const,
+    ([list, loop]) => {
+      if (!list.length) {
+        visibleList.value = []
+      } else if (loop && list.length > 1) {
+        visibleList.value = [list[list.length - 1], ...list, list[0]]
+      } else {
+        visibleList.value = list // 直接引用
+      }
+    },
+    { immediate: true }
+  )
   function getRealIndex(displayIndex: number) {
     if (!props.loop || props.list.length <= 1) {
       return displayIndex
@@ -315,9 +332,7 @@
     const end = curIndex.value !== props.list.length - 1
     return { start, end }
   })
-  // lazy
-  const shouldRender = (displayIndex: number) => {
-    if (!props.lazy) return true
+  function shouldShow(displayIndex: number) {
     const current = curIndex.value
     const total = visibleList.value.length
     // 当前页面
@@ -344,44 +359,67 @@
       startX: touch.clientX,
       startY: touch.clientY,
       isSwiping: false,
+      direction: '',
       deltaX: 0,
       deltaY: 0
     }
     pause()
   }
   function handleTouchMove(e: TouchEvent) {
-    const now = Date.now()
-    if (now - lastTouchTime < THTROTTLE_DELAY) return
-    const deltaX = e.touches[0].clientX - touchState.value.startX
-    const deltaY = e.touches[0].clientY - touchState.value.startY
-    touchState.value.deltaX = deltaX
-    touchState.value.deltaY = deltaY
-    if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
-      touchState.value.isSwiping = true
+    const touches = e.touches[0]
+    const deltaX = touches.clientX - touchState.value.startX
+    const deltaY = touches.clientY - touchState.value.startY
+    let direction = touchState.value.direction
+    if (!direction) {
+      const absX = Math.abs(deltaX)
+      const absY = Math.abs(deltaY)
+      if (absX < 5 && absY < 5) return
+      direction = absX > absY ? 'horizontal' : 'vertical'
     }
-    lastTouchTime = now
+    if (direction !== props.direction) return
+    e.preventDefault()
+    touchState.value = {
+      ...touchState.value,
+      direction,
+      deltaX,
+      deltaY,
+      isSwiping: Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5
+    }
+
+    updateDraggerTransform()
   }
   function handleTouchEnd() {
+    draggerTransform.value = 'translate(0)'
+
     // autoplay
-    if (resumeTimer.value) {
-      clearTimeout(resumeTimer.value)
-      resumeTimer.value = null
+    if (resumeTimer) {
+      clearTimeout(resumeTimer)
+      resumeTimer = null
     }
     if (!touchState.value.isSwiping) {
       if (props.autoplay) resume()
     } else {
-      resumeTimer.value = setTimeout(() => {
+      resumeTimer = setTimeout(() => {
         if (props.autoplay) resume()
-        resumeTimer.value = null
+        resumeTimer = null
       }, 500)
     }
-    // touchMove
-    if (draggerTransform.value.horizontalNext || draggerTransform.value.verticalNext) handleNext()
-    if (draggerTransform.value.horizontalPrev || draggerTransform.value.verticalPrev) handlePrev()
+
+    const { deltaX, deltaY } = touchState.value
+    const isH = isHorizontal.value
+    const threshold = swipeThreshold.value
+    if (touchState.value.isSwiping) {
+      if ((isH && deltaX < -threshold) || (!isH && deltaY < -threshold)) {
+        handleNext()
+      } else if ((isH && deltaX > threshold) || (!isH && deltaY > threshold)) {
+        handlePrev()
+      }
+    }
     touchState.value = {
       startX: 0,
       startY: 0,
       isSwiping: false,
+      direction: '',
       deltaX: 0,
       deltaY: 0
     }
@@ -402,10 +440,27 @@
     ]
   })
 
+  watch(
+    () => props.modelValue,
+    (newIndex: number | null) => {
+      // 判断当前索引是否是emit更新又传进子组件来的，如果是则return，防止再次执行jump阻断动画播放
+      if (newIndex === null || newIndex === realCurIndex.value) return
+      let targetIndex = newIndex
+      if (props.loop) targetIndex++
+      const safeIndex = Math.min(visibleList.value.length - 1, Math.max(0, targetIndex))
+      handleLoopJump(safeIndex, false)
+    },
+    { immediate: true }
+  )
+
   onUnmounted(() => {
-    if (resumeTimer.value) {
-      clearTimeout(resumeTimer.value)
-      resumeTimer.value = null
+    if (resumeTimer) {
+      clearTimeout(resumeTimer)
+      resumeTimer = null
+    }
+    if (endAnimTimer) {
+      clearTimeout(endAnimTimer)
+      endAnimTimer = null
     }
     clear() // clear useInterval()
   })
@@ -437,16 +492,16 @@
           class="yt-swiper--container-item"
           v-for="(item, index) in visibleList"
           :key="index"
-          @click="handleClick($event, getRealIndex(index))"
+          @click="handleClick"
           :style="getCardStyle(index)"
         >
-          <template v-if="shouldRender(index)">
+          <view v-show="shouldShow(index)">
             <slot
               name="swiper-item"
               :item="item"
               :index="getRealIndex(index)"
             />
-          </template>
+          </view>
         </view>
       </view>
     </view>
@@ -496,7 +551,7 @@
         :theme="theme"
         :total="maxSwiperDots"
         :size="props.dotsSize"
-        :activeIndex="getRealIndex(curIndex)"
+        :activeIndex="realCurIndex"
         :direction="props.direction"
       />
     </view>

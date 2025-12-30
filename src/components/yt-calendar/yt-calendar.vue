@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, toRaw } from 'vue'
+  import { computed, ref, shallowRef, toRaw } from 'vue'
   import { ThemeColor } from '../../types/theme-types'
   import { Calendar, useCalendar } from '../../hooks/useCalendar'
   import { throttle } from '../../utils/util'
@@ -51,6 +51,7 @@
 
   const emit = defineEmits<{
     change: [{ year: number; month: number }]
+    dateClick: [{ year: number; month: number; date: number; index: number }]
   }>()
 
   const calendarClass = computed(() => {
@@ -65,6 +66,38 @@
         typeof props.borderRadius === 'number' ? `${props.borderRadius}px` : props.borderRadius
     }
   })
+  const calendarOpacity = computed(() => {
+    if (!touchState.value.isDragging) return 1
+    const value = 1 - Math.abs(touchState.value.curX - touchState.value.startX) * 0.012
+    return Math.min(Math.max(0.1, value), 1)
+  })
+  const calendarGridClass = computed(() => {
+    return (item: Calendar, index: number) => {
+      const active =
+        calendar.isToday(item.year, item.month, item.date) || index === selectedDate.value?.index
+      const secondary =
+        active && selectedDate.value !== null && item.date !== selectedDate.value.item.date
+      return {
+        'yt-calendar--body-grid-item': true,
+        'yt-calendar--body-grid-item-today': active,
+        'yt-calendar--body-grid-item-secondary': secondary,
+        'yt-calendar--body-grid-item-prev-month': item.isPrevMonth,
+        'yt-calendar--body-grid-item-next-month': item.isNextMonth
+      }
+    }
+  })
+  const arrowScale = computed(() => {
+    if (!touchState.value.isDragging) return { leftScale: 1, rightScale: 1 }
+    const deltaX = touchState.value.curX - touchState.value.startX
+    const rightScale =
+      deltaX < 0 ? 1 + Math.abs(touchState.value.curX - touchState.value.startX) * 0.012 : 1
+    const leftScale =
+      deltaX > 0 ? 1 + Math.abs(touchState.value.curX - touchState.value.startX) * 0.012 : 1
+    return {
+      leftScale: Math.min(Math.max(1, leftScale), 1.5),
+      rightScale: Math.min(Math.max(1, rightScale), 1.5)
+    }
+  })
 
   const calendar = useCalendar()
   const date = ref<Date>(new Date())
@@ -72,31 +105,29 @@
     year: date.value.getFullYear(),
     month: date.value.getMonth() + 1
   })
-  const touchState = ref({
+  const touchState = shallowRef({
     curX: 0,
     curY: 0,
     startX: 0,
     startY: 0,
     isDragging: false
   })
+  const selectedDate = ref<{ item: Calendar; index: number } | null>(null)
+
   const calendarData = computed(() => {
     return calendar.getCalendar(state.value.year, state.value.month)
   })
-
   const backgroundText = computed(() => {
     return `${monthNameMap[state.value.month].slice(0, 3)}.${state.value.month}`
   })
-
   function getExtra(item: Calendar) {
     const target = props.monthData.find(md => md.date === item.date && item.isCurMonth)
     return target?.extra || ''
   }
-
   function isHoliday(item: Calendar) {
     const target = props.monthData.find(md => md.date === item.date && item.isCurMonth)
     return target?.isHoliday
   }
-
   function changeMonth(type: 'prev' | 'next') {
     let newMonth = state.value.month
     let newYear = state.value.year
@@ -123,38 +154,38 @@
       year: newYear,
       month: newMonth
     }
+    selectedDate.value = null
     emit('change', toRaw(state.value))
   }
-
   function handleDatePickerChange(str: any) {
+    selectedDate.value = null
     const strArr = str.split('-')
     state.value.year = Number(strArr[0])
     state.value.month = Number(strArr[1])
     emit('change', toRaw(state.value))
   }
-
   function handleTouchStart(e: any) {
     if (props.loading) return
-    touchState.value.startX = e.touches[0].clientX
-    touchState.value.startY = e.touches[0].clientY
+    const touches = e.touches[0]
+    touchState.value = {
+      ...touchState.value,
+      startX: touches.clientX,
+      startY: touches.clientY
+    }
   }
-
-  const handleTouchMove = throttle(
-    (e: any) => {
-      if (props.loading) return
-      touchState.value.curX = e.touches[0].clientX
-      touchState.value.curY = e.touches[0].clientY
-      if (
-        Math.abs(touchState.value.curX - touchState.value.startX) ||
-        Math.abs(touchState.value.curY - touchState.value.startY) > 5
-      ) {
-        touchState.value.isDragging = true
-      }
-    },
-    16,
-    { leading: true, trailing: false }
-  )
-
+  function handleTouchMove(e: TouchEvent) {
+    if (props.loading) return
+    e.preventDefault()
+    const touches = e.touches[0]
+    const absDeltaX = Math.abs(touchState.value.curX - touchState.value.startX)
+    const absDeltaY = Math.abs(touchState.value.curY - touchState.value.startY)
+    touchState.value = {
+      ...touchState.value,
+      curX: touches.clientX,
+      curY: touches.clientY,
+      isDragging: absDeltaX > 5 || absDeltaY > 5
+    }
+  }
   function handleTouchEnd() {
     const deltaX = touchState.value.curX - touchState.value.startX
     const deltaY = touchState.value.curY - touchState.value.startY
@@ -169,25 +200,11 @@
       isDragging: false
     }
   }
-
-  const calendarOpacity = computed(() => {
-    if (!touchState.value.isDragging) return 1
-    const value = 1 - Math.abs(touchState.value.curX - touchState.value.startX) * 0.012
-    return Math.min(Math.max(0.1, value), 1)
-  })
-
-  const arrowScale = computed(() => {
-    if (!touchState.value.isDragging) return { leftScale: 1, rightScale: 1 }
-    const deltaX = touchState.value.curX - touchState.value.startX
-    const rightScale =
-      deltaX < 0 ? 1 + Math.abs(touchState.value.curX - touchState.value.startX) * 0.012 : 1
-    const leftScale =
-      deltaX > 0 ? 1 + Math.abs(touchState.value.curX - touchState.value.startX) * 0.012 : 1
-    return {
-      leftScale: Math.min(Math.max(1, leftScale), 1.5),
-      rightScale: Math.min(Math.max(1, rightScale), 1.5)
-    }
-  })
+  function handleDateClick(item: Calendar, index: number) {
+    if (selectedDate.value !== null && selectedDate.value.index === index) return
+    selectedDate.value = { item, index }
+    emit('dateClick', { year: item.year, month: item.month, date: item.date, index })
+  }
 
   defineOptions({
     name: 'YtCalendar'
@@ -250,18 +267,8 @@
         <span
           v-for="(item, index) in calendarData"
           :key="index"
-          :class="[
-            'yt-calendar--body-grid-item',
-            {
-              'yt-calendar--body-grid-item-today': calendar.isToday(
-                item.year,
-                item.month,
-                item.date
-              ),
-              'yt-calendar--body-grid-item-prev-month': item.isPrevMonth,
-              'yt-calendar--body-grid-item-next-month': item.isNextMonth
-            }
-          ]"
+          :class="calendarGridClass(item, index)"
+          @click="handleDateClick(item, index)"
         >
           <p class="yt-calendar--body-grid-item-date">{{ item.date }}</p>
           <p class="yt-calendar--body-grid-item-extra">
@@ -294,16 +301,13 @@
 
   .yt-calendar--body {
     opacity: v-bind(calendarOpacity);
-    transition: opacity var.$transition-duration-fast var.$easing-ease-out;
   }
 
   .arrow-left {
     transform: scale(v-bind('arrowScale.leftScale'));
-    transition: transform var.$transition-duration-medium var.$easing-ease-out;
   }
 
   .arrow-right {
     transform: scale(v-bind('arrowScale.rightScale'));
-    transition: transform var.$transition-duration-medium var.$easing-ease-out;
   }
 </style>

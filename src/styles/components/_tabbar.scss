@@ -73,8 +73,6 @@ $center-item-height: 48px;
         }
 
         &-image {
-          transform: scale(0.42);
-          object-fit: fill;
           width: $center-item-width;
           height: $center-item-width;
         }

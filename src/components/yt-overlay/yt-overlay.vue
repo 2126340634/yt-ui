@@ -24,21 +24,17 @@
 
   const overlayStyle = computed(() => {
     return {
-      backgroundColor: props.bgColor,
-      transition: `opacity ${props.duration}ms ease-out, visibility ${props.duration}ms linear`,
-      zIndex: props.zIndex,
       width: typeof props.width === 'number' ? `${props.width}px` : props.width,
-      height: typeof props.height === 'number' ? `${props.height}px` : props.height
+      height: typeof props.height === 'number' ? `${props.height}px` : props.height,
+      '--overlay-background-color': props.bgColor,
+      '--overlay-transition': `opacity ${props.duration}ms ease-out, visibility ${props.duration}ms linear`,
+      '--overlay-z-index': props.zIndex
     }
   })
-  const overlayClass = computed(() => {
-    return [
-      'yt-overlay',
-      {
-        'yt-overlay--visible': props.visible
-      }
-    ]
-  })
+  const overlayClass = computed(() => ({
+    'yt-overlay': true,
+    'yt-overlay--visible': props.visible
+  }))
 
   function handleClick(e: Event) {
     emit('click', e)

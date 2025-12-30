@@ -57,14 +57,15 @@
     position: absolute;
     top: 50%;
     background-color: #fff;
-    border-radius: 20px;
+    border-radius: 10px;
     box-sizing: border-box;
     padding: 4px;
     transition: transform var.$transition-duration-medium var.$easing-ease-out,
       opacity var.$transition-duration-fast var.$easing-ease-in-out;
-    transform: translateY(-50%) scaleX(0.5);
+    transform: translateY(-50%) scaleX(0.3);
     opacity: 0;
     box-shadow: var.$shadow-1;
+    pointer-events: none;
 
     &-right {
       right: calc(100% + 4px);
@@ -79,6 +80,7 @@
     &-active {
       transform: translateY(-50%) scaleX(1);
       opacity: 1;
+      pointer-events: all;
     }
 
     &-item {
