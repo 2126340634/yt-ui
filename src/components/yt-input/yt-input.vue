@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
+  import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
   import { InputType, KeyboardConfirmType } from '../../types/prop-types'
   import { ThemeColor } from '../../types/theme-types'
 
@@ -68,6 +68,8 @@
     keyboardHeightChange: [{ height: number; duration: number }]
   }>()
 
+  const currentValue = ref<any>()
+
   function handleInput(e: any) {
     currentValue.value = e.detail.value
     emit('input', e.detail.value)
@@ -86,11 +88,21 @@
     emit('keyboardHeightChange', e.detail)
   }
 
+  watch(
+    () => [props.modelValue, props.value],
+    ([newModel, newVal]) => {
+      const val = newModel || newVal
+      if (val !== currentValue.value) {
+        currentValue.value = val
+      }
+    },
+    { immediate: true }
+  )
+
   defineOptions({
     name: 'YtInput'
   })
 
-  const currentValue = ref<any>(props.modelValue || props.value)
   const registerField: any = inject('registerField', () => {})
   const unregisterField: any = inject('unregisterField', () => {})
   const getValue = () => {

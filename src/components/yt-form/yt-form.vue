@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { provide, ref } from 'vue'
+  import { onUnmounted, provide, ref } from 'vue'
 
   interface Props {
     rules?: Record<string, { rule: (value: any) => boolean; message: string }[]>
@@ -32,8 +32,11 @@
     return formData
   }
 
-  function handleReset() {
-    fields.value.forEach(item => {
+  // 传names按name清除，否则默认全部清除
+  function handleReset(names: string[] = []) {
+    const resetAll = !names.length
+    fields.value.forEach((item, key) => {
+      if (!resetAll && !names.includes(key)) return
       const currentValue = item.getValue()
       if (Array.isArray(currentValue)) {
         item.setValue([])
@@ -62,6 +65,10 @@
   function validate(callback?: (valid: boolean) => void) {
     return callback ? callback(validateAll()) : validateAll()
   }
+
+  onUnmounted(() => {
+    fields.value.clear()
+  })
 
   defineExpose({
     submitForm: handleSubmit,

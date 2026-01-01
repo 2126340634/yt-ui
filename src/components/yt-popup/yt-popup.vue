@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, watch } from 'vue'
+  import { computed, CSSProperties, onUnmounted, watch } from 'vue'
   interface HeaderProps {
     title?: string
     cancelName?: string
@@ -11,6 +11,8 @@
   interface Props {
     width?: number | string
     height?: number | string
+    maxWidth?: number | string
+    maxHeight?: number | string
     bgColor?: string
     overlayColor?: string
     visible?: boolean
@@ -24,8 +26,10 @@
     headerProps?: HeaderProps
   }
   const props = withDefaults(defineProps<Props>(), {
-    width: 'min(70vw, 400px)',
-    height: 'min(70vh, 400px)',
+    width: '70vw',
+    height: '70vh',
+    maxWidth: 'none',
+    maxHeight: 'none',
     bgColor: '#ffffff',
     overlayColor: '#00000080',
     visible: false,
@@ -37,7 +41,7 @@
     destroyOnClose: false,
     headerType: 'none',
     headerProps: () => ({
-      title: '标题文字',
+      title: '',
       cancelName: '取消',
       confirmName: '确定',
       cancelFn: () => {},
@@ -45,6 +49,15 @@
       closeSide: 'right'
     })
   })
+  const emit = defineEmits<{
+    overlayClick: [e: Event]
+    'update:visible': [value: boolean]
+    open: []
+    opened: []
+    close: []
+    closed: []
+  }>()
+
   const shouldRender = computed(() => {
     return props.visible || !props.destroyOnClose
   })
@@ -70,10 +83,10 @@
       br = borderRadius
     }
     return {
-      borderTopLeftRadius: tl,
-      borderTopRightRadius: tr,
-      borderBottomLeftRadius: bl,
-      borderBottomRightRadius: br
+      '--popup-borderTopLeftRadius': tl,
+      '--popup-borderTopRightRadius': tr,
+      '--popup-borderBottomLeftRadius': bl,
+      '--popup-borderBottomRightRadius': br
     }
   })
   const popupClass = computed(() => {
@@ -88,16 +101,20 @@
   const popupStyle = computed(() => {
     const width = typeof props.width === 'number' ? `${props.width}px` : props.width
     const height = typeof props.height === 'number' ? `${props.height}px` : props.height
+    const maxWidth = typeof props.maxWidth === 'number' ? `${props.maxWidth}px` : props.maxWidth
+    const maxHeight = typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight
     return {
       ...popupBorderRadius.value,
-      width: isCenter.value ? `min(${width}, ${height})` : isHorizontal.value ? width : '100vw',
-      height: isCenter.value ? `min(${width}, ${height})` : isHorizontal.value ? '100vh' : height,
-      zIndex: props.zIndex,
-      transition: `transform ${props.duration}ms ease-out, opacity ${props.duration}ms ease-out`,
-      backgroundColor: props.bgColor,
+      width: isCenter.value ? width : isHorizontal.value ? width : '100vw',
+      height: isCenter.value ? height : isHorizontal.value ? '100vh' : height,
+      '--popup-max-width': maxWidth,
+      '--popup-max-height': maxHeight,
+      '--popup-z-index': props.zIndex,
+      '--popup-transition': `transform ${props.duration}ms ease-out, opacity ${props.duration}ms ease-out`,
+      '--popup-background-color': props.bgColor,
       '--popup-header-close-justify-content':
         props.headerProps.closeSide === 'left' ? 'flex-start' : 'flex-end'
-    }
+    } as CSSProperties
   })
   const isHorizontal = computed(() => {
     return props.placement === 'left' || props.placement === 'right'
@@ -105,33 +122,40 @@
   const isCenter = computed(() => {
     return props.placement === 'center'
   })
-  const emit = defineEmits<{
-    overlayClick: [e: Event]
-    'update:visible': [value: boolean]
-    open: []
-    opened: []
-    close: []
-    closed: []
-  }>()
-  watch(
-    () => props.visible,
-    newVal => {
-      if (newVal) {
-        emit('open')
-        setTimeout(() => emit('opened'), props.duration)
-      } else {
-        emit('close')
-        setTimeout(() => emit('closed'), props.duration)
-      }
-    },
-    { immediate: true }
-  )
+
   function handleOverlayClick(e: Event) {
     emit('overlayClick', e)
     if (props.closeOnOverlayClick) {
       emit('update:visible', false)
     }
   }
+
+  let stateTime: NodeJS.Timeout | null = null
+  watch(
+    () => props.visible,
+    newVal => {
+      if (stateTime) {
+        clearTimeout(stateTime)
+        stateTime = null
+      }
+      if (newVal) {
+        emit('open')
+        stateTime = setTimeout(() => emit('opened'), props.duration)
+      } else {
+        emit('close')
+        stateTime = setTimeout(() => emit('closed'), props.duration)
+      }
+    },
+    { immediate: true }
+  )
+
+  onUnmounted(() => {
+    if (stateTime) {
+      clearTimeout(stateTime)
+      stateTime = null
+    }
+  })
+
   defineOptions({
     name: 'YtPopup'
   })
@@ -142,9 +166,11 @@
     v-if="shouldRender"
     :class="popupClass"
     :style="popupStyle"
-    @touchmove.stop
   >
-    <view class="yt-popup--header">
+    <view
+      class="yt-popup--header"
+      v-if="headerType !== 'none'"
+    >
       <view
         v-if="headerType === 'cancel-confirm'"
         class="yt-popup--header-cancel-confirm"

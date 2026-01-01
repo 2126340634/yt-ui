@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { inject, onMounted, onUnmounted, ref } from 'vue'
+  import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
 
   interface Props {
     name?: string
@@ -17,10 +17,7 @@
     type: 'switch'
   })
 
-  // 初始化传入的checked
   const currentValue = ref<any>(false)
-  if (props.modelValue !== null) currentValue.value = props.modelValue
-  else currentValue.value = !!props.checked
 
   const emit = defineEmits<{
     'update:modelValue': [modelValue: boolean]
@@ -32,6 +29,17 @@
     emit('update:modelValue', e.detail.value)
     emit('change', e.detail.value)
   }
+
+  watch(
+    () => [props.modelValue, props.checked],
+    ([newModel, newChecked]) => {
+      const targetValue = newModel !== null ? !!newModel : !!newChecked
+      if (currentValue.value !== targetValue) {
+        currentValue.value = targetValue
+      }
+    },
+    { immediate: true }
+  )
 
   defineOptions({
     name: 'YtSwitch'

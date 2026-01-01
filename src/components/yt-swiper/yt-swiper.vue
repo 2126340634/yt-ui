@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, onUnmounted, ref, shallowRef, watch } from 'vue'
+  import { computed, CSSProperties, onUnmounted, ref, shallowRef, watch } from 'vue'
   import { ThemeColor } from '../../types/theme-types'
   import { useInterval } from '../../hooks/useInterval'
 
@@ -59,10 +59,6 @@
     borderRadius: 0
   })
 
-  const maxSwiperDots = computed(() => {
-    return Math.min(props.list.length, props.maxDots)
-  })
-
   const { pause, resume, clear } = useInterval(
     () => {
       if (props.autoplay && !isAnimating && props.list.length > 1) {
@@ -105,8 +101,8 @@
     deltaY: 0
   })
 
-  const cardBorderRadius = computed(() => {
-    return typeof props.borderRadius === 'number' ? `${props.borderRadius}px` : props.borderRadius
+  const maxSwiperDots = computed(() => {
+    return Math.min(props.list.length, props.maxDots)
   })
   const isHorizontal = computed(() => {
     return props.direction === 'horizontal'
@@ -124,16 +120,14 @@
       { 'yt-swiper--card': isCard.value }
     ]
   })
-  const swiperStyle = computed(() => {
-    const dotsOffset =
-      typeof props.dotsOffset === 'number' ? `${props.dotsOffset}%` : props.dotsOffset
-    return {
-      width: typeof props.width === 'number' ? `${props.width}px` : props.width,
-      height: typeof props.height === 'number' ? `${props.height}px` : props.height,
-      '--swiper-dots-offset': dotsOffset,
-      borderRadius: cardBorderRadius.value
-    }
-  })
+  const swiperStyle = computed(() => ({
+    '--swiper-width': typeof props.width === 'number' ? `${props.width}px` : props.width,
+    '--swiper-height': typeof props.height === 'number' ? `${props.height}px` : props.height,
+    '--swiper-dots-offset':
+      typeof props.dotsOffset === 'number' ? `${props.dotsOffset}%` : props.dotsOffset,
+    '--swiper-border-radius':
+      typeof props.borderRadius === 'number' ? `${props.borderRadius}px` : props.borderRadius
+  }))
   const swiperContainerClass = computed(() => {
     return ['yt-swiper--container', `yt-swiper--container-${props.direction}`]
   })
@@ -143,16 +137,18 @@
       '--swiper-translate-duration': enableTransition.value ? `${props.duration * 0.001}s` : '0s'
     }
   })
-  const draggerTransform = ref('translate(0')
+  const draggerTransform = ref('translate3d(0, 0, 0)')
   function updateDraggerTransform() {
     const { deltaX, deltaY } = touchState.value
+    if (!touchState.value.isSwiping || props.disabled) {
+      draggerTransform.value = 'translate3d(0, 0, 0)'
+      return
+    }
     const activeDeltaX = touchState.value.direction === 'horizontal' ? deltaX : 0
     const activeDeltaY = touchState.value.direction === 'vertical' ? deltaY : 0
-    if (isHorizontal.value) {
-      draggerTransform.value = props.disabled ? 'translate(0)' : `translateX(${activeDeltaX}px)`
-    } else {
-      draggerTransform.value = props.disabled ? 'translate(0)' : `translateY(${activeDeltaY}px)`
-    }
+    draggerTransform.value = isHorizontal.value
+      ? `translate3d(${activeDeltaX}px, 0, 0)`
+      : `translate3d(0, ${activeDeltaY}px, 0)`
   }
   const swipeThreshold = computed(() => {
     const threshold =
@@ -165,14 +161,10 @@
       transform: draggerTransform.value
     }
   })
-  const swiperDraggerClass = computed(() => {
-    return [
-      'yt-swiper--dragger',
-      {
-        'yt-swiper--dragger-swipping': touchState.value.isSwiping
-      }
-    ]
-  })
+  const swiperDraggerClass = computed(() => ({
+    'yt-swiper--dragger': true,
+    'yt-swiper--dragger-swiping': touchState.value.isSwiping
+  }))
   const arrowStyle = computed(() => {
     return {
       flexDirection: (isHorizontal.value ? 'row' : 'column') as 'row' | 'column'
@@ -284,38 +276,40 @@
   }
   function getCardStyle(index: number) {
     const isCurrentCard = isCurrentActive(index)
-    // transform
-    const translateValue =
-      index === curIndex.value + 1
-        ? -props.cardGap
-        : index === curIndex.value - 1
-        ? props.cardGap
-        : '0'
+    const isAdjacent = index === curIndex.value + 1 || index === curIndex.value - 1
     const diff = index - curIndex.value
     const rotateType = isHorizontal.value ? 'rotateY' : 'rotateX'
+    let translateValue = '0'
+    if (index === curIndex.value + 1) translateValue = `-${props.cardGap}%`
+    if (index === curIndex.value - 1) translateValue = `${props.cardGap}%`
+    // transform
+    const translate = isCurrentCard
+      ? 'translate(0, 0)'
+      : isHorizontal.value
+      ? `translateX(${translateValue})`
+      : `translateY(${translateValue})`
     const rotateValue = isCurrentCard ? '0deg' : `${diff * (isHorizontal.value ? -8 : 8)}deg`
-    const cardTransform = `${
-      isCurrentCard
-        ? 'translate(0, 0)'
-        : isHorizontal.value
-        ? `translateX(${translateValue}%)`
-        : `translateY(${translateValue}%)`
-    } translateZ(${isCurrentCard ? '0px' : '-50px'}) ${rotateType}(${rotateValue}) scale(${
-      isCurrentCard ? Math.min(props.activeCardScale, 1) : Math.min(props.inactiveCardScale, 1)
-    })`
+    const translateZ = isCurrentCard ? '0px' : '-50px'
+    const scale = isCurrentCard
+      ? Math.min(props.activeCardScale, 1)
+      : Math.min(props.inactiveCardScale, 1)
+    const cardTransform = isCard.value
+      ? `${translate} translateZ(${translateZ}) ${rotateType}(${rotateValue}) scale(${scale})`
+      : 'none'
     // shadow
     const boxShadow =
-      isCard.value &&
-      (isCurrentCard || index === curIndex.value + 1 || index === curIndex.value - 1)
+      isCard.value && (isCurrentCard || isAdjacent)
         ? '0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.2)'
         : 'none'
     // border-radius
-    const borderRadius = cardBorderRadius.value
+    const borderRadius =
+      typeof props.borderRadius === 'number' ? `${props.borderRadius}px` : props.borderRadius
+
     return {
-      transform: isCard.value ? cardTransform : 'none',
-      zIndex: index === curIndex.value ? '1' : '0',
-      boxShadow,
-      borderRadius
+      '--swiper-container-item-transform': cardTransform,
+      '--swiper-container-item-z-index': isCurrentCard ? '1' : '0',
+      '--swiper-container-item-box-shadow': boxShadow,
+      '--swiper-container-item-border-radius': borderRadius
     }
   }
   function isCurrentActive(index: number) {
@@ -383,13 +377,13 @@
       direction,
       deltaX,
       deltaY,
-      isSwiping: Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5
+      isSwiping: true
     }
 
     updateDraggerTransform()
   }
   function handleTouchEnd() {
-    draggerTransform.value = 'translate(0)'
+    draggerTransform.value = 'translate3d(0, 0, 0)'
 
     // autoplay
     if (resumeTimer) {

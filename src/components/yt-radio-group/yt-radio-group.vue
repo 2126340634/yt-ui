@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { inject, onMounted, onUnmounted, ref } from 'vue'
+  import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
 
   interface Props {
     name?: string // form-name
@@ -15,10 +15,7 @@
     list: () => []
   })
 
-  // 初始化传入的checked
   const currentValue = ref<any>(null)
-  const defaultItem = props.list.find(item => item.checked)
-  if (defaultItem) currentValue.value = defaultItem.value
 
   const emit = defineEmits<{
     change: [value: any]
@@ -28,6 +25,20 @@
     currentValue.value = e.detail.value
     emit('change', e.detail.value)
   }
+
+  watch(
+    () => props.list,
+    newList => {
+      const defaultItem = newList.find(item => item.checked)
+      if (defaultItem) {
+        currentValue.value = defaultItem.value
+      }
+    },
+    {
+      immediate: true,
+      deep: true
+    }
+  )
 
   defineOptions({
     name: 'YtRadioGroup'

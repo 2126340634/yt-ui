@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { inject, onMounted, onUnmounted, ref } from 'vue'
+  import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
 
   interface Props {
     name?: string // form-name
@@ -16,10 +16,7 @@
     list: () => []
   })
 
-  // 初始化传入的checked
   const currentValue = ref<any[]>([])
-  const defaultItem = props.list.filter(item => item.checked).map(item => item.value)
-  if (defaultItem.length) currentValue.value = defaultItem
 
   const emit = defineEmits<{
     change: [value: any[]]
@@ -29,6 +26,17 @@
     currentValue.value = e.detail.value
     emit('change', e.detail.value)
   }
+
+  watch(
+    () => props.list,
+    newList => {
+      const checkedValues = newList.filter(item => item.checked).map(item => item.value)
+      if (JSON.stringify(checkedValues) !== JSON.stringify(currentValue.value)) {
+        currentValue.value = checkedValues
+      }
+    },
+    { deep: true, immediate: true }
+  )
 
   defineOptions({
     name: 'YtCheckboxGroup'
