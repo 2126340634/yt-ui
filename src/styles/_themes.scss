@@ -257,13 +257,13 @@ $component-themes: (
 @each $name, $color in map.get($component-themes, 'input') {
   .yt-input--theme-#{$name} {
     box-sizing: border-box;
-    border: 1px rgba($color, 0.5) solid;
+    border: 1px rgba($color, 0.25) solid;
     border-radius: 8px;
   }
   // textarea
   .yt-textarea--theme-#{$name} {
     box-sizing: border-box;
-    border: 1px rgba($color, 0.5) solid;
+    border: 1px rgba($color, 0.25) solid;
     border-radius: 8px;
   }
 }

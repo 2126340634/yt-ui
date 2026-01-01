@@ -1,10 +1,23 @@
 @use '../_var.scss' as var;
 
 .yt-popup {
-  overflow: hidden;
+  overflow: auto;
   box-sizing: border-box;
   position: fixed;
   padding: 16px;
+  transition: var(--popup-transition);
+  background-color: var(--popup-background-color);
+  z-index: var(--popup-z-index);
+  border-top-left-radius: var(--popup-borderTopLeftRadius);
+  border-top-right-radius: var(--popup-borderTopRightRadius);
+  border-bottom-left-radius: var(--popup-borderBottomLeftRadius);
+  border-bottom-right-radius: var(--popup-borderBottomRightRadius);
+  max-width: var(--popup-max-width);
+  max-height: var(--popup-max-height);
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   &--header {
     width: 100%;
@@ -31,7 +44,6 @@
 
   &--text-title {
     color: black;
-    font-weight: bold;
     font-size: var.$font-size-large;
     position: absolute;
     left: 50%;
@@ -50,34 +62,41 @@
   &--center {
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%) scale(0.5);
+    transform: translate(-50%, -50%);
     visibility: hidden;
+    opacity: 0;
+    transition: opacity var.$transition-duration-fast var.$easing-ease-out;
   }
 
   &--left {
     left: 0;
+    top: 0;
     transform: translateX(-100%);
   }
 
   &--right {
     right: 0;
+    top: 0;
     transform: translateX(100%);
   }
 
   &--top {
     top: 0;
+    left: 0;
     transform: translateY(-100%);
   }
 
   &--bottom {
     bottom: 0;
+    left: 0;
     transform: translateY(100%);
   }
 
   &--visible {
     &.yt-popup--center {
-      transform: translate(-50%, -50%) scale(1);
+      transform: translate(-50%, -50%);
       visibility: visible;
+      opacity: 1;
     }
 
     &.yt-popup--left {

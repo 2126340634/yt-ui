@@ -125,6 +125,7 @@ $grid-row-delay: 0.2s;
   }
 
   &--table {
+    contain: strict;
     display: flex;
     width: 100%;
     height: $table-height;
@@ -165,8 +166,9 @@ $grid-row-delay: 0.2s;
     }
 
     &-grid {
+      contain: strict;
       width: 100%;
-      height: $table-height;
+      height: calc(var(--grid-rows) * #{$table-item-height * 2});
       display: grid;
       grid-template-rows: repeat(var(--grid-rows), 1fr);
       grid-template-columns: repeat(var(--grid-cols), 1fr);
@@ -174,8 +176,9 @@ $grid-row-delay: 0.2s;
       position: relative;
 
       &-item {
+        contain: strict;
         width: 100%;
-        height: calc($table-item-height * 2);
+        height: $table-item-height * 2;
         border-bottom: 1px dashed #99999980;
         box-sizing: border-box;
         padding: 1px;
@@ -183,6 +186,7 @@ $grid-row-delay: 0.2s;
       }
 
       &-item-box {
+        contain: content;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
@@ -220,6 +224,7 @@ $grid-row-delay: 0.2s;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         line-clamp: 2;
+        word-break: break-all;
       }
 
       &-item-name {
@@ -248,6 +253,57 @@ $grid-row-delay: 0.2s;
         font-size: 60px;
         color: #99999920;
       }
+    }
+  }
+
+  &--popup-preview {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: calc(100% - 32px);
+    height: 100%;
+    margin: 0 auto;
+    color: #333;
+    line-height: 24px;
+    font-size: 14px;
+
+    &-course,
+    &-agenda {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      word-break: break-all;
+    }
+
+    &-divider {
+      border-top: 1px dashed #99999980;
+      height: 1px;
+      width: 100%;
+      margin: 8px 0;
+    }
+  }
+
+  &--popup-edit {
+    margin-top: 16px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    &-name,
+    &-cycle,
+    &-time,
+    &-location {
+      @include mixins.inline-flex-center;
+      width: 100%;
+      gap: 12px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    &-submit {
+      margin-top: 8px;
     }
   }
 }

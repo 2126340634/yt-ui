@@ -23,7 +23,10 @@
     fields: 'day'
   })
 
-  if (props.items.some(item => typeof item === 'object') && !props.itemKey) {
+  if (
+    props.items.some(item => typeof item === 'object' && item !== null && !Array.isArray(item)) &&
+    !props.itemKey
+  ) {
     console.warn('[yt-picker] 使用对象数组的选择器时，请设置itemKey以作为显示内容')
   }
   if (props.items.length && (props.type === 'date' || props.type === 'region')) {
@@ -42,7 +45,7 @@
   }
 
   // 初始化传入的值
-  const currentValue = ref<any>(null)
+  const currentValue = ref<any>()
 
   const emit = defineEmits<{
     change: [value: any]
