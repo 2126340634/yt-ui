@@ -11,9 +11,9 @@ A simple, lightweight UI library for [指尖移通 5.0 微信小程序] with Vue
 ## 📦 Install
 
 ```bash
-npm install yt-ui
+npm install @rao2126340634/yt-ui
 # or
-pnpm add yt-ui
+pnpm add @rao2126340634/yt-ui
 ```
 
 ## ⚙️ Usage
