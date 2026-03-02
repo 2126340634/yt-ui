@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, CSSProperties, onUnmounted, ref, shallowRef, watch } from 'vue'
+  import { computed, onUnmounted, ref, shallowRef, watch } from 'vue'
   import { ThemeColor } from '../../types/theme-types'
   import { useInterval } from '../../hooks/useInterval'
 
@@ -256,10 +256,12 @@
   watch(
     () => [props.list, props.loop] as const,
     ([list, loop]) => {
+      const oldLength = visibleList.value.length
       if (!list.length) {
         visibleList.value = []
       } else if (loop && list.length > 1) {
         visibleList.value = [list[list.length - 1], ...list, list[0]]
+        if (oldLength === 0) curIndex.value = 1 // 异步数据传入时重置index
       } else {
         visibleList.value = list // 直接引用
       }
@@ -443,8 +445,7 @@
       if (props.loop) targetIndex++
       const safeIndex = Math.min(visibleList.value.length - 1, Math.max(0, targetIndex))
       handleLoopJump(safeIndex, false)
-    },
-    { immediate: true }
+    }
   )
 
   onUnmounted(() => {
