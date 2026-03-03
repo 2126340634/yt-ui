@@ -365,7 +365,13 @@
       if (absX < 5 && absY < 5) return
       direction = absX > absY ? 'horizontal' : 'vertical'
     }
-    if (direction !== props.direction) return
+    if (direction !== props.direction) {
+      touchState.value = {
+        ...touchState.value,
+        direction
+      }
+      return
+    }
     e.preventDefault()
     touchState.value = {
       ...touchState.value,
@@ -374,7 +380,6 @@
       deltaY,
       isSwiping: true
     }
-
     updateDraggerTransform()
   }
   function handleTouchEnd() {
