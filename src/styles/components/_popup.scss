@@ -14,7 +14,6 @@
   border-bottom-right-radius: var(--popup-borderBottomRightRadius);
   max-width: var(--popup-max-width);
   max-height: var(--popup-max-height);
-  touch-action: none;
 
   &::-webkit-scrollbar {
     display: none;

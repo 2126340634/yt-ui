@@ -6,8 +6,6 @@
   import { ThemeColor } from '../../types/theme-types'
   import { onHide, onShow } from '@dcloudio/uni-app'
 
-  type LoadType = 'all' | 'course' | 'agenda'
-
   export interface CourseData {
     type: 'course' | 'agenda'
     name: string
@@ -175,7 +173,7 @@
     const agenda = localAgendas.value
     // 填充当前周课表数据
     const fillCourse = () => {
-      course.forEach(course => {
+      course?.forEach(course => {
         if (course.z.includes(week)) {
           const key = `${course.x}-${course.y}`
           if (!colorCache[course.name]) {
@@ -200,7 +198,7 @@
     }
     // 填充当前周日程数据
     const fillAgenda = () => {
-      agenda.forEach(agenda => {
+      agenda?.forEach(agenda => {
         if (agenda.z.includes(week)) {
           const key = `${agenda.x}-${agenda.y}`
           // 检测并标记冲突
@@ -312,7 +310,7 @@
             newAgendas.map(item => toRaw(item))
           )
           const newCache = new Map(weekMapsCache.value)
-          targetAgenda.z.forEach(zWeek => {
+          targetAgenda?.z?.forEach(zWeek => {
             newCache.delete(zWeek - 1)
           })
           weekMapsCache.value = newCache
@@ -375,7 +373,7 @@
         agendas.map(item => toRaw(item))
       )
       // 清除新日程所在周数的缓存，重新加载
-      z.forEach(week => weekMapsCache.value.delete(week - 1))
+      z?.forEach(week => weekMapsCache.value.delete(week - 1))
       weekMapsCache.value = new Map(weekMapsCache.value)
       isPopping.value = false
       editFormRef.value.resetForm(['nameInput', 'locationInput'])
@@ -391,9 +389,9 @@
   function getAgendaRepeatWeeks(x: number, y: number, z: number[]): number[] {
     const result: number[] = []
     const targetWeeks = new Set(z)
-    localAgendas.value.forEach(agenda => {
+    localAgendas.value?.forEach(agenda => {
       if (agenda.x === x && agenda.y === y) {
-        agenda.z.forEach(existingWeek => {
+        agenda.z?.forEach(existingWeek => {
           if (targetWeeks.has(existingWeek)) {
             result.push(existingWeek)
           }
