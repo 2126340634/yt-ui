@@ -234,6 +234,7 @@ $grid-row-delay: 0.2s;
 
       &-item-location {
         font-size: 11px;
+        white-space: pre-wrap;
       }
 
       &-item-conflict {

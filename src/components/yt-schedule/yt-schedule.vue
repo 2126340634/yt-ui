@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { computed, ComputedRef, onUnmounted, ref, shallowRef, toRaw, watch } from 'vue'
-  import { useSchedule, WeekDate } from '../../hooks/useSchedule'
+  import { computed, ComputedRef, onUnmounted, ref, shallowRef, toRaw, watch, watchEffect } from 'vue'
+  import { Schedule, useSchedule, WeekDate } from '../../hooks/useSchedule'
   import { getLessonCoordinates } from '../../utils/util'
   import { defaultColorList, editFormRules } from '../../configs/scheduleConfig'
   import { ThemeColor } from '../../types/theme-types'
@@ -69,7 +69,7 @@
     timeList: () => [],
     colorList: () => defaultColorList,
     data: () => ({
-      term: 1,
+      term: 0,
       termYear: '',
       start: '',
       course: [],
@@ -83,7 +83,10 @@
     agendaChange: [agenda: Agenda[]]
   }>()
 
-  const schedule = useSchedule(props.data.start, props.weeks)
+  const schedule = shallowRef<Schedule>(null)
+  watchEffect(() => {
+    schedule.value = useSchedule(props.data.start, props.weeks)
+  })
   const curWeek = ref(props.activeWeek) // 当前选中周(索引0开始)
   const showWeek = ref(false)
   const enableAutoScrollWeek = ref(true)
@@ -102,10 +105,10 @@
   const localAgendas = shallowRef<Agenda[]>(JSON.parse(JSON.stringify(props.data.agenda)))
 
   const weekDate: ComputedRef<WeekDate> = computed(() => {
-    return schedule.getWeekDate(curWeek.value + 1) || []
+    return schedule.value?.getWeekDate(curWeek.value + 1) || []
   })
   const weekMonth: ComputedRef<number | ''> = computed(() => {
-    return schedule.getMonthOfStartDate(curWeek.value + 1)
+    return schedule.value?.getMonthOfStartDate(curWeek.value + 1) || ''
   })
   const weekList = computed(() => {
     return Array.from({ length: props.weeks }, (_, index) => index)
@@ -264,7 +267,7 @@
     // 添加日程模式更新表单组件值
     if (editMode.value) {
       const week = weekIndex + 1
-      const day = schedule.weekDays[index % 7]
+      const day = schedule.value?.weekDays[index % 7]
       const lessonNum = Math.floor(index / 7) * 2 + 1
       const range = Array.from({ length: props.weeks }, (_, index) => `第${index + 1}周`)
       editState.value = {
@@ -533,12 +536,12 @@
     <view class="yt-schedule--date">
       <view class="yt-schedule--date-month">{{ weekMonth }}月</view>
       <view
-        v-for="(day, index) in schedule.weekDays"
-        :class="dateContainerClass(index)"
-        @click="handleDateClick(index)"
+        v-for="(day, index) in schedule?.weekDays"
+        :class="dateContainerClass(index as number)"
+        @click="handleDateClick(index as number)"
       >
         <view class="yt-schedule--date-container-day">{{ day }}</view>
-        <view class="yt-schedule--date-container-date">{{ weekDate?.[index].date || '' }}</view>
+        <view class="yt-schedule--date-container-date">{{ weekDate?.[index as number].date || '' }}</view>
         <view class="yt-schedule--date-container-dot" />
       </view>
     </view>

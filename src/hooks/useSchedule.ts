@@ -6,8 +6,16 @@ export type WeekDate = {
   isToday: boolean
 }[]
 
+export type Schedule = {
+  weekDays: string[]
+  getWeekDate: (week:number) => WeekDate | undefined
+  isCurrentWeek: (week: number) => boolean
+  getMonthOfStartDate: (week: number) => number | ''
+  clearCache: () => void
+} | null
+
 // start => 学期第一天xxxx-xx-xx, weeks => 总周数
-export function useSchedule(start: string, weeks: number) {
+export function useSchedule(start: string, weeks: number): Schedule {
   const weekDays = ['一', '二', '三', '四', '五', '六', '日']
   let startDate: Date | null = null
   const weekDateCache = new Map<number, WeekDate>() // 缓存已计算的周7天填充日期
@@ -61,7 +69,6 @@ export function useSchedule(start: string, weeks: number) {
   // 获取当前周起始日期是几月份
   const getMonthOfStartDate = (week: number) => {
     if (!startDate) return ''
-    const today = new Date()
     const dayStart = new Date(startDate)
     dayStart.setDate(startDate.getDate() + (week - 1) * 7)
     return dayStart.getMonth() + 1
