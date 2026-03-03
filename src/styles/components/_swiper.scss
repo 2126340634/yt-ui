@@ -12,6 +12,7 @@
   position: relative;
   overflow: hidden;
   border-radius: var(--swiper-border-radius);
+  touch-action: none;
 
   &.yt-swiper--card {
     perspective: 1200px;

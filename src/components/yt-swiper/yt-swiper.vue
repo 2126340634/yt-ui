@@ -84,7 +84,6 @@
   }
 
   // swiper
-  const systemInfo = uni.getSystemInfoSync()
   const curIndex = ref(props.loop && props.list.length > 1 ? 1 : 0)
   const enableTransition = ref(true)
   let isAnimating = false
@@ -150,12 +149,6 @@
       ? `translate3d(${activeDeltaX}px, 0, 0)`
       : `translate3d(0, ${activeDeltaY}px, 0)`
   }
-  const swipeThreshold = computed(() => {
-    const threshold =
-      (isHorizontal.value ? systemInfo.windowWidth / 3 : systemInfo.windowHeight / 3) ||
-      MIN_SWIPE_THRESHOLD
-    return Math.min(threshold, MIN_SWIPE_THRESHOLD)
-  })
   const swiperDraggerStyle = computed(() => {
     return {
       transform: draggerTransform.value
@@ -403,11 +396,10 @@
 
     const { deltaX, deltaY } = touchState.value
     const isH = isHorizontal.value
-    const threshold = swipeThreshold.value
     if (touchState.value.isSwiping) {
-      if ((isH && deltaX < -threshold) || (!isH && deltaY < -threshold)) {
+      if ((isH && deltaX < -MIN_SWIPE_THRESHOLD) || (!isH && deltaY < -MIN_SWIPE_THRESHOLD)) {
         handleNext()
-      } else if ((isH && deltaX > threshold) || (!isH && deltaY > threshold)) {
+      } else if ((isH && deltaX > MIN_SWIPE_THRESHOLD) || (!isH && deltaY > MIN_SWIPE_THRESHOLD)) {
         handlePrev()
       }
     }
