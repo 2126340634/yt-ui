@@ -2,96 +2,51 @@
  * @description ICON文件路径映射表
  */
 
-import Home from '../../static/icons/home.png'
-import Course from '../../static/icons/course.png'
-import Community from '../../static/icons/community.png'
-import Me from '../../static/icons/me.png'
-import QRcode from '../../static/icons/QRcode.png'
-import HomeActive from '../../static/icons/home_active.png'
-import CourseActive from '../../static/icons/course_active.png'
-import CommunityActive from '../../static/icons/community_active.png'
-import MeActive from '../../static/icons/me_active.png'
-import ArrowLeft from '../../static/icons/arrow_left.png'
-import ArrowRight from '../../static/icons/arrow_right.png'
-import ArrowUp from '../../static/icons/arrow_up.png'
-import ArrowDown from '../../static/icons/arrow_down.png'
-import ArrowLeftWhite from '../../static/icons/arrow_left_white.png'
-import ArrowRightWhite from '../../static/icons/arrow_right_white.png'
-import ArrowUpWhite from '../../static/icons/arrow_up_white.png'
-import ArrowDownWhite from '../../static/icons/arrow_down_white.png'
-import Calendar from '../../static/icons/calendar.png'
-import DefaultAvatar from '../../static/icons/default_avatar.png'
-import DoorEnter from '../../static/icons/door_enter.png'
-import DoorExit from '../../static/icons/door_exit.png'
-import Edit from '../../static/icons/edit.png'
-import HotTopic from '../../static/icons/hot_topic.png'
-import Identity from '../../static/icons/identity.png'
-import Official from '../../static/icons/official.png'
-import Passed from '../../static/icons/passed.png'
-import Unpassed from '../../static/icons/unpassed.png'
-import SuccessResult from '../../static/icons/success_result.png'
-import FailResult from '../../static/icons/fail_result.png'
-import InfoResult from '../../static/icons/info_result.png'
-import Time from '../../static/icons/time.png'
-import Slider from '../../static/icons/slider.png'
-import Close from '../../static/icons/close.png'
-import Search from '../../static/icons/search.png'
-import Plus from '../../static/icons/plus.png'
-import Fail from '../../static/icons/fail.png'
-import Done from '../../static/icons/done.png'
-import Empty from '../../static/icons/empty.png'
-import Champion from '../../static/icons/champion.png'
-import Error from '../../static/icons/error.png'
-import FirstPlace from '../../static/icons/first_place.png'
-import SecondPlace from '../../static/icons/second_place.png'
-import ThirdPlace from '../../static/icons/third_place.png'
-import Winner from '../../static/icons/winner.png'
-import Read from '../../static/icons/read.png'
-
+const ICON_BASE_URL = 'https://zjyt.cqytxy.edu.cn/static/yt-ui/icons';
 export const iconMap: Record<string, string> = {
-  Home,
-  Course,
-  Community,
-  Me,
-  QRcode,
-  HomeActive,
-  CourseActive,
-  CommunityActive,
-  MeActive,
-  ArrowLeft,
-  ArrowRight,
-  ArrowUp,
-  ArrowDown,
-  ArrowLeftWhite,
-  ArrowRightWhite,
-  ArrowUpWhite,
-  ArrowDownWhite,
-  Calendar,
-  DefaultAvatar,
-  DoorEnter,
-  DoorExit,
-  Edit,
-  HotTopic,
-  Identity,
-  Official,
-  Passed,
-  Unpassed,
-  SuccessResult,
-  FailResult,
-  InfoResult,
-  Time,
-  Slider,
-  Close,
-  Search,
-  Plus,
-  Fail,
-  Done,
-  Empty,
-  Champion,
-  Error,
-  FirstPlace,
-  SecondPlace,
-  ThirdPlace,
-  Winner,
-  Read
+  Home: `${ICON_BASE_URL}/home.png`,
+  Course: `${ICON_BASE_URL}/course.png`,
+  Community: `${ICON_BASE_URL}/community.png`,
+  Me: `${ICON_BASE_URL}/me.png`,
+  QRcode: `${ICON_BASE_URL}/QRcode.png`,
+  HomeActive: `${ICON_BASE_URL}/home_active.png`,
+  CourseActive: `${ICON_BASE_URL}/course_active.png`,
+  CommunityActive: `${ICON_BASE_URL}/community_active.png`,
+  MeActive: `${ICON_BASE_URL}/me_active.png`,
+  ArrowLeft: `${ICON_BASE_URL}/arrow_left.png`,
+  ArrowRight: `${ICON_BASE_URL}/arrow_right.png`,
+  ArrowUp: `${ICON_BASE_URL}/arrow_up.png`,
+  ArrowDown: `${ICON_BASE_URL}/arrow_down.png`,
+  ArrowLeftWhite: `${ICON_BASE_URL}/arrow_left_white.png`,
+  ArrowRightWhite: `${ICON_BASE_URL}/arrow_right_white.png`,
+  ArrowUpWhite: `${ICON_BASE_URL}/arrow_up_white.png`,
+  ArrowDownWhite: `${ICON_BASE_URL}/arrow_down_white.png`,
+  Calendar: `${ICON_BASE_URL}/calendar.png`,
+  DefaultAvatar: `${ICON_BASE_URL}/default_avatar.png`,
+  DoorEnter: `${ICON_BASE_URL}/door_enter.png`,
+  DoorExit: `${ICON_BASE_URL}/door_exit.png`,
+  Edit: `${ICON_BASE_URL}/edit.png`,
+  HotTopic: `${ICON_BASE_URL}/hot_topic.png`,
+  Identity: `${ICON_BASE_URL}/identity.png`,
+  Official: `${ICON_BASE_URL}/official.png`,
+  Passed: `${ICON_BASE_URL}/passed.png`,
+  Unpassed: `${ICON_BASE_URL}/unpassed.png`,
+  SuccessResult: `${ICON_BASE_URL}/success_result.png`,
+  FailResult: `${ICON_BASE_URL}/fail_result.png`,
+  InfoResult: `${ICON_BASE_URL}/info_result.png`,
+  Time: `${ICON_BASE_URL}/time.png`,
+  Slider: `${ICON_BASE_URL}/slider.png`,
+  Close: `${ICON_BASE_URL}/close.png`,
+  Search: `${ICON_BASE_URL}/search.png`,
+  Plus: `${ICON_BASE_URL}/plus.png`,
+  Fail: `${ICON_BASE_URL}/fail.png`,
+  Done: `${ICON_BASE_URL}/done.png`,
+  Empty: `${ICON_BASE_URL}/empty.png`,
+  Champion: `${ICON_BASE_URL}/champion.png`,
+  Error: `${ICON_BASE_URL}/error.png`,
+  FirstPlace: `${ICON_BASE_URL}/first_place.png`,
+  SecondPlace: `${ICON_BASE_URL}/second_place.png`,
+  ThirdPlace: `${ICON_BASE_URL}/third_place.png`,
+  Winner: `${ICON_BASE_URL}/winner.png`,
+  Read: `${ICON_BASE_URL}/read.png`
 }

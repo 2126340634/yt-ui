@@ -71,7 +71,7 @@
       @click="handleClick"
     >
       <image
-        v-if="props.url"
+        v-if="url"
         class="yt-avatar--image"
         :src="url"
         :mode="fit"

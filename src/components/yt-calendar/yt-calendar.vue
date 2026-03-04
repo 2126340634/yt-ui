@@ -110,7 +110,8 @@
     curY: 0,
     startX: 0,
     startY: 0,
-    isDragging: false
+    isDragging: false,
+    isLock: false
   })
   const selectedDate = ref<{ item: Calendar; index: number } | null>(null)
 
@@ -170,22 +171,34 @@
     touchState.value = {
       ...touchState.value,
       startX: touches.clientX,
-      startY: touches.clientY
+      startY: touches.clientY,
+      isDragging: false,
+      isLock: false,
+      curX: 0,
+      curY: 0
     }
   }
   function handleTouchMove(e: TouchEvent) {
-    if (props.loading) return
-    e.preventDefault()
+    if (props.loading || touchState.value.isLock) return
     const touches = e.touches[0]
+    if (!touchState.value.isDragging) {
     const absDeltaX = Math.abs(touchState.value.curX - touchState.value.startX)
     const absDeltaY = Math.abs(touchState.value.curY - touchState.value.startY)
-    touchState.value = {
-      ...touchState.value,
-      curX: touches.clientX,
-      curY: touches.clientY,
-      isDragging: absDeltaX > 5 || absDeltaY > 5
+    if (absDeltaX < 5 || absDeltaY > absDeltaX) {
+        touchState.value = {
+          ...touchState.value,
+          isLock: true
+        }
+        return
+      }
     }
-  }
+      touchState.value = {
+        ...touchState.value,
+        curX: touches.clientX,
+        curY: touches.clientY,
+        isDragging: true
+      }
+    }
   function handleTouchEnd() {
     const deltaX = touchState.value.curX - touchState.value.startX
     const deltaY = touchState.value.curY - touchState.value.startY
@@ -197,7 +210,8 @@
       curY: 0,
       startX: 0,
       startY: 0,
-      isDragging: false
+      isDragging: false,
+      isLock: false
     }
   }
   function handleDateClick(item: Calendar, index: number) {

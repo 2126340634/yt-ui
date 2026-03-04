@@ -95,7 +95,7 @@
     startX: 0,
     startY: 0,
     isSwiping: false,
-    direction: '' as 'horizontal' | 'vertical' | '',
+    isLock: false,
     deltaX: 0,
     deltaY: 0
   })
@@ -143,11 +143,9 @@
       draggerTransform.value = 'translate3d(0, 0, 0)'
       return
     }
-    const activeDeltaX = touchState.value.direction === 'horizontal' ? deltaX : 0
-    const activeDeltaY = touchState.value.direction === 'vertical' ? deltaY : 0
     draggerTransform.value = isHorizontal.value
-      ? `translate3d(${activeDeltaX}px, 0, 0)`
-      : `translate3d(0, ${activeDeltaY}px, 0)`
+      ? `translate3d(${deltaX}px, 0, 0)`
+      : `translate3d(0, ${deltaY}px, 0)`
   }
   const swiperDraggerStyle = computed(() => {
     return {
@@ -348,34 +346,31 @@
       startX: touch.clientX,
       startY: touch.clientY,
       isSwiping: false,
-      direction: '',
+      isLock: false,
       deltaX: 0,
       deltaY: 0
     }
     pause()
   }
   function handleTouchMove(e: TouchEvent) {
+    if (touchState.value.isLock) return
     const touches = e.touches[0]
     const deltaX = touches.clientX - touchState.value.startX
     const deltaY = touches.clientY - touchState.value.startY
-    let direction = touchState.value.direction
-    if (!direction) {
-      const absX = Math.abs(deltaX)
-      const absY = Math.abs(deltaY)
-      if (absX < 5 && absY < 5) return
-      direction = absX > absY ? 'horizontal' : 'vertical'
-    }
-    if (direction !== props.direction) {
-      touchState.value = {
-        ...touchState.value,
-        direction
+    if (!touchState.value.isSwiping) {
+      const absDeltaX = Math.abs(deltaX)
+      const absDeltaY = Math.abs(deltaY)
+      if (absDeltaX < 5 && absDeltaY < 5) return
+      if (isHorizontal.value ? absDeltaY > absDeltaX : absDeltaX > absDeltaY) {
+        touchState.value = {
+          ...touchState.value,
+          isLock: true
+        }
+        return
       }
-      return
     }
-    e.preventDefault()
     touchState.value = {
       ...touchState.value,
-      direction,
       deltaX,
       deltaY,
       isSwiping: true
@@ -412,7 +407,7 @@
       startX: 0,
       startY: 0,
       isSwiping: false,
-      direction: '',
+      isLock: false,
       deltaX: 0,
       deltaY: 0
     }
