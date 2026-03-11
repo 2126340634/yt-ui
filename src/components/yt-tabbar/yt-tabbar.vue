@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import { iconMap } from '../yt-icon/icon-map'
   import { ThemeColor } from '../../types/theme-types'
 
@@ -50,6 +50,9 @@
   }>()
 
   const activeIndex = ref(props.modelValue)
+  watch(() => props.modelValue, (index: number) => {
+    activeIndex.value = index
+  })
 
   const tabbarContainerStyle = computed(() => {
     return {

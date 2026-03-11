@@ -88,6 +88,9 @@
     schedule.value = useSchedule(props.data.start, props.weeks)
   })
   const curWeek = ref(props.activeWeek) // 当前选中周(索引0开始)
+  watch(() => props.activeWeek, (val: number) => {
+    curWeek.value = val
+  })
   const showWeek = ref(false)
   const enableAutoScrollWeek = ref(true)
   const selectedDay = ref<null | number>(null)
@@ -160,8 +163,8 @@
   const dateContainerClass = (index: number) => ({
     'yt-schedule--date-container': true,
     'yt-schedule--date-container-active': selectedDay.value === index,
-    'yt-schedule--date-container-current-week': weekDate.value?.[index].isCurWeek,
-    'yt-schedule--date-container-today': weekDate.value?.[index].isToday
+    'yt-schedule--date-container-current-week': weekDate.value?.[index]?.isCurWeek,
+    'yt-schedule--date-container-today': weekDate.value?.[index]?.isToday
   })
 
   let colorCache: Record<string, string> = {}
@@ -541,7 +544,7 @@
         @click="handleDateClick(index as number)"
       >
         <view class="yt-schedule--date-container-day">{{ day }}</view>
-        <view class="yt-schedule--date-container-date">{{ weekDate?.[index as number].date || '' }}</view>
+        <view class="yt-schedule--date-container-date">{{ weekDate?.[index as number]?.date || '' }}</view>
         <view class="yt-schedule--date-container-dot" />
       </view>
     </view>

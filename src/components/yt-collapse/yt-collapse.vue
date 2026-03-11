@@ -70,7 +70,7 @@
     class="yt-collapse"
     :style="collapseStyle"
   >
-    <template v-for="(title, index) in safeList">
+    <template v-for="(title, index) in safeList" :key=index>
       <!-- collapse-item -->
       <view
         @click="toggleExpand(index)"

@@ -167,7 +167,7 @@
    * swiper相关函数
    */
   function canAnimate() {
-    return props.list.length && !isAnimating
+    return props.list.length > 1 && !isAnimating
   }
   function endAnim() {
     if (endAnimTimer) clearTimeout(endAnimTimer)
@@ -341,6 +341,7 @@
    * autoplay,touch相关函数
    */
   function handleTouchStart(e: TouchEvent) {
+    if (props.list.length <= 1 || props.disabled) return
     const touch = e.touches[0]
     touchState.value = {
       startX: touch.clientX,
@@ -353,6 +354,7 @@
     pause()
   }
   function handleTouchMove(e: TouchEvent) {
+    if (props.list.length <= 1 || props.disabled) return
     if (touchState.value.isLock) return
     const touches = e.touches[0]
     const deltaX = touches.clientX - touchState.value.startX

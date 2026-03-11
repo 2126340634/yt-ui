@@ -79,7 +79,8 @@
   }
 
   &--stretch {
-    width: min(80%, 180px);
+    min-width: 240px;
+    flex-shrink: 0;
   }
 
   &--small {
