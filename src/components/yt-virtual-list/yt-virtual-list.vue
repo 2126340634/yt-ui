@@ -1,237 +1,99 @@
 <script setup lang="ts">
-  import { computed, CSSProperties, getCurrentInstance, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, ref, getCurrentInstance, watch, onBeforeUnmount } from 'vue'
 
-  interface Props {
-    list: any[]
-    itemKey: string
-    width?: number | string
-    height?: number | string
-    direction?: 'vertical' | 'horizontal'
-    buffer?: number // item预渲染缓冲数量, 防止闪烁
-    estimatedSize?: number
-    showScrollbar?: boolean
-    refresher?: boolean
-    threshold?: number
-    triggered?: boolean
-    refresherBgColor?: string
-    refresherStyle?: 'black' | 'white' | 'none'
+interface Props {
+  list: any[]
+  itemKey: string
+  width?: number | string
+  height?: number | string
+  chunkSize?: number       // 每个分块的数量
+  estimatedSize?: number   // 每个分块的预估高度 (px)
+  showScrollbar?: boolean
+  refresher?: boolean
+  threshold?: number
+  triggered?: boolean
+  refresherBgColor?: string
+  refresherStyle?: 'black' | 'white' | 'none'
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  list: () => [],
+  itemKey: '',
+  width: '100%',
+  height: '100%',
+  chunkSize: 10,
+  estimatedSize: 1000,
+  showScrollbar: false,
+  refresher: false,
+  threshold: 50,
+  triggered: false,
+  refresherBgColor: '#fff',
+  refresherStyle: 'black'
+})
+
+const emit = defineEmits([
+  'scroll', 'scrollToUpper', 'scrollToLower', 
+  'pull', 'refresh', 'restore', 'abort'
+])
+
+const chunkedList = computed(() => {
+  const chunks = []
+  for (let i = 0; i < props.list.length; i += props.chunkSize) {
+    chunks.push({
+      id: i / props.chunkSize,
+      startIndex: i,
+      items: props.list.slice(i, i + props.chunkSize)
+    })
   }
+  return chunks
+})
 
-  const props = withDefaults(defineProps<Props>(), {
-    list: () => [],
-    itemKey: '',
-    width: '100%',
-    height: '100%',
-    direction: 'vertical',
-    buffer: 5,
-    estimatedSize: 30,
-    showScrollbar: false,
-    refresher: false,
-    threshold: 50,
-    triggered: false,
-    refresherBgColor: '#fff',
-    refresherStyle: 'black'
-  })
+const visibleMap = ref<Record<number, boolean>>({})
+const heightMap = ref<Record<number, number>>({})
+const instance = getCurrentInstance()
+let observer: UniApp.IntersectionObserver | null = null
 
-  if (!props.itemKey) console.warn('[yt-virtual-list] 缺少参数itemKey')
-
-  const emit = defineEmits<{
-    scroll: [e: any]
-    scrollToUpper: []
-    scrollToLower: []
-    pull: []
-    refresh: []
-    restore: []
-    abort: []
-  }>()
-
-  const instance = getCurrentInstance()
-  const containerSize = ref(0)
-  const scrollPos = ref(0)
-  const itemSizes = ref<number[]>([])
-  const measured = new Set<number>()
-
-  const isVertical = computed(() => {
-    return props.direction === 'vertical'
-  })
-
-  const virtualListStyle = computed(() => {
-    return {
-      width: typeof props.width === 'number' ? `${props.width}px` : props.width,
-      height: typeof props.height === 'number' ? `${props.height}px` : props.height
-    }
-  })
-  // 占位符撑起总高度
-  const placeholderStyle = computed(() => {
-    return {
-      [isVertical.value ? 'height' : 'width']: `${totalSize.value}px`
-    }
-  })
-  const totalSize = computed(() => {
-    return props.list.reduce(
-      (sum, _, index) => sum + (itemSizes.value[index] || props.estimatedSize),
-      0
-    )
-  })
-  // 前缀和存储内容高度累加
-  const prefixSum = computed(() => {
-    const sum = [0]
-    for (let i = 0; i < props.list.length; i++) {
-      sum[i + 1] = sum[i] + (itemSizes.value[i] || props.estimatedSize)
-    }
-    return sum
-  })
-  const getStartIndex = (): number => {
-    if (!props.list.length) return 0
-    let left = 0
-    let right = props.list.length
-    while (left < right) {
-      const mid = Math.floor(left + (right - left) / 2)
-      if (prefixSum.value[mid] <= scrollPos.value) {
-        left = mid + 1
-      } else {
-        right = mid
+const startObserver = () => {
+  if (observer) observer.disconnect()
+  if (!props.list.length) return
+  observer = uni.createIntersectionObserver(instance?.proxy, { observeAll: true })
+  // 600px缓冲区
+  observer.relativeToViewport({ top: 600, bottom: 600 })
+    .observe('.chunk-anchor', (res: any) => {
+      const { id } = res.dataset
+      const isIntersecting = res.intersectionRatio > 0
+      visibleMap.value[id] = isIntersecting
+      if (isIntersecting && res.boundingClientRect.height > 0) {
+        heightMap.value[id] = res.boundingClientRect.height
       }
-    }
-    return Math.max(0, Math.min(left - 1 - props.buffer, props.list.length - 1))
-  }
-  const visibleRange = computed(() => {
-    if (!props.list.length) return { start: 0, end: 0 }
-    const start = getStartIndex()
-    let offset = 0
-    for (let i = 0; i < start; i++) {
-      offset += itemSizes.value[i] || props.estimatedSize
-    }
-    let end = start
-    while (offset < scrollPos.value + containerSize.value && end < props.list.length) {
-      offset += itemSizes.value[end] || props.estimatedSize
-      end++
-    }
-    return { start, end: Math.min(end + props.buffer, props.list.length) }
-  })
-  const visibleList = computed(() => {
-    return props.list.slice(visibleRange.value.start, visibleRange.value.end)
-  })
-  const startOffset = computed(() => {
-    let offset = 0
-    for (let i = 0; i < visibleRange.value.start; i++) {
-      offset += itemSizes.value[i] || props.estimatedSize
-    }
-    return offset
-  })
-  const containerStyle = computed(() => {
-    return {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      transform: isVertical.value
-        ? `translateY(${startOffset.value}px)`
-        : `translateX(${startOffset.value}px)`,
-      display: 'flex',
-      flexDirection: isVertical.value ? 'column' : 'row',
-      [isVertical.value ? 'width' : 'height']: '100%',
-      alignItems: isVertical.value ? 'flex-start' : 'stretch',
-      '--container-item-width': isVertical.value ? '100%' : 'fit-content',
-      '--container-item-height': isVertical.value ? 'fit-content' : '100%'
-    } as CSSProperties
-  })
-  const measureItem = async () => {
-    await nextTick()
-    const start = visibleRange.value.start
-    uni
-      .createSelectorQuery()
-      .in(instance?.proxy)
-      .selectAll(`.yt-virtual-list--container-item`)
-      .boundingClientRect((res: any) => {
-        const rects = res as any[]
-        if (!rects || !rects.length) return
-        rects.forEach((res, index) => {
-          const itemIndex = start + index
-          if (measured.has(itemIndex)) return
-          const size = isVertical.value ? res.height : res.width
-          if (size > 0 && itemSizes.value[itemIndex] !== size) {
-            itemSizes.value[itemIndex] = size
-            measured.add(itemIndex)
-          }
-        })
-      })
-      .exec()
-  }
+    })
+}
 
-  onMounted(async () => {
-    await nextTick()
-    uni
-      .createSelectorQuery()
-      .in(instance?.proxy)
-      .select('.yt-virtual-list')
-      .boundingClientRect((res: any) => {
-        if (res) {
-          containerSize.value = isVertical.value ? res.height : res.width
-        } else {
-          console.warn('[yt-virtual-list] 未获取到列表容器大小')
-        }
-      })
-      .exec()
-  })
+watch(() => props.list.length, () => {
+  startObserver()
+}, { immediate: true })
 
-  // 清空列表高度缓存
-  const resetCache = () => {
-    itemSizes.value = []
-    measured.clear()
-  }
+onBeforeUnmount(() => observer && observer.disconnect()) 
 
-  watch(
-    () => props.list,
-    (newList: any[], oldList: any[]) => {
-      // 首次测量无需清空
-      if (!oldList || !oldList.length) return
-      if (!newList || !newList.length) {
-        resetCache()
-        return
-      }
-      const oldFirstKey = oldList?.[0]?.[props.itemKey]
-      const newFirstKey = newList?.[0]?.[props.itemKey]
-      // 首项key值变化(说明列表被替换)或者有删除操作
-      if (oldFirstKey !== newFirstKey || newList.length < oldList.length) {
-        resetCache()
-      }
-    },
-    { deep: false }
-  )
-
-  // 测量item高度
-  watch(
-    () => visibleRange.value,
-    async () => {
-      measureItem()
-    },
-    { immediate: true }
-  )
-
-  function handleScroll(e: any) {
-    scrollPos.value = isVertical.value ? e.detail.scrollTop : e.detail.scrollLeft
-    emit('scroll', e)
-  }
+const virtualListStyle = computed(() => ({
+  width: typeof props.width === 'number' ? `${props.width}px` : props.width,
+  height: typeof props.height === 'number' ? `${props.height}px` : props.height
+}))
 </script>
 
 <template>
   <scroll-view
-    :class="[
-      'yt-virtual-list',
-      {
-        'yt-virtual-list--hidden-scrollbar': !showScrollbar
-      }
-    ]"
+    class="yt-virtual-list"
+    :class="{ 'yt-virtual-list--hidden-scrollbar': !showScrollbar }"
     :style="virtualListStyle"
-    :scroll-y="isVertical"
-    :scroll-x="!isVertical"
+    scroll-y
     :show-scrollbar="showScrollbar"
-    @scroll="handleScroll"
     :refresher-enabled="refresher"
     :refresher-threshold="threshold"
     :refresher-triggered="triggered"
     :refresher-background="refresherBgColor"
     :refresher-default-style="refresherStyle"
+    @scroll="e => $emit('scroll', e)"
     @scrolltoupper="$emit('scrollToUpper')"
     @scrolltolower="$emit('scrollToLower')"
     @refresherpulling="$emit('pull')"
@@ -239,39 +101,33 @@
     @refresherrestore="$emit('restore')"
     @refresherabort="$emit('abort')"
   >
-    <view
-      class="yt-virtual-list--placeholder"
-      :style="placeholderStyle"
-    />
-    <view
-      class="yt-virtual-list--container"
-      :style="containerStyle"
+    <view 
+      v-for="chunk in chunkedList" 
+      :key="chunk.id"
+      :data-id="chunk.id"
+      class="chunk-anchor"
+      :style="{ minHeight: visibleMap[chunk.id] ? 'auto' : (heightMap[chunk.id] || estimatedSize) + 'px' }"
     >
-      <view
-        v-for="(item, index) in visibleList"
-        :key="item[props.itemKey]"
-        class="yt-virtual-list--container-item"
-      >
-        <slot
-          name="list-item"
-          :item="item"
-          :index="visibleRange.start + index"
-        />
-      </view>
+      <template v-if="visibleMap[chunk.id]">
+        <view v-for="(item, index) in chunk.items" :key="item[itemKey] || index">
+          <slot name="list-item" :item="item" :index="chunk.startIndex + index" />
+        </view>
+      </template>
     </view>
   </scroll-view>
 </template>
 
 <style lang="scss" scoped>
-  .yt-virtual-list--hidden-scrollbar {
-    ::-webkit-scrollbar {
-      display: none;
-    }
+.yt-virtual-list {
+  display: block;
+  position: relative;
+  &--hidden-scrollbar {
+    ::-webkit-scrollbar { display: none; }
   }
-  .yt-virtual-list--container-item {
-    width: var(--container-item-width);
-    height: var(--container-item-height);
-    box-sizing: border-box;
-    flex-shrink: 0;
-  }
+}
+.chunk-anchor {
+  width: 100%;
+  display: block;
+  overflow: hidden; 
+}
 </style>
