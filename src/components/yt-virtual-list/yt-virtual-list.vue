@@ -93,7 +93,7 @@ const virtualListStyle = computed(() => ({
     :refresher-triggered="triggered"
     :refresher-background="refresherBgColor"
     :refresher-default-style="refresherStyle"
-    @scroll="e => $emit('scroll', e)"
+    @scroll="(e: any) => $emit('scroll', e)"
     @scrolltoupper="$emit('scrollToUpper')"
     @scrolltolower="$emit('scrollToLower')"
     @refresherpulling="$emit('pull')"
