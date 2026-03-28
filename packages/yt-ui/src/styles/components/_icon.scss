@@ -1,0 +1,6 @@
+@use '../_var.scss' as var;
+@use '../mixins' as mixins;
+
+.yt-icon {
+  @include mixins.inline-flex-center;
+}

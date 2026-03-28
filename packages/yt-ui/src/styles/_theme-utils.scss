@@ -1,0 +1,11 @@
+@function is-gradient($color) {
+  $color-str: #{$color};
+  @return string-index($color-str, 'gradient');
+}
+
+@function get-non-gradient-color($color, $default-color) {
+  @if is-gradient($color) {
+    @return $default-color;
+  }
+  @return $color;
+}

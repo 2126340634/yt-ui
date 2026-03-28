@@ -1,0 +1,57 @@
+@use '../_mixins.scss' as mixins;
+
+$divider-margin: 1em;
+
+// line with text
+.yt-divider--container {
+  @include mixins.inline-flex-center(var(--divider-direction));
+}
+
+.yt-divider {
+  @include mixins.inline-flex-center(var(--divider-direction));
+
+  // horizontal
+  &--horizontal.start-line,
+  &--horizontal.end-line {
+    margin-top: var(--divider-margin);
+    margin-bottom: var(--divider-margin);
+  }
+
+  // vertical
+  &--vertical.start-line,
+  &--vertical.end-line {
+    margin-left: var(--divider-margin);
+    margin-right: var(--divider-margin);
+  }
+
+  // align-start
+  &--start.start-line,
+  &--left.start-line {
+    flex: 0.35;
+  }
+  &--start.end-line,
+  &--left.end-line {
+    flex: 1;
+  }
+
+  // align-end
+  &--end.start-line,
+  &--right.start-line {
+    flex: 1;
+  }
+  &--end.end-line,
+  &--right.end-line {
+    flex: 0.35;
+  }
+}
+
+// line without text
+.yt-divider--horizontal.single-line {
+  margin-top: var(--divider-margin);
+  margin-bottom: var(--divider-margin);
+}
+
+.yt-divider--vertical.single-line {
+  margin-left: var(--divider-margin);
+  margin-right: var(--divider-margin);
+}

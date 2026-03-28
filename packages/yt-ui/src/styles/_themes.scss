@@ -1,0 +1,392 @@
+@use 'sass:map';
+@use 'sass:meta';
+@use '../styles/var' as var;
+// @use '../styles/theme-utils' as utils;
+
+$theme-forest: #49b08f;
+$theme-ocean: #00a5e0;
+$theme-magic: #9c27ff;
+$theme-blossom: #ff6b9d;
+$theme-sunshine: #ff9800;
+$theme-classic: #ffffff;
+$theme-gradient-forest-sky: linear-gradient(135deg, #49b08f, #66bb6a);
+$theme-gradient-ocean-sky: linear-gradient(135deg, #00a5e0, #667ee0);
+$theme-gradient-magic-sky: linear-gradient(135deg, #9c27ff, #e040fb);
+$theme-gradient-blossom-sky: linear-gradient(135deg, #ff6b9d, #ff8a80);
+$theme-gradient-sunshine-sky: linear-gradient(135deg, #ff9800, #ffca28);
+
+$themes: (
+  'forest': $theme-forest,
+  'ocean': $theme-ocean,
+  'magic': $theme-magic,
+  'blossom': $theme-blossom,
+  'sunshine': $theme-sunshine,
+  'classic': $theme-classic,
+  'forest-sky': $theme-gradient-forest-sky,
+  'ocean-sky': $theme-gradient-ocean-sky,
+  'magic-sky': $theme-gradient-magic-sky,
+  'blossom-sky': $theme-gradient-blossom-sky,
+  'sunshine-sky': $theme-gradient-sunshine-sky,
+  'none': #ffffff00
+);
+
+$component-themes: (
+  'dots': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': $theme-classic,
+    'forest-sky': $theme-gradient-forest-sky,
+    'ocean-sky': $theme-gradient-ocean-sky,
+    'magic-sky': $theme-gradient-magic-sky,
+    'blossom-sky': $theme-gradient-blossom-sky,
+    'sunshine-sky': $theme-gradient-sunshine-sky,
+    'none': #ffffff
+  ),
+  'input': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #999,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #ffffff00
+  ),
+  'avatar': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #33333330,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #ffffff00
+  ),
+  'calendar': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #000,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #000
+  ),
+  'calendar-header': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': linear-gradient(135deg, #33333380, #33333333),
+    'forest-sky': $theme-gradient-forest-sky,
+    'ocean-sky': $theme-gradient-ocean-sky,
+    'magic-sky': $theme-gradient-magic-sky,
+    'blossom-sky': $theme-gradient-blossom-sky,
+    'sunshine-sky': $theme-gradient-sunshine-sky,
+    'none': linear-gradient(135deg, #33333380, #33333333)
+  ),
+  'loading': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #333,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #333
+  ),
+  'notice-bar': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #fff,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #ffffff00
+  ),
+  'card': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #333,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #333
+  ),
+  'segment': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #999,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #999
+  ),
+  'steps': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #333,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #333
+  ),
+  'schedule': (
+    'forest': $theme-forest,
+    'ocean': $theme-ocean,
+    'magic': $theme-magic,
+    'blossom': $theme-blossom,
+    'sunshine': $theme-sunshine,
+    'classic': #333,
+    'forest-sky': $theme-forest,
+    'ocean-sky': $theme-ocean,
+    'magic-sky': $theme-magic,
+    'blossom-sky': $theme-blossom,
+    'sunshine-sky': $theme-sunshine,
+    'none': #333
+  )
+);
+
+//theme
+@each $name, $color in $themes {
+  // tabbar
+  .yt-tabbar--theme-#{$name} {
+    background: #{$color};
+  }
+  // swiper
+  .yt-swiper--theme-#{$name} {
+    background: #{$color};
+  }
+  // button-primary
+  .yt-button--primary-#{$name} {
+    background: #{$color};
+    color: #fff;
+    border-color: #{$color};
+    @if $name == 'classic' or $name == 'none' {
+      color: #333;
+      border-color: #33333330;
+    }
+  }
+  // badge
+  .yt-badge--theme-#{$name} {
+    background: #{$color};
+    @if $name == 'classic' or $name == 'none' {
+      background: #f50;
+    }
+  }
+  // fab
+  .yt-fab--theme-#{$name} {
+    .yt-fab--inner-circle {
+      background: #{$color};
+      @if $name == 'classic' or $name == 'none' {
+        background: #999;
+      }
+    }
+  }
+  // tag-primary
+  .yt-tag--primary-#{$name} {
+    background: #{$color};
+    color: #fff;
+    border-color: #{$color};
+    @if $name == 'classic' or $name == 'none' {
+      background: #fff;
+      color: #333;
+      border-color: #33333330;
+    }
+  }
+}
+
+// dots
+@each $name, $color in map.get($component-themes, 'dots') {
+  $dots-border-radius: 40px;
+  // inactive-dots
+  .yt-dots--theme-#{$name} .yt-dots--item-outer {
+    @if $name != 'none' {
+      border-radius: $dots-border-radius;
+    }
+  }
+  // active-dots
+  .yt-dots--theme-#{$name} .yt-dots--item-outer-active .yt-dots--item-inner {
+    background: #{$color};
+    @if $name != 'none' {
+      border-radius: $dots-border-radius;
+    }
+  }
+}
+// input
+@each $name, $color in map.get($component-themes, 'input') {
+  .yt-input--theme-#{$name} {
+    box-sizing: border-box;
+    border: 1px #{$color} solid;
+    border-radius: 8px;
+  }
+  // textarea
+  .yt-textarea--theme-#{$name} {
+    box-sizing: border-box;
+    border: 1px #{$color} solid;
+    border-radius: 8px;
+  }
+}
+// avatar
+@each $name, $color in map.get($component-themes, 'avatar') {
+  .yt-avatar--theme-#{$name} {
+    border: 1px solid #{$color};
+  }
+}
+// calendar
+@each $name, $color in map.get($component-themes, 'calendar') {
+  .yt-calendar--theme-#{$name} {
+    .yt-calendar--body-grid-item-today {
+      background: rgba($color, 0.05);
+      border-color: #{$color};
+      color: #{$color};
+    }
+    .yt-calendar--body-grid-item-secondary {
+      background: transparent;
+      border-color: transparent;
+    }
+    .yt-calendar--body-week {
+      color: rgba($color, 0.8);
+      @if $name == 'none' {
+        color: rgba(#333, 0.8);
+      }
+    }
+  }
+}
+// calendar-header
+@each $name, $color in map.get($component-themes, 'calendar-header') {
+  .yt-calendar--theme-#{$name} {
+    .yt-calendar--header {
+      background: #{$color};
+    }
+  }
+}
+// loading-inner-circle
+@each $name, $color in map.get($component-themes, 'loading') {
+  .yt-loading--theme-#{$name} {
+    .yt-loading--inner-circle {
+      border-top-color: #{$color};
+    }
+  }
+}
+// notice-bar
+@each $name, $color in map.get($component-themes, 'notice-bar') {
+  .yt-notice-bar--theme-#{$name} {
+    background: rgba($color, 0.1);
+    color: #{$color};
+    @if $name == 'classic' or $name == 'none' {
+      color: #333333aa;
+    }
+  }
+}
+// card
+@each $name, $color in map.get($component-themes, 'card') {
+  .yt-card--theme-#{$name} {
+    .yt-card--decoration {
+      color: #{$color};
+    }
+  }
+}
+// segment
+@each $name, $color in map.get($component-themes, 'segment') {
+  .yt-segment--theme-#{$name} {
+    .yt-segment--text {
+      border-color: #{$color};
+      color: #{$color};
+
+      &-active {
+        background: #{$color};
+        color: #fff;
+      }
+    }
+  }
+}
+// steps
+@each $name, $color in map.get($component-themes, 'steps') {
+  .yt-steps--theme-#{$name} {
+    .yt-steps--item-active {
+      .yt-steps--item-icon,
+      .yt-steps--item-line {
+        border-color: #{$color};
+      }
+      .yt-steps--item-icon-text,
+      .yt-steps--item-text {
+        color: #{$color};
+      }
+    }
+  }
+}
+
+// schedule
+@each $name, $color in map.get($component-themes, 'schedule') {
+  .yt-schedule--theme-#{$name} {
+    // week text
+    .yt-schedule--header-time-week {
+      color: #{$color};
+    }
+    .yt-schedule--week-text-active {
+      color: #{$color};
+      text-decoration-color: #{$color};
+    }
+    // selected border
+    .yt-schedule--date-container-active {
+      border-color: #{$color};
+      color: #{$color};
+    }
+
+    // dot background of current week
+    .yt-schedule--date-container-current-week {
+      .yt-schedule--date-container-dot {
+        background: #{$color};
+      }
+    }
+
+    // text color of today
+    .yt-schedule--date-container-today {
+      .yt-schedule--date-container-day,
+      .yt-schedule--date-container-date {
+        color: #{$color};
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+@use '../_var.scss' as var;
+@use '../mixins' as mixins;
+@use '../anim' as anim;
+
+.yt-tag {
+  @include mixins.inline-flex-center;
+  line-height: var.$line-height;
+  border: 1px solid var.$border-color;
+  padding: var.$spacing-xs var.$spacing-medium;
+  transition: background var.$transition-duration-slow var.$easing-ease-in-out;
+
+  // 主题色
+  &--primary {
+    background: var.$primary-color;
+    color: #fff;
+    border-color: var.$primary-color;
+  }
+
+  &--success {
+    background: var.$success-color;
+    color: #fff;
+    border-color: var.$success-color;
+  }
+
+  &--warning {
+    background: var.$warning-color;
+    color: #fff;
+    border-color: var.$warning-color;
+  }
+
+  &--error {
+    background: var.$error-color;
+    color: #fff;
+    border-color: var.$error-color;
+  }
+
+  &--info {
+    background: var.$info-color;
+    color: #fff;
+    border-color: var.$info-color;
+  }
+
+  // 朴素版本
+  &--plain {
+    background: transparent;
+
+    &.yt-tag--success {
+      color: var.$success-color;
+      border-color: var.$success-color;
+    }
+
+    &.yt-tag--warning {
+      color: var.$warning-color;
+      border-color: var.$warning-color;
+    }
+
+    &.yt-tag--error {
+      color: var.$error-color;
+      border-color: var.$error-color;
+    }
+
+    &.yt-tag--info {
+      color: var.$info-color;
+      border-color: var.$info-color;
+    }
+  }
+
+  &--small {
+    font-size: var.$font-size-xxs;
+  }
+
+  &--medium {
+    font-size: var.$font-size-xs;
+  }
+
+  &--large {
+    font-size: var.$font-size-small;
+  }
+
+  &--disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
