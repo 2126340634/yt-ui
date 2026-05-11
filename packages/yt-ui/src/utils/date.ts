@@ -23,9 +23,5 @@ export const getFormattedTermYear = (firstYear: number, secondYear: number) => {
 
 export const isToday = (date: Date): boolean => {
   const today = new Date()
-  return (
-    today.getDate() === date.getDate() &&
-    today.getMonth() === date.getMonth() &&
-    today.getFullYear() === date.getFullYear()
-  )
+  return today.getDate() === date.getDate() && today.getMonth() === date.getMonth() && today.getFullYear() === date.getFullYear()
 }

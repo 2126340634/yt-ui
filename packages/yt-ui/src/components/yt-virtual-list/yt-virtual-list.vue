@@ -6,8 +6,8 @@ interface Props {
   itemKey: string
   width?: number | string
   height?: number | string
-  chunkSize?: number       // 每个分块的数量
-  estimatedSize?: number   // 每个分块的预估高度 (px)
+  chunkSize?: number // 每个分块的数量
+  estimatedSize?: number // 每个分块的预估高度 (px)
   showScrollbar?: boolean
   refresher?: boolean
   threshold?: number
@@ -31,10 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   refresherStyle: 'black'
 })
 
-const emit = defineEmits([
-  'scroll', 'scrollToUpper', 'scrollToLower', 
-  'pull', 'refresh', 'restore', 'abort'
-])
+const emit = defineEmits(['scroll', 'scrollToUpper', 'scrollToLower', 'pull', 'refresh', 'restore', 'abort'])
 
 const chunkedList = computed(() => {
   const chunks = []
@@ -47,7 +44,6 @@ const chunkedList = computed(() => {
   }
   return chunks
 })
-
 
 const instance = getCurrentInstance()
 let observer: UniApp.IntersectionObserver | null = null
@@ -65,22 +61,25 @@ function startObserver() {
   if (!props.list.length) return
   observer = uni.createIntersectionObserver(instance, { observeAll: true })
   // 600px缓冲区
-  observer.relativeToViewport({ top: 600, bottom: 600 })
-    .observe('.chunk-anchor', (res: any) => {
-      const { id } = res.dataset
-      const isIntersecting = res.intersectionRatio > 0
-      visibleMap.value[id] = isIntersecting
-      if (isIntersecting && res.boundingClientRect.height > 0) {
-        heightMap.value[id] = res.boundingClientRect.height
-      }
-    })
+  observer.relativeToViewport({ top: 600, bottom: 600 }).observe('.chunk-anchor', (res: any) => {
+    const { id } = res.dataset
+    const isIntersecting = res.intersectionRatio > 0
+    visibleMap.value[id] = isIntersecting
+    if (isIntersecting && res.boundingClientRect.height > 0) {
+      heightMap.value[id] = res.boundingClientRect.height
+    }
+  })
 }
 
-watch(() => props.list.length, () => {
-  startObserver()
-}, { immediate: true })
+watch(
+  () => props.list.length,
+  () => {
+    startObserver()
+  },
+  { immediate: true }
+)
 
-onBeforeUnmount(() => observer && observer.disconnect()) 
+onBeforeUnmount(() => observer && observer.disconnect())
 
 const virtualListStyle = computed(() => ({
   width: typeof props.width === 'number' ? `${props.width}px` : props.width,
@@ -109,8 +108,8 @@ const virtualListStyle = computed(() => ({
     @refresherabort="emit('abort')"
   >
     <slot name="prefix" />
-    <view 
-      v-for="chunk in chunkedList" 
+    <view
+      v-for="chunk in chunkedList"
       :key="chunk.id"
       :data-id="chunk.id"
       class="chunk-anchor"
@@ -129,12 +128,12 @@ const virtualListStyle = computed(() => ({
 <style lang="scss" scoped>
 .yt-virtual-list--hidden-scrollbar {
   ::-webkit-scrollbar {
-    display: none; 
+    display: none;
   }
 }
 .chunk-anchor {
   width: 100%;
   display: block;
-  overflow: hidden; 
+  overflow: hidden;
 }
 </style>

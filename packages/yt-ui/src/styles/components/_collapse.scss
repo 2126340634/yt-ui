@@ -51,8 +51,7 @@ $item-width: calc(100% - 16px);
 
     &-active {
       border-bottom: 1px solid #e5e7eb;
-      animation: collapse-content-slide-in-animation anim.$animation-duration-fast anim.$ease-bounce
-        forwards;
+      animation: collapse-content-slide-in-animation anim.$animation-duration-fast anim.$ease-bounce forwards;
     }
   }
 }

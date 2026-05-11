@@ -86,7 +86,8 @@ $center-item-height: 48px;
           background-color: var(--tabbar-center-item-bgColor);
           width: $center-item-width;
           height: $center-item-height * 5;
-          transition: transform var.$transition-duration-slow var.$easing-ease-in-out,
+          transition:
+            transform var.$transition-duration-slow var.$easing-ease-in-out,
             background-color var.$transition-duration-slow var.$easing-ease-in-out;
         }
       }

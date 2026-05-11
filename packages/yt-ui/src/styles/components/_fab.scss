@@ -27,7 +27,8 @@
     padding: var.$spacing-small;
     box-sizing: border-box;
     box-shadow: var.$shadow-1;
-    transition: transform var.$transition-duration-slow var.$easing-ease-out,
+    transition:
+      transform var.$transition-duration-slow var.$easing-ease-out,
       background var.$transition-duration-slow var.$easing-ease-in-out;
 
     &-active {
@@ -60,7 +61,8 @@
     border-radius: 10px;
     box-sizing: border-box;
     padding: 4px;
-    transition: transform var.$transition-duration-medium var.$easing-ease-out,
+    transition:
+      transform var.$transition-duration-medium var.$easing-ease-out,
       opacity var.$transition-duration-fast var.$easing-ease-in-out;
     transform: translateY(-50%) scaleX(0.3);
     opacity: 0;

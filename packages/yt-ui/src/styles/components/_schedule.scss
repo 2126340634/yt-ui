@@ -205,13 +205,11 @@ $grid-row-delay: 0.2s;
         transform: var(--grid-item-box-transform);
 
         &-active {
-          animation: grid-item-opacity-animation anim.$animation-duration-fast anim.$ease-out-back
-            var(--grid-item-anim-delay) forwards;
+          animation: grid-item-opacity-animation anim.$animation-duration-fast anim.$ease-out-back var(--grid-item-anim-delay) forwards;
         }
 
         &-active-anim {
-          animation: grid-item-slide-in-animation anim.$animation-duration-fast anim.$ease-out-back
-            var(--grid-item-anim-delay) forwards;
+          animation: grid-item-slide-in-animation anim.$animation-duration-fast anim.$ease-out-back var(--grid-item-anim-delay) forwards;
         }
       }
 
@@ -315,7 +313,8 @@ $grid-row-delay: 0.2s;
     opacity: 1;
     transform: translateY(0);
     pointer-events: all;
-    transition: transform anim.$animation-duration-fast anim.$ease-bounce,
+    transition:
+      transform anim.$animation-duration-fast anim.$ease-bounce,
       opacity var.$transition-duration-fast var.$easing-ease-out;
   }
   .yt-schedule--header-arrow {

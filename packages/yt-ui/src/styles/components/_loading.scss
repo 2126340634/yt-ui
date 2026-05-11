@@ -14,8 +14,7 @@
   &--inner-circle {
     width: 30px;
     height: 30px;
-    animation: loading-rotate-animation anim.$animation-duration-slow anim.$ease-in-out-back
-      infinite;
+    animation: loading-rotate-animation anim.$animation-duration-slow anim.$ease-in-out-back infinite;
     border: 5px solid #eeeeee80;
     border-top-width: 5px;
     border-top-style: solid;
@@ -23,8 +22,7 @@
   }
 
   &--text {
-    animation: text-flash-animation anim.$animation-duration-normal var.$easing-linear infinite
-      alternate;
+    animation: text-flash-animation anim.$animation-duration-normal var.$easing-linear infinite alternate;
     margin-top: 8px;
     font-size: 14px;
     color: var(--loading-text-color);

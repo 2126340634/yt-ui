@@ -8,7 +8,7 @@ export type WeekDate = {
 
 export type Schedule = {
   weekDays: string[]
-  getWeekDate: (week:number) => WeekDate | undefined
+  getWeekDate: (week: number) => WeekDate | undefined
   isCurrentWeek: (week: number) => boolean
   getMonthOfStartDate: (week: number) => number | ''
   clearCache: () => void

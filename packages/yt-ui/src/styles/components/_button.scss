@@ -10,7 +10,8 @@
   border-radius: var.$border-radius-large;
   position: relative;
   box-shadow: var.$shadow-1;
-  transition: transform var.$transition-duration-fast var.$easing-ease-out,
+  transition:
+    transform var.$transition-duration-fast var.$easing-ease-out,
     background var.$transition-duration-slow var.$easing-ease-in-out;
 
   // 主题色

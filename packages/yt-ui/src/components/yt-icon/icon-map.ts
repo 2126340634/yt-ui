@@ -2,7 +2,7 @@
  * @description ICON文件路径映射表
  */
 
-const ICON_BASE_URL = 'https://zjyt.cqytxy.edu.cn/static/yt-ui/icons';
+const ICON_BASE_URL = 'https://zjyt.cqytxy.edu.cn/static/yt-ui/icons'
 export const iconMap: Record<string, string> = {
   Home: `${ICON_BASE_URL}/home.png`,
   Course: `${ICON_BASE_URL}/course.png`,

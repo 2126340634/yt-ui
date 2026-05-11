@@ -1,8 +1,4 @@
-export function useInterval(
-  callback: () => void,
-  interval: number,
-  options: { immediate?: boolean } = { immediate: false }
-) {
+export function useInterval(callback: () => void, interval: number, options: { immediate?: boolean } = { immediate: false }) {
   let timer: NodeJS.Timeout | null = null
   const clear = () => {
     if (timer) {

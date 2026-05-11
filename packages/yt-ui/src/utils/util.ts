@@ -1,8 +1,4 @@
-export const throttle = <T extends (...args: any[]) => any>(
-  fn: T,
-  delay: number,
-  options: { leading?: boolean; trailing?: boolean } = {}
-) => {
+export const throttle = <T extends (...args: any[]) => any>(fn: T, delay: number, options: { leading?: boolean; trailing?: boolean } = {}) => {
   const { leading = true, trailing = true } = options
   let timer: ReturnType<typeof setTimeout> | null = null
   let lastTime = 0
@@ -39,11 +35,7 @@ export const throttle = <T extends (...args: any[]) => any>(
   return throttled as T & { cancel: () => void }
 }
 
-export const debounce = <T extends (...args: any[]) => any>(
-  fn: T,
-  delay: number,
-  options: { immediate?: boolean } = {}
-) => {
+export const debounce = <T extends (...args: any[]) => any>(fn: T, delay: number, options: { immediate?: boolean } = {}) => {
   const { immediate = false } = options
   let timer: ReturnType<typeof setTimeout> | null = null
 
