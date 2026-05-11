@@ -424,7 +424,7 @@ onUnmounted(() => {
     clearTimeout(endAnimTimer)
     endAnimTimer = null
   }
-  clear() // clear useInterval()
+  clear() 
 })
 
 defineOptions({

@@ -9,13 +9,25 @@
     {
       "path": "pages/index",
       "style": {
-        "navigationBarTitleText": "测试入口"
+        "navigationBarTitleText": "选择测试组件"
+      }
+    },
+    {
+      "path": "pages/schedule",
+      "style": {
+        "navigationBarTitleText": "课程表组件"
+      }
+    },
+    {
+      "path": "pages/virtual-list",
+      "style": {
+        "navigationBarTitleText": "虚拟列表组件"
       }
     }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "yt-ui 组件库测试",
+    "navigationBarTitleText": "yt-ui",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
   }

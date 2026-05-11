@@ -1,8 +1,7 @@
 @use 'sass:map';
-@use 'sass:meta';
 @use '../styles/var' as var;
-// @use '../styles/theme-utils' as utils;
 
+// 主题色
 $theme-forest: #49b08f;
 $theme-ocean: #00a5e0;
 $theme-magic: #9c27ff;
@@ -257,13 +256,13 @@ $component-themes: (
 @each $name, $color in map.get($component-themes, 'input') {
   .yt-input--theme-#{$name} {
     box-sizing: border-box;
-    border: 1px #{$color} solid;
+    border: 1px rgba($color, 0.3) solid;
     border-radius: 8px;
   }
   // textarea
   .yt-textarea--theme-#{$name} {
     box-sizing: border-box;
-    border: 1px #{$color} solid;
+    border: 1px rgba($color, 0.3) solid;
     border-radius: 8px;
   }
 }

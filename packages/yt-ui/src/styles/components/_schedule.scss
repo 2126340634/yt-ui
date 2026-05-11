@@ -238,9 +238,8 @@ $grid-row-delay: 0.2s;
       &-item-conflict {
         position: absolute;
         right: 0;
-        top: -4px;
-        font-size: 14px;
-        color: #ffcc00;
+        top: 0;
+        font-size: 6px;
       }
 
       &-empty {
@@ -266,6 +265,10 @@ $grid-row-delay: 0.2s;
     line-height: 24px;
     font-size: 14px;
 
+    &-prefix {
+      font-weight: 600;
+    }
+
     &-course,
     &-agenda {
       display: flex;
@@ -279,6 +282,10 @@ $grid-row-delay: 0.2s;
       height: 1px;
       width: 100%;
       margin: 8px 0;
+    }
+
+    &-add-agenda {
+      margin: 8px auto 0 auto;
     }
   }
 
@@ -297,7 +304,7 @@ $grid-row-delay: 0.2s;
       @include mixins.inline-flex-center;
       width: 100%;
       gap: 12px;
-      font-size: 14px;
+      font-size: 12px;
       white-space: nowrap;
     }
 

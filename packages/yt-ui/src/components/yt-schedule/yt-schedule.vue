@@ -8,7 +8,7 @@ import { onHide, onShow } from '@dcloudio/uni-app'
 
 export interface CourseData {
   type: 'course' | 'agenda'
-  name: string
+  name?: string
   location?: string
   teacher?: string
   class?: string
@@ -104,9 +104,9 @@ const editState = shallowRef({
   cycle: '',
   time: ''
 })
-const selectedCourse = shallowRef<(CourseData & { weekIndex: number; gridIndex: number }) | null>(null)
+const selectedCourse = shallowRef<(CourseData & { weekIndex: number; gridIndex: number } & { agendaName?: string; agendaLocation?: string }) | null>(null)
 const hasPoppedUp = ref(false) // 手动触发popup前不渲染
-const localAgendas = shallowRef<Agenda[]>(JSON.parse(JSON.stringify(props.data.agenda)))
+const localAgendas = shallowRef<Agenda[]>(JSON.parse(JSON.stringify(toRaw(props.data.agenda))))
 
 const weekDate: ComputedRef<WeekDate> = computed(() => {
   return schedule.value?.getWeekDate(curWeek.value + 1) || []
@@ -171,64 +171,70 @@ const dateContainerClass = (index: number) => ({
 let colorCache: Record<string, string> = {}
 let colorCounter = 0
 const COLOR_AGENDA = '#999'
-const weekMapsCache = shallowRef<Map<number, Map<string, CourseData>>>(new Map())
+const weekMapsCache = shallowRef<Map<number, Map<string, CourseData & { agendaName?: string; agendaLocation?: string }>>>(new Map())
+
+// 填充当前周课表数据
+function _fillCourse(course: Course[], week: number, map: Map<string, CourseData>) {
+  course?.forEach(course => {
+    if (course.z.includes(week)) {
+      if (!course.name) return
+      const key = `${course.x}-${course.y}`
+      if (!colorCache[course.name]) {
+        colorCache[course.name] = props.colorList[colorCounter++ % props.colorList.length] || ''
+      }
+      // 内联样式缓存
+      const color = colorCache[course.name]
+      const delay = (course.y - 1) * 0.04
+      const transform = props.animation ? 'translateY(15px) scale(0.1)' : 'none'
+      const style = `--grid-item-box-color: ${color}; --grid-item-anim-delay: ${delay}s; --grid-item-box-transform: ${transform}`
+      map.set(key, {
+        type: 'course',
+        name: course.name,
+        location: course.location,
+        teacher: course.teacher,
+        class: course.class,
+        style
+      })
+    }
+  })
+}
+// 填充当前周日程数据
+function _fillAgenda(agenda: Agenda[], week: number, map: Map<string, CourseData & { agendaName?: string; agendaLocation?: string }>) {
+  agenda?.forEach(agenda => {
+    if (agenda.z.includes(week)) {
+      const key = `${agenda.x}-${agenda.y}`
+      // 检测并标记冲突
+      const item = map.get(key)
+      if (item && item.type !== 'agenda') {
+        map.set(key, {
+          ...item,
+          agendaName: agenda.name,
+          agendaLocation: agenda.location,
+          isConflict: true
+        })
+      } else {
+        const color = COLOR_AGENDA
+        const delay = (agenda.y - 1) * 0.04
+        const transform = props.animation ? 'translateY(15px) scale(0.1)' : 'none'
+        const style = `--grid-item-box-color: ${color}; --grid-item-anim-delay: ${delay}s; --grid-item-box-transform: ${transform}`
+        map.set(key, {
+          type: 'agenda',
+          agendaName: agenda.name,
+          agendaLocation: agenda.location,
+          style
+        })
+      }
+    }
+  })
+}
 function loadCourse(weekIndex: number) {
   if (weekMapsCache.value.has(weekIndex)) return
   const map = new Map<string, CourseData>()
   const week = weekIndex + 1
   const { course } = props.data
   const agenda = localAgendas.value
-  // 填充当前周课表数据
-  const fillCourse = () => {
-    course?.forEach(course => {
-      if (course.z.includes(week)) {
-        const key = `${course.x}-${course.y}`
-        if (!colorCache[course.name]) {
-          colorCache[course.name] = props.colorList[colorCounter++ % props.colorList.length] || ''
-        }
-        // 内联样式缓存
-        const color = colorCache[course.name]
-        const delay = (course.y - 1) * 0.04
-        const transform = props.animation ? 'translateY(15px) scale(0.1)' : 'none'
-        const style = `--grid-item-box-color: ${color}; --grid-item-anim-delay: ${delay}s; --grid-item-box-transform: ${transform}`
-
-        map.set(key, {
-          type: 'course',
-          name: course.name,
-          location: course.location,
-          teacher: course.teacher,
-          class: course.class,
-          style
-        })
-      }
-    })
-  }
-  // 填充当前周日程数据
-  const fillAgenda = () => {
-    agenda?.forEach(agenda => {
-      if (agenda.z.includes(week)) {
-        const key = `${agenda.x}-${agenda.y}`
-        // 检测并标记冲突
-        const item = map.get(key)
-        if (item && item.type !== 'agenda') {
-          map.set(key, { ...item, isConflict: true })
-        } else {
-          const color = COLOR_AGENDA
-          const delay = (agenda.y - 1) * 0.04
-          const transform = props.animation ? 'translateY(15px) scale(0.1)' : 'none'
-          const style = `--grid-item-box-color: ${color}; --grid-item-anim-delay: ${delay}s; --grid-item-box-transform: ${transform}`
-          map.set(key, {
-            type: 'agenda',
-            name: agenda.name,
-            location: agenda.location,
-            style
-          })
-        }
-      }
-    })
-  }
-  fillCourse()
-  fillAgenda()
+  _fillCourse(course, week, map)
+  _fillAgenda(agenda, week, map)
   const newCache = new Map(weekMapsCache.value)
   newCache.set(weekIndex, map)
   weekMapsCache.value = newCache
@@ -247,7 +253,9 @@ const courseClasses = computed(() => {
 function getCachedCourse(weekIndex: number, index: number) {
   const coord = gridCoords.value[index]
   const key = `${coord?.x}-${coord?.y}`
-  return weekMapsCache.value.get(weekIndex)?.get(key) || null
+  const course = weekMapsCache.value.get(weekIndex)?.get(key) || null
+  if (course?.type === 'agenda') return { ...course, name: course.agendaName, location: course.agendaLocation }
+  return course
 }
 function handleWeekClick(index: number) {
   enableAutoScrollWeek.value = false
@@ -264,10 +272,17 @@ function handleSwiperChange(index: number) {
   if (curWeek.value === index) return
   emit('change', index)
 }
-function handleCourseClick(weekIndex: number, index: number) {
+// 已有课程添加额外日程
+function addExtraAgenda() {
+  if (!selectedCourse.value) return
+  const { weekIndex, gridIndex } = selectedCourse.value
+  handleCourseClick(weekIndex, gridIndex, true)
+}
+// 点击课程或日程
+function handleCourseClick(weekIndex: number, index: number, forceEditMode = false) {
   hasPoppedUp.value = true // 渲染popup
   const course = getCachedCourse(weekIndex, index) as CourseData
-  editMode.value = !course
+  editMode.value = forceEditMode || !course
   // 添加日程模式更新表单组件值
   if (editMode.value) {
     const week = weekIndex + 1
@@ -294,6 +309,7 @@ function handleCourseClick(weekIndex: number, index: number) {
   })
   isPopping.value = true
 }
+// 长按课程
 function handleCourseLongPress(weekIndex: number, index: number) {
   const course = getCachedCourse(weekIndex, index)
   if (course?.type !== 'agenda') return
@@ -338,6 +354,7 @@ function shouldRender(weekIndex: number) {
   return curWeek.value === weekIndex
 }
 const editFormRef = ref()
+// 提交日程添加
 function handleAddAgenda() {
   editFormRef.value.validate((validated: boolean) => {
     if (!validated || !selectedCourse.value) return
@@ -464,16 +481,17 @@ onUnmounted(() => {
 
 let isLeaving = false
 onShow(() => {
+  // 切回来重新加载
   if (isLeaving) {
     isLeaving = false
     lazyLoadCourses()
   }
 })
 
-// 小程序切换页面清理缓存，防止内存占用过大
+// 切换页面就清理缓存
 onHide(() => {
-  isLeaving = true
   clearCache()
+  isLeaving = true
 })
 
 defineOptions({
@@ -560,7 +578,7 @@ defineOptions({
                   {{ getCachedCourse(weekIndex, index)?.location }}
                 </view>
                 <view class="yt-schedule--table-grid-item-conflict" v-if="getCachedCourse(weekIndex, index)?.isConflict">
-                  {{ '⚠' }}
+                  {{ '🟡' }}
                 </view>
               </view>
             </view>
@@ -585,22 +603,23 @@ defineOptions({
       <view v-if="!editMode" class="yt-schedule--popup-preview">
         <!-- course -->
         <view v-if="selectedCourse?.type === 'course'" class="yt-schedule--popup-preview-course">
-          <view>课程 {{ selectedCourse?.name || '未知' }}</view>
-          <view>地点 {{ selectedCourse?.location || '未知' }}</view>
-          <view>教师 {{ selectedCourse?.teacher || '未知' }}</view>
+          <view><text class="yt-schedule--popup-preview-prefix">课程</text> {{ selectedCourse?.name || '未知' }}</view>
+          <view><text class="yt-schedule--popup-preview-prefix">地点</text> {{ selectedCourse?.location || '未知' }}</view>
+          <view><text class="yt-schedule--popup-preview-prefix">教师</text> {{ selectedCourse?.teacher || '未知' }}</view>
           <view>
-            班级 {{ courseClasses.length ? '' : '未知' }}
+            <text class="yt-schedule--popup-preview-prefix">班级</text> {{ courseClasses.length ? '' : '未知' }}
             <view v-if="courseClasses.length" v-for="className in courseClasses">
               {{ className }}
             </view>
           </view>
+          <yt-button v-if="!selectedCourse?.isConflict" class="yt-schedule--popup-preview-add-agenda" size="small" @click="addExtraAgenda">添加额外日程</yt-button>
         </view>
         <!-- divider-line -->
         <view v-if="selectedCourse?.isConflict" class="yt-schedule--popup-preview-divider" />
         <!-- agenda -->
         <view v-if="selectedCourse?.type === 'agenda' || selectedCourse?.isConflict" class="yt-schedule--popup-preview-agenda">
-          <view>日程 {{ selectedCourse?.name || '无' }}</view>
-          <view>地点 {{ selectedCourse?.location || '无' }}</view>
+          <view><text class="yt-schedule--popup-preview-prefix">日程</text> {{ selectedCourse?.agendaName || '无' }}</view>
+          <view><text class="yt-schedule--popup-preview-prefix">地点</text> {{ selectedCourse?.agendaLocation || '无' }}</view>
         </view>
       </view>
       <!-- edit -->
@@ -624,8 +643,7 @@ defineOptions({
             <view>地点</view>
             <yt-input name="locationInput" theme="classic" placeholder="请输入日程地点" />
           </view>
-
-          <yt-button class="yt-schedule--popup-edit-submit" size="small" @click="handleAddAgenda"> 添加日程 </yt-button>
+          <yt-button class="yt-schedule--popup-edit-submit" size="small" @click="handleAddAgenda">添加日程</yt-button>
         </view>
       </yt-form>
     </yt-popup>

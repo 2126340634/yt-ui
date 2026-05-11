@@ -25,6 +25,7 @@ export const timeList = [
   }
 ]
 
+// 日程表
 export const agenda = [
   {
     type: 'agenda',
@@ -74,6 +75,7 @@ export const agenda = [
   }
 ]
 
+// 课程表
 export const course = [
   {
     name: '数据结构',
@@ -361,3 +363,12 @@ export const course = [
     z: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
   }
 ]
+
+// 课表数据
+export const scheduleData = {
+  term: 1,
+  termYear: '25-26',
+  start: '2025-09-01',
+  course: course,
+  agenda: agenda
+}

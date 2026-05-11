@@ -4,7 +4,7 @@ import type { InputType, KeyboardConfirmType } from '../../types/prop-types'
 import type { ThemeColor } from '../../types/theme-types'
 
 interface Props {
-  name?: string // form-name
+  name?: string
   theme?: ThemeColor | 'none'
   width?: number | string
   height?: number | string
@@ -17,12 +17,12 @@ interface Props {
   disabled?: boolean
   maxlength?: number
   focus?: boolean
-  confirmType?: KeyboardConfirmType // only when type = text
-  confirmHold?: boolean // keep keyboard holding when confirm
+  confirmType?: KeyboardConfirmType // 仅 text 类型生效
+  confirmHold?: boolean // 确认时键盘不收起
   adjustPosition?: boolean
   autoBlur?: boolean
-  holdKeyboard?: boolean // not hide when click page
-  randomNumber?: boolean // random number when type = number,digit,idcard
+  holdKeyboard?: boolean // 点击页面时键盘不收起
+  randomNumber?: boolean // 随机数字键盘,仅 number,digit,idcard 类型生效
 }
 
 const props = withDefaults(defineProps<Props>(), {
