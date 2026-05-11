@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, shallowRef, watch } from 'vue'
-import { ThemeColor } from '../../types/theme-types'
+import type { ThemeColor } from '../../types/theme-types'
 import { useInterval } from '../../hooks/useInterval'
 
 interface Props {
@@ -87,10 +87,10 @@ function handleClick(e: Event) {
 const curIndex = ref(props.loop && props.list.length > 1 ? 1 : 0)
 const enableTransition = ref(true)
 let isAnimating = false
-let endAnimTimer: NodeJS.Timeout | null = null
+let endAnimTimer: number | null = null
 const MIN_SWIPE_THRESHOLD = 50
 // autoplay
-let resumeTimer: NodeJS.Timeout | null = null
+let resumeTimer: number | null = null
 const touchState = shallowRef({
   startX: 0,
   startY: 0,
@@ -317,8 +317,8 @@ function handleTouchStart(e: TouchEvent) {
   if (props.list.length <= 1 || props.disabled) return
   const touch = e.touches[0]
   touchState.value = {
-    startX: touch.clientX,
-    startY: touch.clientY,
+    startX: touch?.clientX || 0,
+    startY: touch?.clientY || 0,
     isSwiping: false,
     isLock: false,
     deltaX: 0,
@@ -330,8 +330,8 @@ function handleTouchMove(e: TouchEvent) {
   if (props.list.length <= 1 || props.disabled) return
   if (touchState.value.isLock) return
   const touches = e.touches[0]
-  const deltaX = touches.clientX - touchState.value.startX
-  const deltaY = touches.clientY - touchState.value.startY
+  const deltaX = (touches?.clientX || 0) - touchState.value.startX
+  const deltaY = (touches?.clientY || 0) - touchState.value.startY
   if (!touchState.value.isSwiping) {
     const absDeltaX = Math.abs(deltaX)
     const absDeltaY = Math.abs(deltaY)

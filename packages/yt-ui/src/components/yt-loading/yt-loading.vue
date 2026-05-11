@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ThemeColor } from '../../types/theme-types'
+import type { ThemeColor } from '../../types/theme-types'
 
 interface Props {
   theme?: ThemeColor | 'none'

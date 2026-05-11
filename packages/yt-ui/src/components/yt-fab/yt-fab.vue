@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { ThemeColor } from '../../types/theme-types'
-import { SizeType } from '../../types/prop-types'
+import type { ThemeColor } from '../../types/theme-types'
+import type { SizeType } from '../../types/prop-types'
 import { iconMap } from '../yt-icon/icon-map'
 
 interface Props {

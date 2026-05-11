@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
-import { InputType, KeyboardConfirmType } from '../../types/prop-types'
-import { ThemeColor } from '../../types/theme-types'
+import type { InputType, KeyboardConfirmType } from '../../types/prop-types'
+import type { ThemeColor } from '../../types/theme-types'
 
 interface Props {
   name?: string // form-name

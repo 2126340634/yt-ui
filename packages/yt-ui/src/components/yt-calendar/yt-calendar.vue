@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, shallowRef, toRaw } from 'vue'
-import { ThemeColor } from '../../types/theme-types'
-import { Calendar, useCalendar } from '../../hooks/useCalendar'
-import { throttle } from '../../utils/util'
+import type { ThemeColor } from '../../types/theme-types'
+import { type Calendar, useCalendar } from '../../hooks/useCalendar'
 
 const monthNameMap: Record<number, string> = {
   1: 'January',
@@ -114,7 +113,7 @@ const calendarData = computed(() => {
   return calendar.getCalendar(state.value.year, state.value.month)
 })
 const backgroundText = computed(() => {
-  return `${monthNameMap[state.value.month].slice(0, 3)}.${state.value.month}`
+  return `${monthNameMap[state.value.month]?.slice(0, 3)}.${state.value.month}`
 })
 function getExtra(item: Calendar) {
   const target = props.monthData.find(md => md.date === item.date && item.isCurMonth)
@@ -189,8 +188,8 @@ function handleTouchMove(e: TouchEvent) {
   }
   touchState.value = {
     ...touchState.value,
-    curX: touches.clientX,
-    curY: touches.clientY,
+    curX: touches?.clientX || 0,
+    curY: touches?.clientY || 0,
     isDragging: true
   }
 }

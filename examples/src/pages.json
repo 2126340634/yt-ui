@@ -7,15 +7,15 @@
   },
   "pages": [
     {
-      "path": "pages/test",
+      "path": "pages/index",
       "style": {
-        "navigationBarTitleText": "组件测试"
+        "navigationBarTitleText": "测试入口"
       }
     }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "uni-app",
+    "navigationBarTitleText": "yt-ui 组件库测试",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
   }

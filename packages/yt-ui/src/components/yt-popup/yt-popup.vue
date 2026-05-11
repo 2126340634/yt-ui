@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, CSSProperties, onUnmounted, watch } from 'vue'
+import { computed, type CSSProperties, onUnmounted, watch } from 'vue'
 interface HeaderProps {
   title?: string
   cancelName?: string
@@ -128,7 +128,7 @@ function handleOverlayClick(e: Event) {
   }
 }
 
-let stateTime: NodeJS.Timeout | null = null
+let stateTime: number | null = null
 watch(
   () => props.visible,
   newVal => {

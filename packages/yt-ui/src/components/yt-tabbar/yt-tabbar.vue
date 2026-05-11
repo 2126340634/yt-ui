@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { iconMap } from '../yt-icon/icon-map'
-import { ThemeColor } from '../../types/theme-types'
+import type { ThemeColor } from '../../types/theme-types'
 
 interface Props {
   modelValue?: number

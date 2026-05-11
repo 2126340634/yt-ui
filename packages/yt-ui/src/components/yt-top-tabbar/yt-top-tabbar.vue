@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, CSSProperties, ref } from 'vue'
+import { computed, type CSSProperties, ref } from 'vue'
 
 interface Props {
   list: string[]

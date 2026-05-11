@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ComputedRef, onUnmounted, ref, shallowRef, toRaw, watch, watchEffect } from 'vue'
-import { Schedule, useSchedule, WeekDate } from '../../hooks/useSchedule'
+import { computed, type ComputedRef, onUnmounted, ref, shallowRef, toRaw, watch, watchEffect } from 'vue'
+import { type Schedule, useSchedule, type WeekDate } from '../../hooks/useSchedule'
 import { getLessonCoordinates } from '../../utils/util'
 import { defaultColorList, editFormRules } from '../../configs/scheduleConfig'
-import { ThemeColor } from '../../types/theme-types'
+import type { ThemeColor } from '../../types/theme-types'
 import { onHide, onShow } from '@dcloudio/uni-app'
 
 export interface CourseData {
@@ -184,7 +184,7 @@ function loadCourse(weekIndex: number) {
       if (course.z.includes(week)) {
         const key = `${course.x}-${course.y}`
         if (!colorCache[course.name]) {
-          colorCache[course.name] = props.colorList[colorCounter++ % props.colorList.length]
+          colorCache[course.name] = props.colorList[colorCounter++ % props.colorList.length] || ''
         }
         // 内联样式缓存
         const color = colorCache[course.name]
@@ -246,7 +246,7 @@ const courseClasses = computed(() => {
 // 获取某一格课程
 function getCachedCourse(weekIndex: number, index: number) {
   const coord = gridCoords.value[index]
-  const key = `${coord.x}-${coord.y}`
+  const key = `${coord?.x}-${coord?.y}`
   return weekMapsCache.value.get(weekIndex)?.get(key) || null
 }
 function handleWeekClick(index: number) {
@@ -327,7 +327,7 @@ function handleCourseLongPress(weekIndex: number, index: number) {
 }
 // 选择日程周期
 function handleCyclePicked(value: number[]) {
-  let [start, end] = [value[0] + 1, value[1] + 1]
+  let [start, end] = [(value?.[0] || 0) + 1, (value?.[1] || 0) + 1]
   if (start > end) [start, end] = [end, start]
   editState.value = {
     ...editState.value,
@@ -525,19 +525,19 @@ defineOptions({
           <view class="yt-schedule--table-time-item">
             <view class="yt-schedule--table-time-item-title">{{ i * 2 - 1 }}</view>
             <view class="yt-schedule--table-time-item-subtitle">
-              {{ timeList[index].first.start }}
+              {{ timeList[index]?.first.start }}
             </view>
             <view class="yt-schedule--table-time-item-subtitle">
-              {{ timeList[index].first.end }}
+              {{ timeList[index]?.first.end }}
             </view>
           </view>
           <view class="yt-schedule--table-time-item">
             <view class="yt-schedule--table-time-item-title">{{ i * 2 }}</view>
             <view class="yt-schedule--table-time-item-subtitle">
-              {{ timeList[index].second.start }}
+              {{ timeList[index]?.second.start }}
             </view>
             <view class="yt-schedule--table-time-item-subtitle">
-              {{ timeList[index].second.end }}
+              {{ timeList[index]?.second.end }}
             </view>
           </view>
         </template>

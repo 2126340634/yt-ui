@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ImageMode } from '../../types/prop-types'
-import { ThemeColor } from '../../types/theme-types'
+import type { ImageMode } from '../../types/prop-types'
+import type { ThemeColor } from '../../types/theme-types'
 
 interface Props {
   theme?: ThemeColor | 'none'

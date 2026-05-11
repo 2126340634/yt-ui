@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ThemeColor } from '../../types/theme-types'
+import type { ThemeColor } from '../../types/theme-types'
 import YtInput from '../yt-input/yt-input.vue'
 
 interface Props {

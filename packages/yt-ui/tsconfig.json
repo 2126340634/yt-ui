@@ -1,9 +1,10 @@
 {
+  "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
     "useDefineForClassFields": true,
-    "moduleResolution": "nodenext",
-    "module": "nodenext",
+    "moduleResolution": "bundler",
+    "module": "esnext",
     "strict": true,
     "jsx": "preserve",
     "sourceMap": true,
@@ -11,9 +12,13 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "isolatedModules": true,
-    "types": ["node"]
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "importsNotUsedAsValues": "remove",
+    "preserveValueImports": false,
+    "types": ["@dcloudio/types"]
   },
-
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }

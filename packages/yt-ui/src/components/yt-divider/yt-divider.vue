@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
-import { AlignType } from '../../types/prop-types'
+import type { AlignType } from '../../types/prop-types'
 
 interface Props {
   direction?: 'horizontal' | 'vertical'
