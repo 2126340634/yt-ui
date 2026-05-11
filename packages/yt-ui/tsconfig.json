@@ -3,7 +3,6 @@
     "target": "esnext",
     "useDefineForClassFields": true,
     "module": "esnext",
-    "moduleResolution": "node",
     "strict": true,
     "jsx": "preserve",
     "sourceMap": true,
@@ -11,8 +10,7 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "isolatedModules": true,
-    "types": ["node", "@dcloudio/types"],
-    "paths": {}
+    "types": ["node"],
   },
 
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "../../examples/src/testConfig.ts"],
