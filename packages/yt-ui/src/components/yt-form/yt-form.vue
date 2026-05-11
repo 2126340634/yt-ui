@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted, provide, ref } from 'vue'
+import { onBeforeUnmount, provide, ref } from 'vue'
 
 interface Props {
   rules?: Record<string, { rule: (value: any) => boolean; message: string }[]>
@@ -64,7 +64,7 @@ function validate(callback?: (valid: boolean) => void) {
   return callback ? callback(validateAll()) : validateAll()
 }
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   fields.value.clear()
 })
 

@@ -1,0 +1,26 @@
+.yt-virtual-list {
+  .chunk-content {
+    display: grid;
+
+    // 单列
+    &.layout-single {
+      grid-template-columns: 1fr;
+    }
+
+    // 双列
+    &.layout-double {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    // 瀑布流
+    &.layout-waterfall {
+      display: block; // grid下column-count不生效
+      column-count: 2;
+    }
+
+    &-item {
+      box-sizing: border-box;
+      break-inside: avoid;
+    }
+  }
+}

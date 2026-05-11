@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, shallowRef, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
 import type { ThemeColor } from '../../types/theme-types'
 import { useInterval } from '../../hooks/useInterval'
 
@@ -415,7 +415,7 @@ watch(
   }
 )
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (resumeTimer) {
     clearTimeout(resumeTimer)
     resumeTimer = null

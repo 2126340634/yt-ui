@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 interface Props {
   name?: string // form-name
@@ -55,7 +55,7 @@ onMounted(() => {
     registerField(props.name, getValue, setValue)
   }
 })
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (unregisterField && props.name) {
     unregisterField(props.name)
   }

@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, getCurrentInstance, watch, onBeforeUnmount } from 'vue'
+import { computed, ref, getCurrentInstance, watch, onBeforeUnmount, type CSSProperties } from 'vue'
 
 interface Props {
+  layout: 'single' | 'double' | 'waterfall'
+  rowGap: number | string
+  columnGap: number | string
+  bufferDistance: number
   list: any[]
   itemKey: string
   width?: number | string
@@ -17,11 +21,15 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  layout: 'single',
+  rowGap: 8,
+  columnGap: 8,
+  bufferDistance: 1200,
   list: () => [],
   itemKey: '',
   width: '100%',
   height: '100%',
-  chunkSize: 10,
+  chunkSize: 20,
   estimatedSize: 1000,
   showScrollbar: false,
   refresher: false,
@@ -33,8 +41,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['scroll', 'scrollToUpper', 'scrollToLower', 'pull', 'refresh', 'restore', 'abort'])
 
+// 计算切片
 const chunkedList = computed(() => {
-  const chunks = []
+  const chunks: { id: number; startIndex: number; items: Props['list'] }[] = []
   for (let i = 0; i < props.list.length; i += props.chunkSize) {
     chunks.push({
       id: i / props.chunkSize,
@@ -47,8 +56,8 @@ const chunkedList = computed(() => {
 
 const instance = getCurrentInstance()
 let observer: UniApp.IntersectionObserver | null = null
-const visibleMap = ref<Record<number, boolean>>({})
-const heightMap = ref<Record<number, number>>({})
+const visibleMap = ref<Record<number, boolean>>({}) // 每个分块的是否渲染
+const heightMap = ref<Record<number, number>>({}) // 每个分块的高度
 
 function getChunkVisibility(id: number) {
   return visibleMap.value[id] || false
@@ -57,11 +66,10 @@ function getChunkHeight(id: number) {
   return heightMap.value[id] || 0
 }
 function startObserver() {
-  if (observer) observer.disconnect()
-  if (!props.list.length) return
+  observer && observer.disconnect()
+  if (!props.list || !props.list.length) return
   observer = uni.createIntersectionObserver(instance, { observeAll: true })
-  // 600px缓冲区
-  observer.relativeToViewport({ top: 600, bottom: 600 }).observe('.chunk-anchor', (res: any) => {
+  observer.relativeToViewport({ top: props.bufferDistance, bottom: props.bufferDistance }).observe('.chunk-anchor', (res: any) => {
     const { id } = res.dataset
     const isIntersecting = res.intersectionRatio > 0
     visibleMap.value[id] = isIntersecting
@@ -70,6 +78,27 @@ function startObserver() {
     }
   })
 }
+
+const chunkContentClass = computed(() => {
+  return ['chunk-content', `layout-${props.layout}`]
+})
+const chunkContentStyle = computed<CSSProperties>(() => {
+  const columnGap = typeof props.columnGap === 'number' ? `${props.columnGap}px` : props.columnGap
+  const rowGap = typeof props.rowGap === 'number' ? `${props.rowGap}px` : props.rowGap
+  if (props.layout === 'waterfall') {
+    return {
+      columnGap,
+      marginBottom: rowGap // 分块之间的间距
+    }
+  }
+  return { columnGap, rowGap }
+})
+const chunkContentItemStyle = computed<CSSProperties>(() => {
+  const rowGap = typeof props.rowGap === 'number' ? `${props.rowGap}px` : props.rowGap
+  // 瀑布流为block布局,不存在行间距rowGap,改用marginBottom作为上下边距
+  const marginBottom = props.layout === 'waterfall' ? rowGap : 0
+  return { marginBottom }
+})
 
 watch(
   () => props.list.length,
@@ -107,7 +136,9 @@ const virtualListStyle = computed(() => ({
     @refresherrestore="emit('restore')"
     @refresherabort="emit('abort')"
   >
+    <!-- prefix slot -->
     <slot name="prefix" />
+
     <view
       v-for="chunk in chunkedList"
       :key="chunk.id"
@@ -115,17 +146,21 @@ const virtualListStyle = computed(() => ({
       class="chunk-anchor"
       :style="{ minHeight: getChunkVisibility(chunk.id) ? 'auto' : (getChunkHeight(chunk.id) || estimatedSize) + 'px' }"
     >
-      <template v-if="getChunkVisibility(chunk.id)">
-        <view v-for="(item, index) in chunk.items" :key="item[itemKey] || index">
+      <view v-if="getChunkVisibility(chunk.id)" :class="chunkContentClass" :style="chunkContentStyle">
+        <view v-for="(item, index) in chunk.items" :key="item[itemKey] || index" class="chunk-content-item" :style="chunkContentItemStyle">
           <slot name="list-item" :item="item" :index="chunk.startIndex + index" />
         </view>
-      </template>
+      </view>
     </view>
+
+    <!-- suffix slot -->
     <slot name="suffix" />
   </scroll-view>
 </template>
 
 <style lang="scss" scoped>
+@use '../../styles/components/virtual-list';
+
 .yt-virtual-list--hidden-scrollbar {
   ::-webkit-scrollbar {
     display: none;

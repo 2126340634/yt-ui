@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type CSSProperties, onUnmounted, watch } from 'vue'
+import { computed, type CSSProperties, onBeforeUnmount, watch } from 'vue'
 interface HeaderProps {
   title?: string
   cancelName?: string
@@ -147,7 +147,7 @@ watch(
   { immediate: true }
 )
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (stateTime) {
     clearTimeout(stateTime)
     stateTime = null

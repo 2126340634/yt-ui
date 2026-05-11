@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { InputType, KeyboardConfirmType } from '../../types/prop-types'
 import type { ThemeColor } from '../../types/theme-types'
 
@@ -118,7 +118,7 @@ onMounted(() => {
     registerField(props.name, getValue, setValue)
   }
 })
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (unregisterField && props.name) {
     unregisterField(props.name)
   }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type ComputedRef, onUnmounted, ref, shallowRef, toRaw, watch, watchEffect } from 'vue'
+import { computed, type ComputedRef, onBeforeUnmount, ref, shallowRef, toRaw, watch, watchEffect } from 'vue'
 import { type Schedule, useSchedule, type WeekDate } from '../../hooks/useSchedule'
 import { getLessonCoordinates } from '../../utils/util'
 import { defaultColorList, editFormRules } from '../../configs/scheduleConfig'
@@ -475,7 +475,7 @@ watch(
   { immediate: true, flush: 'post' }
 )
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   clearCache()
 })
 
