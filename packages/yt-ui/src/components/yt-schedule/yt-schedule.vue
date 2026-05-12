@@ -312,7 +312,8 @@ function handleCourseClick(weekIndex: number, index: number, forceEditMode = fal
 // 长按课程
 function handleCourseLongPress(weekIndex: number, index: number) {
   const course = getCachedCourse(weekIndex, index)
-  if (course?.type !== 'agenda') return
+  if (!course) return
+  if (!course.isConflict && course.type !== 'agenda') return
   uni.showModal({
     title: '系统提示',
     content: '确定要删除该日程吗？',
@@ -603,23 +604,23 @@ defineOptions({
       <view v-if="!editMode" class="yt-schedule--popup-preview">
         <!-- course -->
         <view v-if="selectedCourse?.type === 'course'" class="yt-schedule--popup-preview-course">
-          <view><text class="yt-schedule--popup-preview-prefix">课程</text> {{ selectedCourse?.name || '未知' }}</view>
-          <view><text class="yt-schedule--popup-preview-prefix">地点</text> {{ selectedCourse?.location || '未知' }}</view>
-          <view><text class="yt-schedule--popup-preview-prefix">教师</text> {{ selectedCourse?.teacher || '未知' }}</view>
+          <view><text class="yt-schedule--popup-preview-prefix">课程 </text> {{ selectedCourse?.name || '未知' }}</view>
+          <view><text class="yt-schedule--popup-preview-prefix">地点 </text> {{ selectedCourse?.location || '未知' }}</view>
+          <view><text class="yt-schedule--popup-preview-prefix">教师 </text> {{ selectedCourse?.teacher || '未知' }}</view>
           <view>
-            <text class="yt-schedule--popup-preview-prefix">班级</text> {{ courseClasses.length ? '' : '未知' }}
+            <text class="yt-schedule--popup-preview-prefix">班级 </text> {{ courseClasses.length ? '' : '未知' }}
             <view v-if="courseClasses.length" v-for="className in courseClasses">
               {{ className }}
             </view>
           </view>
-          <yt-button v-if="!selectedCourse?.isConflict" class="yt-schedule--popup-preview-add-agenda" size="small" @click="addExtraAgenda">添加额外日程</yt-button>
+          <yt-button v-if="!selectedCourse?.isConflict" class="yt-schedule--popup-preview-add-agenda" size="small" @click="addExtraAgenda">添加自定义日程</yt-button>
         </view>
         <!-- divider-line -->
         <view v-if="selectedCourse?.isConflict" class="yt-schedule--popup-preview-divider" />
         <!-- agenda -->
         <view v-if="selectedCourse?.type === 'agenda' || selectedCourse?.isConflict" class="yt-schedule--popup-preview-agenda">
-          <view><text class="yt-schedule--popup-preview-prefix">日程</text> {{ selectedCourse?.agendaName || '无' }}</view>
-          <view><text class="yt-schedule--popup-preview-prefix">地点</text> {{ selectedCourse?.agendaLocation || '无' }}</view>
+          <view><text class="yt-schedule--popup-preview-prefix">日程 </text> {{ selectedCourse?.agendaName || '无' }}</view>
+          <view><text class="yt-schedule--popup-preview-prefix">地点 </text> {{ selectedCourse?.agendaLocation || '无' }}</view>
         </view>
       </view>
       <!-- edit -->
