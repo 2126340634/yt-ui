@@ -1,0 +1,66 @@
+@use '../_var.scss' as var;
+@use '../_mixins.scss' as mixins;
+
+$primary-color: #333;
+$text-underline-offset: 0.2em;
+@mixin text-underline($text-color: $primary-color) {
+  color: $text-color;
+  text-decoration: underline 0.05em solid $text-color;
+  text-underline-offset: $text-underline-offset;
+}
+
+.yt-line--container {
+  @include mixins.inline-flex-center;
+
+  .yt-line {
+    width: fit-content;
+    height: fit-content;
+
+    // 字体主题
+    &--primary {
+      color: $primary-color;
+    }
+
+    &--success {
+      color: var.$success-color;
+    }
+
+    &--warning {
+      color: var.$warning-color;
+    }
+
+    &--error {
+      color: var.$error-color;
+    }
+
+    &--info {
+      color: var.$info-color;
+    }
+
+    // 下划线主题
+    &--primary--underline {
+      @include text-underline();
+    }
+
+    &--success--underline {
+      @include text-underline(var.$success-color);
+    }
+
+    &--warning--underline {
+      @include text-underline(var.$warning-color);
+    }
+
+    &--error--underline {
+      @include text-underline(var.$error-color);
+    }
+
+    &--info--underline {
+      @include text-underline(var.$info-color);
+    }
+
+    &--disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+}

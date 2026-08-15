@@ -1,0 +1,34 @@
+@use '../var' as var;
+@use '../mixins' as mixins;
+
+.yt-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  position: relative;
+
+  &--header {
+    flex-shrink: 0;
+    width: 100%;
+    height: fit-content;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  &--body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &--decoration {
+    position: absolute;
+    font-weight: bold;
+    left: -3px;
+    top: 8px;
+  }
+}

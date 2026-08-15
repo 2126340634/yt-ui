@@ -1,0 +1,17 @@
+@use '../var';
+
+.yt-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  visibility: hidden;
+  z-index: var(--overlay-z-index);
+  transition: var(--overlay-transition);
+  background-color: var(--overlay-background-color);
+
+  &--visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}
