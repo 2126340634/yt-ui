@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
   itemKey: '',
   width: '100%',
   height: '100%',
-  chunkSize: 20,
+  chunkSize: 40,
   estimatedSize: 1000,
   showScrollbar: false,
   refresher: false,
