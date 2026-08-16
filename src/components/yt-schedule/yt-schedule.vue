@@ -87,11 +87,17 @@ const schedule = shallowRef<Schedule>(null)
 watchEffect(() => {
   schedule.value = useSchedule(props.data.start, props.weeks)
 })
-const curWeek = ref(props.activeWeek) // 当前选中周(索引0开始)
+// 当前选中周(索引0开始)，限制在 [0, weeks-1]，防止 activeWeek 越界(如当前周超过总周数)导致渲染错乱
+function clampWeek(index: number) {
+  // activeWeek 为 NaN/Infinity(如学期开始时间解析失败)时回落到第0周，避免 shouldRender 全 false 导致空白
+  if (!Number.isFinite(index)) index = 0
+  return Math.min(props.weeks - 1, Math.max(0, index))
+}
+const curWeek = ref(clampWeek(props.activeWeek))
 watch(
   () => props.activeWeek,
   (val: number) => {
-    curWeek.value = val
+    curWeek.value = clampWeek(val)
   }
 )
 const showWeek = ref(false)
@@ -148,7 +154,8 @@ const scheduleStyle = computed(() => ({
   width: typeof props.width === 'number' ? `${props.width}px` : props.width,
   height: typeof props.height === 'number' ? `${props.height}px` : props.height,
   '--grid-cols': selectedDay.value === null ? 7 : 1,
-  '--grid-rows': props.rows
+  '--grid-rows': props.rows,
+  '--grid-time-rows': props.rows * 2
 }))
 const weekTextClass = (index: number) => ({
   'yt-schedule--week-text': true,
@@ -262,7 +269,7 @@ function getCachedCourse(weekIndex: number, index: number) {
 function handleWeekClick(index: number) {
   enableAutoScrollWeek.value = false
   if (curWeek.value === index) return
-  curWeek.value = index
+  curWeek.value = clampWeek(index)
   emit('change', index)
 }
 function handleDateClick(index: number) {
@@ -397,7 +404,7 @@ function handleAddAgenda() {
     editFormRef.value.resetForm(['nameInput', 'locationInput'])
     if (zStart - 1 !== curWeek.value) {
       // 跳到创建日程的起始周，触发watch自动加载
-      curWeek.value = zStart - 1
+      curWeek.value = clampWeek(zStart - 1)
     } else {
       lazyLoadCourses()
     }

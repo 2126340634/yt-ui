@@ -3,7 +3,7 @@
 @use '../anim' as anim;
 
 $header-height: 30px;
-$week-height: 35px;
+$week-height: 44px;
 $date-height: 40px;
 $table-height: calc(100% - $header-height - $week-height - $date-height);
 $week-item-width: 60px;
@@ -137,20 +137,26 @@ $grid-row-delay: 0.2s;
 
     &-swiper {
       width: 100%;
-      height: fit-content;
+      height: 100%;
+      // 兜底：百分比高度链失效时保持原固定高度，避免塌缩成空白
+      min-height: calc(var(--grid-rows) * #{$table-item-height * 2});
     }
 
     &-time {
       flex-shrink: 0;
       width: $month-text-width;
-      height: fit-content;
+      height: 100%;
+      // 兜底：百分比高度链失效时保持原固定高度
+      min-height: calc(var(--grid-time-rows) * #{$table-item-height});
+      display: grid;
+      grid-template-rows: repeat(var(--grid-time-rows), 1fr);
       background: #eeeeee50;
 
       &-item {
         @include mixins.inline-flex-center(column);
         flex-shrink: 0;
         width: 100%;
-        height: $table-item-height;
+        height: 100%;
         white-space: nowrap;
         color: #999;
 
@@ -166,19 +172,19 @@ $grid-row-delay: 0.2s;
     }
 
     &-grid {
-      contain: strict;
       width: 100%;
-      height: calc(var(--grid-rows) * #{$table-item-height * 2});
+      height: 100%;
+      // 兜底：百分比高度链失效时保持原固定高度，避免塌缩成空白
+      min-height: calc(var(--grid-rows) * #{$table-item-height * 2});
       display: grid;
       grid-template-rows: repeat(var(--grid-rows), 1fr);
       grid-template-columns: repeat(var(--grid-cols), 1fr);
-      place-items: center;
+      place-items: stretch;
       position: relative;
 
       &-item {
-        contain: strict;
         width: 100%;
-        height: $table-item-height * 2;
+        height: 100%;
         border-bottom: 1px dashed #99999980;
         box-sizing: border-box;
         padding: 1px;

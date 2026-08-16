@@ -419,7 +419,9 @@ watch(
     if (props.loop) targetIndex++
     const safeIndex = Math.min(visibleList.value.length - 1, Math.max(0, targetIndex))
     handleLoopJump(safeIndex, false)
-  }
+  },
+  // 首次挂载即同步到绑定索引，避免 activeWeek 初始不为0时首屏显示错乱/空白
+  { immediate: true }
 )
 
 onBeforeUnmount(() => {
@@ -452,7 +454,7 @@ defineOptions({
       <!-- Item Container -->
       <view :class="swiperContainerClass" :style="swiperContainerStyle">
         <view v-for="(item, index) in visibleList" :key="index" class="yt-swiper--container-item" :style="getCardStyle(index)" @click="handleClick">
-          <view v-show="shouldShow(index)">
+          <view v-show="shouldShow(index)" class="yt-swiper--container-item-inner">
             <slot name="swiper-item" :item="item" :index="getRealIndex(index)" />
           </view>
         </view>
