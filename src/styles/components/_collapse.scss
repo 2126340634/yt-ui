@@ -1,7 +1,7 @@
 @use '../var' as var;
 @use '../anim' as anim;
 
-$item-width: calc(100% - 16px);
+$item-width: calc(100% - 0px);
 
 .yt-collapse {
   width: 100%;
@@ -20,7 +20,7 @@ $item-width: calc(100% - 16px);
     align-items: center;
     border-bottom-width: 1px;
     border-bottom-style: solid;
-    border-bottom-color: #e5e7eb;
+    border-bottom-color: var(--item-border-color);
     transition: border-bottom-color var.$transition-duration-fast var.$easing-ease-out;
 
     &-icon {
@@ -37,6 +37,7 @@ $item-width: calc(100% - 16px);
 
     &-title {
       font-size: 14px;
+      padding: 0 8px;
     }
   }
 
@@ -47,10 +48,12 @@ $item-width: calc(100% - 16px);
     overflow: hidden;
     transform: translateY(-20px);
     opacity: 0;
-    border-bottom: 1px solid transparent;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: transparent;
 
     &-active {
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom-color: var(--item-border-color);
       animation: collapse-content-slide-in-animation anim.$animation-duration-fast anim.$ease-bounce forwards;
     }
   }

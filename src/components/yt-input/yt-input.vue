@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { InputType, KeyboardConfirmType } from '../../types/prop-types'
-import type { ThemeColor } from '../../types/theme-types'
 
 interface Props {
   name?: string
-  theme?: ThemeColor | 'none'
   width?: number | string
   height?: number | string
   padding?: number | string
@@ -27,10 +25,9 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   name: '',
-  theme: 'none',
   width: '100%',
-  height: 30,
-  padding: '0 4px',
+  height: 34,
+  padding: '0 6px',
   modelValue: '',
   value: '',
   type: 'text',
@@ -45,10 +42,6 @@ const props = withDefaults(defineProps<Props>(), {
   autoBlur: true,
   holdKeyboard: false,
   randomNumber: false
-})
-
-const inputClass = computed(() => {
-  return ['yt-input', `yt-input--theme-${props.theme}`]
 })
 
 const inputStyle = computed(() => {
@@ -131,36 +124,39 @@ onBeforeUnmount(() => {
 defineExpose({
   clear
 })
+
 function clear() {
   handleInput({ detail: { value: '' } })
 }
 </script>
 
 <template>
-  <input
-    :class="inputClass"
-    :style="inputStyle"
-    :value="currentValue"
-    :type="type"
-    :password="password"
-    :placeholder="placeholder"
-    :disabled="disabled"
-    :maxlength="maxlength"
-    :focus="focus"
-    :confirm-type="confirmType"
-    :confirm-hold="confirmHold"
-    :auto-blur="autoBlur"
-    :hold-keyboard="holdKeyboard"
-    :random-number="randomNumber"
-    :adjust-position="adjustPosition"
-    @input="handleInput"
-    @focus="handleFocus"
-    @blur="handleBlur"
-    @confirm="handleConfirm"
-    @keyboardheightchange="handleKeyboardHeightChange"
-  />
+  <view class="yt-input" :style="inputStyle">
+    <slot name="prefix"></slot>
+    <input
+      class="yt-input--inner"
+      :value="currentValue"
+      :type="type"
+      :password="password"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :maxlength="maxlength"
+      :focus="focus"
+      :confirm-type="confirmType"
+      :confirm-hold="confirmHold"
+      :auto-blur="autoBlur"
+      :hold-keyboard="holdKeyboard"
+      :random-number="randomNumber"
+      :adjust-position="adjustPosition"
+      @input="handleInput"
+      @focus="handleFocus"
+      @blur="handleBlur"
+      @confirm="handleConfirm"
+      @keyboardheightchange="handleKeyboardHeightChange"
+    />
+  </view>
 </template>
 
 <style lang="scss" scoped>
-@use '../../styles/_themes.scss';
+@use '../../styles/components/_input.scss';
 </style>

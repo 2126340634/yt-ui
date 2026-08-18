@@ -40,7 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
   width: '100%',
   height: '100%',
   direction: 'horizontal',
-  duration: 500,
+  duration: 300,
   showArrow: false,
   arrowColor: 'light',
   arrowSize: 16,
@@ -445,8 +445,8 @@ defineOptions({
   <view
     :class="swiperClass"
     :style="swiperStyle"
-    @touchstart="handleTouchStart"
-    @touchmove="handleTouchMove"
+    @touchstart.passive="handleTouchStart"
+    @touchmove.passive="handleTouchMove"
     @touchend="handleTouchEnd"
     @touchcancel="handleTouchEnd"
   >

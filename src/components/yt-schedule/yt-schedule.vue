@@ -101,7 +101,6 @@ watch(
   }
 )
 const showWeek = ref(false)
-const enableAutoScrollWeek = ref(true)
 const selectedDay = ref<null | number>(null)
 const isPopping = ref(false)
 const editMode = ref(false)
@@ -267,7 +266,6 @@ function getCachedCourse(weekIndex: number, index: number) {
   return course
 }
 function handleWeekClick(index: number) {
-  enableAutoScrollWeek.value = false
   if (curWeek.value === index) return
   curWeek.value = clampWeek(index)
   emit('change', index)
@@ -277,7 +275,6 @@ function handleDateClick(index: number) {
   else selectedDay.value = index
 }
 function handleSwiperChange(index: number) {
-  enableAutoScrollWeek.value = true
   if (curWeek.value === index) return
   emit('change', index)
 }
@@ -483,18 +480,24 @@ onBeforeUnmount(() => {
 })
 
 let isLeaving = false
-onShow(() => {
-  // 切回来重新加载
+// 加载课表数据(切回页面时)
+const load = () => {
   if (isLeaving) {
     isLeaving = false
     lazyLoadCourses()
   }
-})
-
-// 切换页面就清理缓存
-onHide(() => {
+  console.log('加载课表')
+}
+// 清理课表内存(离开页面时)
+const clear = () => {
   clearCache()
   isLeaving = true
+  console.log('清理课表')
+}
+
+defineExpose({
+  load,
+  clear
 })
 
 defineOptions({
@@ -526,13 +529,7 @@ defineOptions({
       <yt-icon class="yt-schedule--header-arrow" name="ArrowUp" :size="12" :width="60" :height="30" />
     </view>
     <!-- schedule-week -->
-    <scroll-view
-      scroll-x
-      scroll-with-animation
-      :scroll-into-view="enableAutoScrollWeek ? `${'week-' + curWeek}` : ''"
-      :show-scrollbar="false"
-      class="yt-schedule--week"
-    >
+    <scroll-view scroll-x scroll-with-animation :scroll-into-view="'week-' + `${curWeek - 2}`" :show-scrollbar="false" class="yt-schedule--week">
       <view v-for="(i, index) in weeks" :id="'week-' + index" :key="index" :class="weekTextClass(index)" @click="handleWeekClick(index)">
         第{{ i }}周
       </view>

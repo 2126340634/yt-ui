@@ -5,12 +5,16 @@ interface Props {
   titleList?: string[]
   iconSide?: 'left' | 'right'
   gap?: number | string
+  defaultActive?: number[]
+  borderColor?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   titleList: () => [],
   iconSide: 'right',
-  gap: 8
+  gap: 8,
+  defaultActive: () => [],
+  borderColor: '#e5e7eb'
 })
 
 // props的reactive转为shallowRef，避免深度监听每个属性
@@ -29,7 +33,8 @@ const isIconLeftSide = computed(() => {
 const collapseStyle = computed(() => {
   return {
     '--item-justify-content': isIconLeftSide.value ? 'start' : 'space-between',
-    '--item-padding': `${typeof props.gap === 'number' ? `${props.gap}px` : props.gap} 0`
+    '--item-padding': `${typeof props.gap === 'number' ? `${props.gap}px` : props.gap} 0`,
+    '--item-border-color': props.borderColor
   }
 })
 const collapseItemClass = (index: number) => ({
@@ -38,7 +43,7 @@ const collapseItemClass = (index: number) => ({
 })
 const collapseItemStyle = (index: number) => {
   return {
-    borderTop: index === 0 ? '1px solid #e5e7eb' : 'none'
+    borderTop: index === 0 ? `1px solid ${props.borderColor}` : 'none'
   }
 }
 const collapseContentClass = (index: number) => ({
@@ -46,7 +51,8 @@ const collapseContentClass = (index: number) => ({
   'yt-collapse--content-active': isExpanded(index)
 })
 
-const expandedSet = ref<Set<number>>(new Set())
+// 默认展开项(仅初始化时生效,后续通过 toggleExpand 控制)
+const expandedSet = ref<Set<number>>(new Set(props.defaultActive))
 
 const isExpanded = (index: number) => expandedSet.value.has(index)
 

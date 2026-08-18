@@ -1,26 +1,38 @@
 @use '../var' as var;
-@use '../mixins' as mixins;
 
 .yt-search {
-  display: inline-flex;
-  justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   width: 100%;
   position: relative;
 
   &--input {
-    position: absolute;
+    flex: 1;
+    min-width: 0;
     font-size: var.$font-size-small;
-    width: 100%;
-    z-index: 0;
+  }
+
+  &--icon {
+    margin-right: 8px;
   }
 
   &--button {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 1;
+
+    &.yt-button--hover {
+      transform: translateY(-50%) scale(0.99);
+    }
   }
 
   &--clear {
     position: absolute;
-    top: 5px;
+    top: 50%;
+    margin-top: -10px;
     z-index: 1;
     font-size: 14px;
     color: #fff;
