@@ -241,8 +241,8 @@ defineOptions({
     </view>
     <view
       class="yt-calendar--body"
-      @touchstart="handleTouchStart"
-      @touchmove="handleTouchMove"
+      @touchstart.passive="handleTouchStart"
+      @touchmove.passive="handleTouchMove"
       @touchend="handleTouchEnd"
       @touchcancel="handleTouchEnd"
     >

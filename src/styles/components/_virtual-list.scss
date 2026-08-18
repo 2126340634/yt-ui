@@ -1,6 +1,7 @@
 .yt-virtual-list {
   .chunk-content {
     display: grid;
+    padding: 0 8px;
 
     // 单列
     &.layout-single {

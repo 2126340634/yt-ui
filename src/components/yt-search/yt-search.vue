@@ -1,28 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { ThemeColor } from '../../types/theme-types'
 import YtInput from '../yt-input/yt-input.vue'
 
 interface Props {
-  theme?: ThemeColor | 'none'
   modelValue?: string
   value?: string
   placeholder?: string
   disabled?: boolean
   focus?: boolean
   autoBlur?: boolean
-  showButton?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
-  theme: 'none',
   modelValue: '',
   value: '',
   placeholder: '请输入搜索内容',
   disabled: false,
   focus: false,
-  autoBlur: true,
-  showButton: true
+  autoBlur: true
 })
 
 const emit = defineEmits<{
@@ -32,7 +27,6 @@ const emit = defineEmits<{
   blur: [value: any]
   confirm: [value: any]
   keyboardHeightChange: [{ height: number; duration: number }]
-  search: [value: any]
 }>()
 
 const currentValue = ref<any>('')
@@ -56,9 +50,6 @@ function handleConfirm(value: any) {
 function handleKeyboardHeightChange(value: any) {
   emit('keyboardHeightChange', value)
 }
-function handleSearch() {
-  emit('search', currentValue.value)
-}
 
 const ytInputRef = ref<InstanceType<typeof YtInput> | null>(null)
 function handleClear() {
@@ -72,14 +63,11 @@ defineOptions({
 
 <template>
   <view class="yt-search">
-    <!-- search-icon -->
-    <yt-icon name="Search" class="yt-search--icon" :size="13" :width="28" :height="28" />
     <yt-input
       ref="ytInputRef"
       confirm-type="search"
-      :padding="showButton ? '0 75px 0 28px' : '0 30px 0 28px'"
       class="yt-search--input"
-      :theme="theme"
+      padding="0 30px 0 4px"
       :value="value"
       :model-value="modelValue"
       :placeholder="placeholder"
@@ -92,15 +80,24 @@ defineOptions({
       @blur="handleBlur"
       @confirm="handleConfirm"
       @keyboard-height-change="handleKeyboardHeightChange"
-    />
+    >
+      <!-- search-icon -->
+      <template #prefix>
+        <yt-icon name="Search" class="yt-search--icon" :size="20" :width="20" :height="20" />
+      </template>
+    </yt-input>
     <!-- clear-button -->
-    <span v-show="currentValue" class="yt-search--clear" :style="{ right: showButton ? '52px' : '4px' }" @click="handleClear"> X </span>
-    <!-- search-button -->
-    <yt-button v-if="showButton" class="yt-search--button" :theme="theme" size="small" @click="handleSearch"> 搜索 </yt-button>
+    <view
+      v-show="currentValue"
+      class="yt-search--clear"
+      :style="{ right: '4px', pointerEvents: currentValue ? 'auto' : 'none' }"
+      @click="handleClear"
+    >
+      X
+    </view>
   </view>
 </template>
 
 <style lang="scss" scoped>
-@use '../../styles/_themes.scss';
 @use '../../styles/components/_search.scss';
 </style>
