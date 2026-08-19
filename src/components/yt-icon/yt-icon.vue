@@ -9,6 +9,7 @@ interface Props {
   width?: number | string
   height?: number | string
   fit?: ImageMode
+  lazyLoad?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -16,7 +17,8 @@ const props = withDefaults(defineProps<Props>(), {
   size: 24,
   width: 60,
   height: 60,
-  fit: 'aspectFit'
+  fit: 'aspectFit',
+  lazyLoad: false
 })
 
 const emit = defineEmits<{
@@ -53,7 +55,7 @@ defineOptions({
 </script>
 
 <template>
-  <image :class="iconClass" :style="iconStyle" :src="imgStr" :mode="fit" @click="handleClick"></image>
+  <image :class="iconClass" :style="iconStyle" :src="imgStr" :mode="fit" @click="handleClick" :lazy-load="lazyLoad"></image>
 </template>
 
 <style lang="scss" scoped>

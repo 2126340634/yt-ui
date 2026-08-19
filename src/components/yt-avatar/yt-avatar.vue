@@ -16,6 +16,7 @@ interface Props {
   overflowCount?: number
   dot?: boolean
   offset?: number[]
+  lazyLoad?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,13 +25,13 @@ const props = withDefaults(defineProps<Props>(), {
   circle: true,
   size: 60,
   fit: 'aspectFill',
-  // badge
   enableBadgeTheme: true,
   showBadge: false,
   count: 0,
   overflowCount: 99,
   dot: false,
-  offset: () => []
+  offset: () => [],
+  lazyLoad: false
 })
 
 const emit = defineEmits<{
@@ -66,7 +67,7 @@ defineOptions({
 <template>
   <view class="yt-avatar--container">
     <view :class="avatarClass" :style="avatarStyle" @click="handleClick">
-      <image v-if="url" class="yt-avatar--image" :src="url" :mode="fit" @load="handleLoad" @error="handleError" />
+      <image v-if="url" class="yt-avatar--image" :src="url" :mode="fit" @load="handleLoad" @error="handleError" :lazy-load="lazyLoad" />
       <yt-icon v-else name="DefaultAvatar" :width="props.size" :height="props.size" />
     </view>
 
